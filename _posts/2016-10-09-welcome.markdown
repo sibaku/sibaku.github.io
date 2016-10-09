@@ -1,2 +1,6 @@
+---
+layout: post
+title: Welcome
+---
 Hello,
 this is just the first post to see how it works :)
