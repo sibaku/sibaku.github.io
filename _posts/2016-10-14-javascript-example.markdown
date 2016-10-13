@@ -5,3 +5,5 @@ categories: javascript test coding
 ---
 
 This is just a small testpage to check for javascript
+
+{% include canvas.html %}
