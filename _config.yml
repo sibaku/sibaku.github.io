@@ -25,4 +25,6 @@ github_username:  sibaku
 repository: sibaku/sibaku.github.io
 # Build settings
 markdown: kramdown
+kramdown:
+  math_engine: mathjax
 theme: minima
