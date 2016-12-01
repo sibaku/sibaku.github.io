@@ -50,16 +50,18 @@ function stripLatexComments(x)
 $("script[type='math/tex']").replaceWith(
   function(){
     var tex = $(this).text();
+    tex = stripLatexComments(tex);
     return "<span class=\"inline-equation\">" + 
-           katex.renderToString(stripLatexComments(tex)) +
+           katex.renderToString(tex) +
            "</span>";
 });
 $("script[type='math/tex; mode=display']").replaceWith(
   function(){
     var tex = $(this).text();
+    tex = stripLatexComments(tex);
     console.log(tex);
     return "<div class=\"equation\">" + 
-           katex.renderToString("\\displaystyle "+stripLatexComments(tex)) +
+           katex.renderToString("\\displaystyle "+ tex) +
            "</div>";
 });
   });
