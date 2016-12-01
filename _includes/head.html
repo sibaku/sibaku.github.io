@@ -18,13 +18,40 @@
 
 
 <script type="text/javascript">
+
+function stripLatexComments(x)
+{
+  // workaround for kramdown placing comments which katex can't process
+	var commentIndex;
+	while((commentIndex = x.indexOf("%") )>= 0)
+	{
+		var left = x.substring(0,commentIndex);
+	  var right = x.substring(commentIndex+1);
+	  
+	  x = left;
+	  if(right === "")
+		{
+		  break;
+		}
+	  var newlineIdx = right.indexOf("\n");
+	  if(newlineIdx < 0)
+	  {
+		break;
+	  }
+	  
+	  x+=right.substring(newlineIdx+1);
+
+	}
+	return x;
+}
+
   $(document).ready(function()
   {
 $("script[type='math/tex']").replaceWith(
   function(){
     var tex = $(this).text();
     return "<span class=\"inline-equation\">" + 
-           katex.renderToString(tex) +
+           katex.renderToString(stripLatexComments(tex)) +
            "</span>";
 });
 $("script[type='math/tex; mode=display']").replaceWith(
@@ -32,7 +59,7 @@ $("script[type='math/tex; mode=display']").replaceWith(
     var tex = $(this).text();
     console.log(tex);
     return "<div class=\"equation\">" + 
-           katex.renderToString("\\displaystyle "+tex) +
+           katex.renderToString("\\displaystyle "+stripLatexComments(tex)) +
            "</div>";
 });
   });
