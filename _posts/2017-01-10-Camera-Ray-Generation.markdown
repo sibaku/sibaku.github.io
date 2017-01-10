@@ -10,6 +10,7 @@ There are of course other articles about this, but I feel they overcomplicate it
 The basic idea is very simple. We reverse the transformation pipeline. We usually want our rays to be in world-space, so that's why we need the view matrix. Just as a reminder:
 
 View matrix $$\mathbf{V}$$ - Transforms world coordinates to view coordinates
+
 Projection matrix $$\mathbf{P}$$ - Transforms view coordinates to clip coordinates
 
 Division by the homogenous coordinate brings us from clip space to normalized device coordinates (NDC). The projection matrix encodes a viewing frustum, a truncated pyramid, with a near plane and a far plane. The frustum will be transformed in a cube $$[-1,1]^3$$ after division by the homogenous coordinate. The near plane (all values with $$z$$ equal to $$-n$$) will be mapped to $$-1$$, while the far plane is mapped to $$1$$.
