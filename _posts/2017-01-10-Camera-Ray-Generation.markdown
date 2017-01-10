@@ -9,8 +9,8 @@ There are of course other articles about this, but I feel they overcomplicate it
 
 The basic idea is very simple. We reverse the transformation pipeline. We usually want our rays to be in world-space, so that's why we need the view matrix. Just as a reminder:
 
-View matrix - Transforms world coordinates to view coordinates
-Projection matrix - Transforms view coordinates to clip coordinates
+View matrix $$\mathbf{V}$$ - Transforms world coordinates to view coordinates
+Projection matrix $$\mathbf{P}$$ - Transforms view coordinates to clip coordinates
 
 Division by the homogenous coordinate brings us from clip space to normalized device coordinates (NDC). The projection matrix encodes a viewing frustum, a truncated pyramid, with a near plane and a far plane. The frustum will be transformed in a cube $$[-1,1]^3$$ after division by the homogenous coordinate. The near plane (all values with $$z$$ equal to $$-n$$) will be mapped to $$-1$$, while the far plane is mapped to $$1$$.
 
@@ -18,17 +18,28 @@ We start with a point in NDC on the near plane (it could be somewhere else thoug
 Next are the $$xy$$-coordinates. NDC starts at the bottom left and goes from $$-1$$ to $$1$$ and represents your screen. If your screen coordinate system also starts on the bottom left, we can work directly with the coordinates, otherwise we need to invert the $$y$$-axis as $$y =  h - y_{inverted}$$, where $$h$$ is the screen's height.
 
 $$\begin{pmatrix} x & y \end{pmatrix}$$ lies in $$[0,w-1]\times[0,h-1]$$, where $$w$$ is the screen's width. First we transform this to be in $$[0,1]$$. You probably want to sample the pixel centers, so we add $$0.5$$ and divide by $$w$$ and $$h$$ respectively.
+
 $$x_{\text{screen}} = (x+0.5)/w $$
+
 $$y_{\text{screen}} = (y+0.5)/h $$ or $$ y_{\text{screen}} = (h-y+0.5)/h $$ for top left screens.
 
 Next we change to NDC.
+
 $$x_{\text{NDC}} = x_{\text{screen}}*2 -1 $$
+
 $$y_{\text{NCD}} = y_{\text{screen}}*2 -1 $$
 
 Both values are now in $$[-1,1]$$. Our 3D point in NDC is then
 
-$$ p_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \end{pmatrix}$$
+$$ \mathbf{p}_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \end{pmatrix}$$
 
 Next we make the point homogenous by adding a $$1$$ as the last coordinate.
 
-$$ p_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \\ 1 \end{pmatrix}$$
+$$ \mathbf{\hat{p]}_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \\ 1 \end{pmatrix}$$
+
+I use the hat to symbolize homogenous points.
+Next we go to view space. For that we use the inverse projection matrix.
+
+$$ \mathbf{\hat{p}}_{\text{View}} = \mathbf{P}^{-1}\mathbf{p}_{\text{NDC}} $$
+
+The result is a homogenous point in view space located on the near plane. Now for the two important points. First: In view space, the camera lies at the origin. We are interested in the direction from the camera to the point we just computed. Since the camera is in the origin, the line through the point is just written as $$ t * \mathbf{p}_{\text{View}} $$ with $$ t $$ being all real values. 
