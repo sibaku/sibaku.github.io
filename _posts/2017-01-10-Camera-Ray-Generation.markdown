@@ -19,28 +19,38 @@ Next are the $$xy$$-coordinates. NDC starts at the bottom left and goes from $$-
 
 $$\begin{pmatrix} x & y \end{pmatrix}$$ lies in $$[0,w-1]\times[0,h-1]$$, where $$w$$ is the screen's width. First we transform this to be in $$[0,1]$$. You probably want to sample the pixel centers, so we add $$0.5$$ and divide by $$w$$ and $$h$$ respectively.
 
+
 $$x_{\text{screen}} = (x+0.5)/w $$
 
 $$y_{\text{screen}} = (y+0.5)/h $$ or $$ y_{\text{screen}} = (h-y+0.5)/h $$ for top left screens.
 
+
 Next we change to NDC.
+
 
 $$x_{\text{NDC}} = x_{\text{screen}}*2 -1 $$
 
 $$y_{\text{NCD}} = y_{\text{screen}}*2 -1 $$
 
+
 Both values are now in $$[-1,1]$$. Our 3D point in NDC is then
+
 
 $$ \mathbf{p}_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \end{pmatrix}$$
 
+
 Next we make the point homogenous by adding a $$1$$ as the last coordinate.
 
+
 $$ \mathbf{\hat{p}}_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \\ 1 \end{pmatrix}$$
+
 
 I use the hat to symbolize homogenous points.
 Next we go to view space. For that we use the inverse projection matrix.
 
+
 $$ \mathbf{\hat{p}}_{\text{View}} = \mathbf{P}^{-1}\mathbf{p}_{\text{NDC}} $$
+
 
 The result is a homogenous point in view space located on the near plane. Now for the two important things. First: In view space, the camera lies at the origin. We are interested in the direction from the camera to the point we just computed. Since the camera is in the origin, the line through the point is just written as $$ t * \mathbf{p}_{\text{View}} $$ with $$ t $$ being all real values. Now the second important thing: Division by the homogenous coordinate to get the real 3D point won't change the direction of the $$x,y,z$$ ray through the origin. So the $$xyz$$ coordinates of $$ \mathbf{\hat{p}}_{\text{View}}$$ already represent the direction we care about.
 
@@ -50,13 +60,17 @@ To get world space directions, we have to transform from view to world space wit
 
  $$ \mathbf{\hat{q}}_{\text{View}} = \begin{pmatrix} \mathbf{\hat{p}}_{\text{View},x} \\ \mathbf{\hat{p}}_{\text{View},y} \\ \mathbf{\hat{p}}_{\text{View},z} \\ 0 \end{pmatrix}$$
  
+ 
  Then the transformation:
  
- $$\mathbf{\hat{q}}_{\text{World}}  = \mathbf{V}^-1\mathbf{\hat{q}}_{\text{View}} $$
+ 
+ $$\mathbf{\hat{q}}_{\text{World}}  = \mathbf{V}^{-1}\mathbf{\hat{q}}_{\text{View}} $$
+ 
  
  The first three components now describe our world ray, so we just normalize them and are finished.
  
  $$\mathbf{v}_{\text{World}} = \begin{pmatrix} \mathbf{\hat{q}}_{\text{World},x} \\ \mathbf{\hat{q}}_{\text{World},y} \\ \mathbf{\hat{q}}_{\text{World},z} \end{pmatrix} $$
+ 
  
  $$ \mathbf{v}_{\text{World}}' = \frac{\mathbf{v}_{\text{World}}}{\lVert \mathbf{v}_{\text{World}} \rVert} $$
  
