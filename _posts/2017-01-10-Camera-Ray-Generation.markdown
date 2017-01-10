@@ -1,0 +1,34 @@
+---
+layout: post
+title:  "Camera ray from projection and view matrix"
+categories: cg computer-graphics ray-tracing tracing graphics
+---
+
+You may come into the situation, that you need to generate rays through a pixel. This could be for clicking on the screen to select an object or for a ray tracing application.
+There are of course other articles about this, but I feel they overcomplicate it. Here, I want to show a pretty simple way to generate rays, given a projection and a view matrix typically used in OpenGL and other Frameworks/APIs. I won't go into the details of these matrices, as they are covered in detail in many places, such as http://www.songho.ca/opengl/gl_projectionmatrix.html
+
+The basic idea is very simple. We reverse the transformation pipeline. We usually want our rays to be in world-space, so that's why we need the view matrix. Just as a reminder:
+
+View matrix - Transforms world coordinates to view coordinates
+Projection matrix - Transforms view coordinates to clip coordinates
+
+Division by the homogenous coordinate brings us from clip space to normalized device coordinates (NDC). The projection matrix encodes a viewing frustum, a truncated pyramid, with a near plane and a far plane. The frustum will be transformed in a cube $$[-1,1]^3$$ after division by the homogenous coordinate. The near plane (all values with $$z$$ equal to $$-n$$) will be mapped to $$-1$$, while the far plane is mapped to $$1$$.
+
+We start with a point in NDC on the near plane (it could be somewhere else though). So we already know the $$z$$-coordinate: $$-1$$.
+Next are the $$xy$$-coordinates. NDC starts at the bottom left and goes from $$-1$$ to $$1$$ and represents your screen. If your screen coordinate system also starts on the bottom left, we can work directly with the coordinates, otherwise we need to invert the $$y$$-axis as $$y =  h - y_{inverted}$$, where $$h$$ is the screen's height.
+
+$$\begin{pmatrix} x & y \end{pmatrix}$$ lies in $$[0,w-1]\times[0,h-1]$$, where $$w$$ is the screen's width. First we transform this to be in $$[0,1]$$. You probably want to sample the pixel centers, so we add $$0.5$$ and divide by $$w$$ and $$h$$ respectively.
+$$x_{\text{screen}} = (x+0.5)/w $$
+$$y_{\text{screen}} = (y+0.5)/h $$ or $$ y_{\text{screen}} = (h-y+0.5)/h $$ for top left screens.
+
+Next we change to NDC.
+$$x_{\text{NDC}} = x_{\text{screen}}*2 -1 $$
+$$y_{\text{NCD}} = y_{\text{screen}}*2 -1 $$
+
+Both values are now in $$[-1,1]$$. Our 3D point in NDC is then
+
+$$ p_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \end{pmatrix}$$
+
+Next we make the point homogenous by adding a $$1$$ as the last coordinate.
+
+$$ p_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \\ 1 \end{pmatrix}$$
