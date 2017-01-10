@@ -35,7 +35,7 @@ $$ \mathbf{p}_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\
 
 Next we make the point homogenous by adding a $$1$$ as the last coordinate.
 
-$$ \mathbf{\hat{p]}_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \\ 1 \end{pmatrix}$$
+$$ \mathbf{\hat{p}}_{\text{NDC}} = \begin{pmatrix} x_{\text{NDC}} \\ y_{\text{NDC}} \\ -1 \\ 1 \end{pmatrix}$$
 
 I use the hat to symbolize homogenous points.
 Next we go to view space. For that we use the inverse projection matrix.
