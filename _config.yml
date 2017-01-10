@@ -27,4 +27,5 @@ repository: sibaku/sibaku.github.io
 markdown: kramdown
 kramdown:
   math_engine: mathjax
+  syntax_highlighter: rouge
 theme: minima
