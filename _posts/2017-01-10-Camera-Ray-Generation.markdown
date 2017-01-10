@@ -8,6 +8,7 @@ You may come into the situation, that you need to generate rays through a pixel.
 There are of course other articles about this, but I feel they overcomplicate it. Here, I want to show a pretty simple way to generate rays, given a projection and a view matrix typically used in OpenGL and other Frameworks/APIs. I won't go into the details of these matrices, as they are covered in detail in many places, such as http://www.songho.ca/opengl/gl_projectionmatrix.html
 
 If you are only interested in the code, here is a glsl example:
+
 {% highlight glsl %}
 // This assumes the pixel position px to be in [0,1], 
 // which can be done by (x+0.5)/w or (y+0.5)/h to sample pixel centers
@@ -42,6 +43,10 @@ vec3 createRay(vec2 px, mat4 PInv, mat4 VInv)
 }
 
 {% endhighlight %}
+
+And here is a working shader using that code to raytrace a simple scene:
+
+<iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/ltyXWh?gui=true&t=10&paused=true&muted=false" allowfullscreen></iframe>
 
 The basic idea is very simple. We reverse the transformation pipeline. We usually want our rays to be in world-space, so that's why we need the view matrix. Just as a reminder:
 
