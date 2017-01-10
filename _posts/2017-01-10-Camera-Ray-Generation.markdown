@@ -42,4 +42,21 @@ Next we go to view space. For that we use the inverse projection matrix.
 
 $$ \mathbf{\hat{p}}_{\text{View}} = \mathbf{P}^{-1}\mathbf{p}_{\text{NDC}} $$
 
-The result is a homogenous point in view space located on the near plane. Now for the two important points. First: In view space, the camera lies at the origin. We are interested in the direction from the camera to the point we just computed. Since the camera is in the origin, the line through the point is just written as $$ t * \mathbf{p}_{\text{View}} $$ with $$ t $$ being all real values. 
+The result is a homogenous point in view space located on the near plane. Now for the two important things. First: In view space, the camera lies at the origin. We are interested in the direction from the camera to the point we just computed. Since the camera is in the origin, the line through the point is just written as $$ t * \mathbf{p}_{\text{View}} $$ with $$ t $$ being all real values. Now the second important thing: Division by the homogenous coordinate to get the real 3D point won't change the direction of the $$x,y,z$$ ray through the origin. So the $$xyz$$ coordinates of $$ \mathbf{\hat{p}}_{\text{View}}$$ already represent the direction we care about.
+
+If you really need view space directions, you can stop here and use the first three entries of  $$ \mathbf{\hat{p}}_{\text{View}}$$ and normalize them.
+
+To get world space directions, we have to transform from view to world space with the inverse view matrix. Since we are only interested in the direction, not a concrete point, we set the homogenous part of  $$ \mathbf{\hat{p}}_{\text{View}}$$ to zero.
+
+ $$ \mathbf{\hat{q}}_{\text{View}} = \begin{pmatrix} \mathbf{\hat{p}}_{\text{View},x} \\ \mathbf{\hat{p}}_{\text{View},y} \\ \mathbf{\hat{p}}_{\text{View},z} \\ 0 \end{pmatrix}$$
+ 
+ Then the transformation:
+ 
+ $$\mathbf{\hat{q}}_{\text{World}}  = \mathbf{V}^-1\mathbf{\hat{q}}_{\text{View}} $$
+ 
+ The first three components now describe our world ray, so we just normalize them and are finished.
+ 
+ $$\mathbf{v}_{\text{World}} = \begin{pmatrix} \mathbf{\hat{q}}_{\text{World},x} \\ \mathbf{\hat{q}}_{\text{World},y} \\ \mathbf{\hat{q}}_{\text{World},z} \end{pmatrix} $$
+ 
+ $$ \mathbf{v}_{\text{World}}' = \frac{\mathbf{v}_{\text{World}}}{\lVert \mathbf{v}_{\text{World}} \rVert} $$
+ 
