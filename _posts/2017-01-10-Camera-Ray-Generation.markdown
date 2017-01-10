@@ -7,6 +7,42 @@ categories: cg computer-graphics ray-tracing tracing graphics
 You may come into the situation, that you need to generate rays through a pixel. This could be for clicking on the screen to select an object or for a ray tracing application.
 There are of course other articles about this, but I feel they overcomplicate it. Here, I want to show a pretty simple way to generate rays, given a projection and a view matrix typically used in OpenGL and other Frameworks/APIs. I won't go into the details of these matrices, as they are covered in detail in many places, such as http://www.songho.ca/opengl/gl_projectionmatrix.html
 
+If you are only interested in the code, here is a glsl example:
+{% highlight glsl %}
+// This assumes the pixel position px to be in [0,1], 
+// which can be done by (x+0.5)/w or (y+0.5)/h to sample pixel centers
+vec3 createRay(vec2 px, mat4 PInv, mat4 VInv)
+{
+	 
+	// convert pixel to NDS
+	// [0,1] -> [-1,1]
+	vec2 pxNDS = px*2. - 1.;
+
+	// choose an arbitrary point in the viewing volume
+	// z = -1 equals a point on the near plane, i.e. the screen
+	vec3 pointNDS = vec3(pxNDS, -1.);
+
+	// as this is in homogenous space, add the last homogenous coordinate
+	vec4 pointNDSH = vec4(pointNDS, 1.0);
+	// transform by inverse projection to get the point in view space
+	vec4 dirEye = PInv * pointNDSH;
+
+	// since the camera is at the origin in view space by definition,
+	// the current point is already the correct direction (dir(0,P) = P - 0 = P
+	// as a direction, an infinite point, the homogenous component becomes 0
+	// the scaling done by the w-division is not of interest, as the direction
+	// in xyz will stay the same and we can just normalize it later
+	dirEye.w = 0.;
+
+	// compute world ray direction by multiplying the inverse view matrix
+	vec3 dirWorld = (VInv * dirEye).xyz;
+
+	// now normalize direction
+	return normalize(dirWorld); 
+}
+
+{% endhighlight %}
+
 The basic idea is very simple. We reverse the transformation pipeline. We usually want our rays to be in world-space, so that's why we need the view matrix. Just as a reminder:
 
 View matrix $$\mathbf{V}$$ - Transforms world coordinates to view coordinates
