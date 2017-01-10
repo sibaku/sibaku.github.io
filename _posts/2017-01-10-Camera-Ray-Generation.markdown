@@ -1,7 +1,8 @@
 ---
 layout: post
 title:  "Camera ray from projection and view matrix"
-categories: cg computer-graphics ray-tracing tracing graphics
+categories: computer-graphics
+tags: [cg, computer-graphics, ray-tracing, tracing, graphics]
 ---
 
 You may come into the situation, that you need to generate rays through a pixel. This could be for clicking on the screen to select an object or for a ray tracing application.
