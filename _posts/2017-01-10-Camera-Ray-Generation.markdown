@@ -5,7 +5,7 @@ categories: cg computer-graphics ray-tracing tracing graphics
 ---
 
 You may come into the situation, that you need to generate rays through a pixel. This could be for clicking on the screen to select an object or for a ray tracing application.
-There are of course other articles about this, but I feel they overcomplicate it. Here, I want to show a pretty simple way to generate rays, given a projection and a view matrix typically used in OpenGL and other Frameworks/APIs. I won't go into the details of these matrices, as they are covered in detail in many places, such as http://www.songho.ca/opengl/gl_projectionmatrix.html
+There are of course other articles about this, but I feel they overcomplicate it. Here, I want to show a pretty simple way to generate rays, given a projection and a view matrix typically used in OpenGL and other Frameworks/APIs. I won't go into the details of these matrices, as they are covered in detail in many places, such as [songo.ca](http://www.songho.ca/opengl/gl_projectionmatrix.html)
 
 If you are only interested in the code, here is a glsl example:
 
