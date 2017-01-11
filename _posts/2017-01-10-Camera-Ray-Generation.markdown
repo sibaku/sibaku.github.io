@@ -49,7 +49,7 @@ vec3 createRay(vec2 px, mat4 PInv, mat4 VInv)
 
 And here is a working shader using that code to raytrace a simple scene:
 
-<iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/ltyXWh?gui=true&t=10&paused=true&muted=false" allowfullscreen></iframe>
+<iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/ltyXWh?gui=true&t=10&paused=false&muted=false" allowfullscreen></iframe>
 
 The basic idea is very simple. We reverse the transformation pipeline. We usually want our rays to be in world-space, so that's why we need the view matrix. Just as a reminder:
 
