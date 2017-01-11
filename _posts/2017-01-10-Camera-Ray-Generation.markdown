@@ -12,7 +12,8 @@ If you are only interested in the code, here is a glsl example:
 
 {% highlight glsl %}
 // This assumes the pixel position px to be in [0,1], 
-// which can be done by (x+0.5)/w or (y+0.5)/h to sample pixel centers
+// which can be done by (x+0.5)/w or (y+0.5)/h (or h-y +0.5 for screens
+// with top left origin) to sample pixel centers
 vec3 createRay(vec2 px, mat4 PInv, mat4 VInv)
 {
 	 
