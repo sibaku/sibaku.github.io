@@ -31,10 +31,11 @@ vec3 createRay(vec2 px, mat4 PInv, mat4 VInv)
 	vec4 dirEye = PInv * pointNDSH;
 
 	// since the camera is at the origin in view space by definition,
-	// the current point is already the correct direction (dir(0,P) = P - 0 = P
-	// as a direction, an infinite point, the homogenous component becomes 0
-	// the scaling done by the w-division is not of interest, as the direction
-	// in xyz will stay the same and we can just normalize it later
+	// the current point is already the correct direction 
+	// (dir(0,P) = P - 0 = P as a direction, an infinite point,
+	// the homogenous component becomes 0 the scaling done by the 
+	// w-division is not of interest, as the direction in xyz will 
+	// stay the same and we can just normalize it later
 	dirEye.w = 0.;
 
 	// compute world ray direction by multiplying the inverse view matrix
