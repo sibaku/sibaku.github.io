@@ -5,7 +5,10 @@ categories: computer-graphics
 tags: [cg, computer-graphics, shadow-mapping, graphics]
 ---
 
-There are a lot of posts already about shadow mapping, but I wanted to also show a working implementation with code, that you can check out. This one will give a brief overview over the basic idea and includes the implementation using shadertoy, where you can check out the full code with comments :)
+There are a lot of posts about shadow mapping, but I wanted to also show a working implementation with code, that you can check out. This one will give a brief overview over the basic idea and includes the implementation using shadertoy, where you can check out the full code with comments :)
+
+The post assumes some familarity with the OpenGL model of rendering. If there are any questions, just send me a tweet (@sibaku1).
+
 The basic idea of shadow mapping is to render the scene as seen by the camera and remember the depth (the shadow map). Afterwards render it normally and check, whether a point was occluded by checking the point's depth in the shadow map.
 
 ![Basic setup]({{ site.url }}/assets/shadowmapping/setupnt.png)
@@ -14,9 +17,10 @@ So how is this done in code? First we use only spot or directional lights (point
 
 $$\mathbf{p}_{L,Clip} = \mathbf{PVM}\mathbf{p} $$
 
+
 We could just use the depth buffer, which contains the projective depth from $$0$$ to $$1$$ or use some other variant, for example linear or viewspace depth. These will usually require float textures or some kind of normalization to keep in $$[0,1]$$. The result will be rendered into a texture, the shadow map.
 
-Next you render as usual and send the point's position to the fragment shader. There you transform the point into the light's system with the formula above. As we want to know, where to look in the shadow map, we have to do two more steps. First, $$\mathbf{p}_{L,NDC}$$ will be in homogenous 4-space. So first we divide by the fourth coordinate. Now $$x$$,$$y$$ and $$z$$ are in $$[-1,1]$$. We need to transform $$x,y,z$$ to $$[0,1]$$, since that's the texture coordinate's and depth range interval. This is simply done by $$x_t = 0.5x + 0.5$$. The same for $$y$$ and $$z$$. Then we look in our texture at position $$\begin{pmatrix}x_t\\y_t\end{pmatrix}$$. 
+Next you render as usual and send the point's position to the fragment shader. There you transform the point into the light's system with the formula above. As we want to know, where to look in the shadow map, we have to do two more steps. First, $$\mathbf{p}_{L,Clip}$$ will be in homogenous 4-space. So first we divide by the fourth coordinate to get $$\mathbf{p}_{L,Clip} = \begin{pmatrix}x\\y\\z\end{pmatrix}$$. Now $$x$$,$$y$$ and $$z$$ are in $$[-1,1]$$. We need to transform $$x,y,z$$ to $$[0,1]$$, since that's the texture coordinate's and depth range interval. This is simply done by $$x_t = 0.5x + 0.5$$. The same for $$y$$ and $$z$$. Then we look in our texture at position $$\begin{pmatrix}x_t\\y_t\end{pmatrix}$$. 
 
 We now check, if the light is occluded. If there is no occluder, the depth of our current point should be the same as the depth rendered to the shadow map. If there is an occluder, the current depth is greater then the one in the shadow map, as the first render pass only stores the closest fragment. 
 
