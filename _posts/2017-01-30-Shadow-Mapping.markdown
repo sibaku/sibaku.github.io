@@ -30,6 +30,6 @@ There are a lot of variants to it. The simplest one is percentage-closer-filteri
 Another very nice technique is variance shadow mapping (VSM). This uses Chebyshev's inequality to provide an upper bound for the probabilty of a fragment being in shadow. The probality can be used as a shadow value to produce nice and smooth edges. VSM also allow for linear filtering of the shadow map, as they use the expected value, which is linear.
 While there are a lot more (convolution shadow maps, cascaded shadow maps, exponential shadow maps, perspective shadow maps,...), these three are implemented in my simple example code.
 
-The showcase down below shows the final image with VSM. By pressing 'p' while in focus, it will show PCF and pressing 'b' will produce basic shadow mapping. If you head over to shader toy (click on the title in the render window), you can check out the complete code, with hopefully helpful comments.
+The showcase down below shows the final image with VSM. By pressing 'p' while in focus, it will show PCF and pressing 'b' will produce basic shadow mapping. You can move the camera around by clicking, holding and moving around. You can also make the light move by pressing the 'play' button. If you head over to shader toy (click on the title in the render window), you can check out the complete code, with hopefully helpful comments.
 
 <iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/MlKSRm?gui=true&t=10&paused=true&muted=false" allowfullscreen></iframe>
