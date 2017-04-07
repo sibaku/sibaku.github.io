@@ -41,7 +41,7 @@ The last missing entries are the ones for the second area, or in this case, the 
 
 $$ \begin{aligned} x_2 &= r \sin \alpha \\ y_2 &= r \cos \alpha \\ z_2 &= h \end{aligned} $$
 
-$$\alpha$$ varies from $$0$$ to $$2\pi$$ for the whole circle. We could do only the half, since it's symmetric, but it doesn't matter much here. From that we can compute the differentials. For some function we have $$d\operatorname{f} = \frac{d\operatorname{f}}{dx} dx$$, where $$\frac{d\operatorname{f}}{dx}$$ is just the derivative with respect to $$dx$$. Here, the parameter is $$\alpha$$, so the result is:
+$$\alpha$$ varies from $$0$$ to $$2\pi$$ for the whole circle. We could do only the half, since it's symmetric, but it doesn't matter much here. From that we can compute the differentials. For some function we have $$df = \frac{df}{dx} dx$$, where $$\frac{df}{dx}$$ is just the derivative with respect to $$dx$$. Here, the parameter is $$\alpha$$, so the result is:
 
 $$ \begin{aligned} dx_2 &= r \cos \alpha \\ dy_2 &= -r \sin \alpha \\ dz_2 &= 0 \end{aligned} $$
 
