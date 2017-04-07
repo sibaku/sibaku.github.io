@@ -24,3 +24,7 @@ $$l_1, m_1, n_1$$ are the components of $$dA_1$$'s normal expressed in a given c
 $$ r^2 = (x_2 - x_1)^2 + (y_2 - y_1)^2 + (z_2 - z_1)^2 $$
 
 We can now get to our problem. First, let's sketch the setup:
+![Basic setup]({{ site.url }}/assets/formfactors/formfactorsetupsimple.png)
+
+In this sketch, two views are included. Below the line in the middle is the $$yz$$ plane. We are always free to choose a coordinate system best suited for our endeavour. Here we choose one, where our point is located in the origin. Its surface patch is oriented, such that its normal lies completely in the $$yz$$ plane.  The disk's normal point along the negative $$z$$ axis and is located directly on top of the point. As the surface patch already takes care of the orientation, the disk can be placed entirely in the $$xy$$ plane, as shown in the top half of the image. The disk is located at $$z=h$$ and has a radius $$r$$. The angle between the differential area's normal and the $$z$$-axis (or the disk's negative normal) is $$\theta$$. The parameter we will use to describe the points on the circle is $$\alpha$$, the orientation as shown.
+For a more 3D-ish view of the scene, have a look at <a href="http://www.thermalradiation.net/sectionb/B-13.html" target="_blank">http://www.thermalradiation.net/sectionb/B-13.html</a>. Our case here corresponds to the first case on the site. I will also use the same identifiers, so that we will arrive at the same expressions at the end.
