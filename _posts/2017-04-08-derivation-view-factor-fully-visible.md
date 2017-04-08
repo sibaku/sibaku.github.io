@@ -56,7 +56,7 @@ $$ \begin{aligned} x_2 &= r \sin \alpha \\ y_2 &= r \cos \alpha \\ z_2 &= h \end
 $$\alpha$$ varies from $$0$$ to $$2\pi$$ for the whole circle. We could do only the half, since it's symmetric, but it doesn't matter much here. From that we can compute the differentials. For some function we have $$df = \frac{df}{dx} dx$$, where $$\frac{df}{dx}$$ is just the derivative with respect to $$dx$$. Here, the parameter is $$\alpha$$, so the result is:
 
 
-$$ \begin{aligned} dx_2 &= r \cos \alpha \\ dy_2 &= -r \sin \alpha \\ dz_2 &= 0 \end{aligned} $$
+$$ \begin{aligned} dx_2 &= r \cos \alpha  d\alpha\\ dy_2 &= -r \sin \alpha d\alpha \\ dz_2 &= 0 \end{aligned} $$
 
 
 The squared distance:
