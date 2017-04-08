@@ -5,7 +5,7 @@ categories: computer-graphics
 tags: [cg, computer-graphics, view-factor, radiosity, graphics]
 ---
 
-This post is a continuation of the last one {{ site.baseurl }}{% post_url 2017-04-08-derivation-view-factor-fully-visible %}. We want to compute the view factor of a disk and an oriented differential area located along the disk's normal. Before, we assumed all of the disk to be visible from our surface. But if our surface is rotated enough, the infinite plane it lies on intersects the disk. The cut off part is then behind the surface, so there is no radiation transfer. We will now handle that case. As before, we will derive the formula given in <a href="http://www.thermalradiation.net/sectionb/B-13.html" target="_blank">http://www.thermalradiation.net/sectionb/B-13.html</a>. First a sketch of the updated setup:
+This post is a continuation of the last one [View factor - fully visible]({{ site.baseurl }}{% post_url 2017-04-08-derivation-view-factor-fully-visible %}). We want to compute the view factor of a disk and an oriented differential area located along the disk's normal. Before, we assumed all of the disk to be visible from our surface. But if our surface is rotated enough, the infinite plane it lies on intersects the disk. The cut off part is then behind the surface, so there is no radiation transfer. We will now handle that case. As before, we will derive the formula given in <a href="http://www.thermalradiation.net/sectionb/B-13.html" target="_blank">http://www.thermalradiation.net/sectionb/B-13.html</a>. First a sketch of the updated setup:
 
 ![Basic setup]({{ site.url }}/assets/formfactors/setupmore.png)
 
@@ -44,7 +44,7 @@ We will now proceed with the actual computation. It will be split into two parts
 
 # Circle segment
 
-Pretty much all the setup is the same as in the last post {{ site.baseurl }}{% post_url 2017-04-08-derivation-view-factor-fully-visible %}, so I will refer to that for more information. The only difference is the interval over which to integrate. Before we had the full circle in $$[0,\pi]$$. Now a part is missing. The new interval goes up to $$ \pi - \beta$$ and starts at that value in negative $$ -(\pi - \beta) = -\pi + \beta$$. One simplification can be done. Since the disk is symmetric, we could just integrate over half the disk and double the result. Doesn't matter in the end, just a bit less to write. We will now compute the values from before with the new bounds.
+Pretty much all the setup is the same as in the last post [View factor - fully visible]({{ site.baseurl }}{% post_url 2017-04-08-derivation-view-factor-fully-visible %}), so I will refer to that for more information. The only difference is the interval over which to integrate. Before we had the full circle in $$[0,\pi]$$. Now a part is missing. The new interval goes up to $$ \pi - \beta$$ and starts at that value in negative $$ -(\pi - \beta) = -\pi + \beta$$. One simplification can be done. Since the disk is symmetric, we could just integrate over half the disk and double the result. Doesn't matter in the end, just a bit less to write. We will now compute the values from before with the new bounds.
 
 $$ \begin{aligned} -\frac{hr\sin \theta}{2\pi(r^2+h^2)}*2 \int_0^{\pi - \beta} \cos \alpha d\alpha &= -\frac{hr\sin \theta}{\pi(r^2+h^2)}\int_0^{\pi - \beta} \cos \alpha d\alpha \\
  &= -\frac{hr\sin \theta}{\pi(r^2+h^2)} (\sin(\pi - \beta) - \sin 0)\\
