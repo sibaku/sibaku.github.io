@@ -121,8 +121,8 @@ $$ \begin{aligned}
 n_1\oint_C \frac{(y_2-y_1)dx_2 - (x_2-x_1)dy_2}{2\pi d^2} &= \frac{\cos\theta}{2\pi}*2\int_{rX}^0 \frac{(-h\cot\theta -0)dx_2 - (x_2-0)*0}{x^2 + h^2\cot^2\theta +h^2}\\
 &= \frac{h\cos\theta}{\pi}\int_{0}^{rX} \frac{\cot\theta dx_2}{x^2 + h^2\cot^2\theta +h^2}\\
 &= \frac{h\cos\theta\cot\theta}{\pi}\int_{0}^{rX} \frac{dx_2}{x^2 + h^2(1+\cot^2\theta)}\\
-&= \frac{h\cos\theta\cot\theta}{\pi}\int_{0}^{rX} \frac{dx_2}{x^2 + h^2(\frac{1}{\sin\theta})}\\
-&= \frac{h\cos\theta\cot\theta}{\pi}\int_{0}^{rX} \frac{dx_2}{x^2 + h^2(\frac{1}{\sin\theta})}\frac{\sin^2\theta}{\sin^2\theta}\\
+&= \frac{h\cos\theta\cot\theta}{\pi}\int_{0}^{rX} \frac{dx_2}{x^2 + h^2(\frac{1}{\sin^2\theta})}\\
+&= \frac{h\cos\theta\cot\theta}{\pi}\int_{0}^{rX} \frac{dx_2}{x^2 + h^2(\frac{1}{\sin^2\theta})}\frac{\sin^2\theta}{\sin^2\theta}\\
 &= \frac{h\cos\theta\cos\theta\sin\theta}{\pi}\int_{0}^{rX} \frac{dx_2}{\sin^2\theta x^2 + h^2}\\
 &= \frac{h\cos^2\theta \sin\theta}{\pi}\int_{0}^{rX} \frac{dx_2}{\sin^2\theta x^2 + h^2}\\
 &= \frac{h\cos^2\theta \sin\theta}{\pi}\frac{\frac{1}{\sin \theta} \tan^{-1}(\frac{rX\sin \theta}{h})}{h}\\
