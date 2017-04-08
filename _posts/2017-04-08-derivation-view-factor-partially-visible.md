@@ -13,7 +13,6 @@ The update from the last post is that we cut off the part of the disk behind the
 
 We will now find the condition for when the disk is fully visible. From the image, we can see that it is fully visible, if $$k$$ is larger than the disk's radius $$r$$. Since the normal is perpendicular to the plane, we have $$ \phi = \frac{\pi}{2} - \theta$$. Computing the tangent yields:
 
-$$ \tan \phi = $$
 $$ \begin{aligned} \tan \phi &= \tan (\frac{\pi}{2} - \theta) \\
 &= \cot \theta \\
 &= \frac{k}{h} \end{aligned} $$
@@ -24,7 +23,7 @@ $$ k = h\cot \theta $$
 
 For the visibility condition:
 
-$$ \begin{aligned} r \leq k \\r leq h\cot \theta \\ \frac{r}{h} \leq \cot \theta \\ \cot^{-1}(\frac{r}{h}) \geq \theta \\ \cot^{-1}(\frac{1}{H}) \geq \theta  \end{aligned} $$
+$$ \begin{aligned} r \leq k \\r \leq h\cot \theta \\ \frac{r}{h} \leq \cot \theta \\ \cot^{-1}(\frac{r}{h}) \geq \theta \\ \cot^{-1}(\frac{1}{H}) \geq \theta  \end{aligned} $$
 
 The last line uses the definition $$ H = \frac{h}{r} $$. The reversal of the inequality sign comes from the fact, that the inverse cotangent function is monotonically decreasing. This is the same condition as given in the reference. If it holds, we can apply the previous post's reasoning and are finished.
 
@@ -39,7 +38,7 @@ Since we will need it later, we can derive another useful expression with the id
 
 $$ \begin{aligned} \sin \beta &= \sin \cos^{-1}(H\cot \theta) \\
 &= \sqrt{1-H^2\cot^2\theta} \\
-&= X$$
+&= X \end{aligned}$$
 
 We will now proceed with the actual computation. It will be split into two parts, since the contour can be decomposed into two parts: A circle segment and a straight line.
 
