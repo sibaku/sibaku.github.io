@@ -60,7 +60,7 @@ $$ \left\lVert\nabla s(\mathbf{P})\right\rVert = 1 $$
 
 The length of the gradient of the distancefield is 1, meaning we always get a normalized vector! For this we use another property of the gradient, namely the directional derivative. The directional derivative can be expressed with a unit direction and the gradient. In general for a unit vector $$ \mathbf{u} $$ we have:
 
-$$ \lim_{h\rightarrow 0) \frac{s(\mathbf{P} + h\mathbf{u}) - s(\mathbf{P})}{h} = \nabla s(\mathbf{P})\cdot \mathbf{u] = \left\lVert\nabla s(\mathbf{P})\right\rVert \left\lVert\mathbf{u}\right\rVert \cos \alpha  = \left\lVert\nabla s(\mathbf{P})\right\rVert \cos \alpha$$ 
+$$ \lim_{h\rightarrow 0) \frac{s(\mathbf{P} + h\mathbf{u}) - s(\mathbf{P})}{h} = \nabla s(\mathbf{P})\cdot \mathbf{u} = \left\lVert\nabla s(\mathbf{P})\right\rVert \left\lVert\mathbf{u}\right\rVert \cos \alpha  = \left\lVert\nabla s(\mathbf{P})\right\rVert \cos \alpha$$ 
 
 The last line follows from the fact that $$ \mathbf{u} $$ is a unit vector. If we now choose a vector with the same direction as the gradient, then the angle between them will be zero and the cosine term one. We already know the direction of the gradient, it is along $$ \mathbf{v} $$. So let $$\hat{\mathbf{v}} $$ be the unit vector in the direction of $$ \mathbf{v} $$. Then we have:
 
