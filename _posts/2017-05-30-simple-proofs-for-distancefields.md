@@ -69,7 +69,7 @@ $$ \lim_{h\rightarrow 0) \frac{\operatorname{s}(\mathbf{P} + h\^{\mathbf{v}}) - 
 So if we know the directional derivative in direction of $$ \^{\mathbf{v}} $$, then we know the magnitude of the gradient! But we can compute that derivative very easily by noting the fact, that the distance at a distance $$ h $$ along $$ \^{\mathbf{v}} $$ is just $$ h $$ more than the distance at $$ \mathbf{P} $$ (for small values of $$ h $$ which are less than the distance to a point outside of the circle, but that's a technicality): $$ \operatorname{s}(\mathbf{P} + h\^{\mathbf{v}}) = \operatorname{s}(\mathbf{P}) + h $$. Putting that in the above equation:
 
 $$ \begin{align*}
-\lim_{h\rightarrow 0) \frac{\operatorname{s}(\mathbf{P} + h\^{\mathbf{v}}) - \operatorname{s}(\mathbf{P})}{h} &= \lim_{h\rightarrow 0) \frac{\operatorname{s}(\mathbf{P}) + h - \operatorname{s}(\mathbf{P})}{h} \\ &= \lim_{h\rightarrow 0) \frac{h}{h} \\ &= 1 \end{align*} $$
+\lim_{h\rightarrow 0) \frac{s(\mathbf{P} + h\^{\mathbf{v}}) - \operatorname{s}(\mathbf{P})}{h} &= \lim_{h\rightarrow 0) \frac{\operatorname{s}(\mathbf{P}) + h - \operatorname{s}(\mathbf{P})}{h} \\ &= \lim_{h\rightarrow 0) \frac{h}{h} \\ &= 1 \end{align*} $$
 
 So the result is, that the length of the gradient is exactly one!
 
@@ -77,7 +77,7 @@ Property 4
 
 $$ \mathbf{C} = \mathbf{P} - \operatorname{s}(\mathbf{P})\nabla\operatorname{s}(\mathbf{P})$$
 
-This says, that we can reconstruct the closest point at $$\mathbf{P} $$ with the distancefield and its gradient. This pretty much follows from the above properties. We know that $$\mathbf{C} $$ lies in the opposite direction of $$\mathbf{v} $$ (by definition). We also know, that the length of $$\mathbf{v} $$ is just the distance from $$\mathbf{C} $$ to $$\mathbf{P} $$, given by $$\operatorname{s}(\mathbf{P})$$ (also by defintion). Therefore, we get to $$\mathbf{C} $$ by adding $$-\mathbf{v} $$ to $$\mathbf{P} $$. By property 2, we know that the gradient is parallel to $$\mathbf{v} $$. By property 3 we know, that the gradient is a unit vector. Therefore $$ $$\mathbf{v} = \operatorname{s}(\mathbf{P})\nabla\operatorname{s}(\mathbf{P}) $$. By property 1, we can travel along $$\mathbf{v} $$ without getting to a point, where $$\mathbf{C} $$ is not the closest point. So putting this all together: 
+This says, that we can reconstruct the closest point at $$\mathbf{P} $$ with the distancefield and its gradient. This pretty much follows from the above properties. We know that $$\mathbf{C} $$ lies in the opposite direction of $$\mathbf{v} $$ (by definition). We also know, that the length of $$\mathbf{v} $$ is just the distance from $$\mathbf{C} $$ to $$\mathbf{P} $$, given by $$\operatorname{s}(\mathbf{P})$$ (also by defintion). Therefore, we get to $$\mathbf{C} $$ by adding $$-\mathbf{v} $$ to $$\mathbf{P} $$. By property 2, we know that the gradient is parallel to $$\mathbf{v} $$. By property 3 we know, that the gradient is a unit vector. Therefore $$\mathbf{v} = \operatorname{s}(\mathbf{P})\nabla\operatorname{s}(\mathbf{P}) $$. By property 1, we can travel along $$\mathbf{v} $$ without getting to a point, where $$\mathbf{C} $$ is not the closest point. So putting this all together: 
 
 $$ \begin{align*}
 \mathbf{C} &=  \mathbf{P} - \mathbf{v} \\ &= \mathbf{P} - \operatorname{s}(\mathbf{P})\nabla\operatorname{s}(\mathbf{P}) \end{align*} $$
