@@ -12,7 +12,7 @@ If you have a closed object, you can use a distancefield for its surface and add
 While this is simple enough, there are a few properties of interest. These are used a lot of times, but it's really hard to find any resources justifying them besides appealing to intuition or similar things. So I want to show some easy to understand explanations why these properties are valid. Keep in mind, that I will try to avoid some special case details as they would distract from the general idea (and are not that hard to take care of). First some notations that I will use and then the properties:
 
 $$s : \mathbb{R}^n \rightarrow \mathbb{R} $$: Distancefield 
-$$\nablas$$: Gradient of the distancefield 
+$$\nabla s$$: Gradient of the distancefield 
 $$ \mathbf{C} $$: Closest point on the surface
 $$ \mathbf{P} $$: Arbitrary point in space
 $$ \mathbf{v} = \mathbf{P} - \mathbf{C}$$: Vector connecting $$\mathbf{C}$$ and $$\mathbf{P}$$
@@ -20,9 +20,9 @@ $$ \mathbf{v} = \mathbf{P} - \mathbf{C}$$: Vector connecting $$\mathbf{C}$$ and 
 With that, now the properties, which will be explained in more detail when they come up:
 
 1. $$\mathbf{P}_t = \mathbf{C} + t\mathbf{v}, t \in [0,1] \Rightarrow$$: $$\mathbf{C}$$ is the closest surface point
-2. $$ \nablas(\mathbf{P}) \parallel \mathbf{v}$$ 
-3. $$ \left\lVert\nablas(\mathbf{P})\right\rVert = 1 $$
-4. $$ \mathbf{C} = \mathbf{P} - s(\mathbf{P})\nablas(\mathbf{P})$$
+2. $$ \nabla s(\mathbf{P}) \parallel \mathbf{v}$$ 
+3. $$ \left\lVert\nabla s(\mathbf{P})\right\rVert = 1 $$
+4. $$ \mathbf{C} = \mathbf{P} - s(\mathbf{P})\nabla s(\mathbf{P})$$
 
 We start with Property 1:
 
@@ -36,7 +36,7 @@ Left we see the line connecting $$ \mathbf{C} $$ and $$ \mathbf{P} $$, with the 
 
 Property 2:
 
-$$ \nablas(\mathbf{P}) \parallel \mathbf{v}$$ 
+$$ \nabla s(\mathbf{P}) \parallel \mathbf{v}$$ 
 
 This property says, that the gradient of the distancefield $$s $$ at $$ \mathbf{P} $$ is parallel to the connecting vector $$ \mathbf{v} $$. The gradient is the vector of all partial derivatives. So for a 2D field, the distancefield will also be 2D (same for any dimension). One important property of the gradient is, that it will point in the direction of greatest increase. So if we find that direction, we know where the gradient points to!
 For that, we use the following setup:
@@ -56,15 +56,15 @@ That's it! The first step follows from the fact, that both direction vectors hav
 
 Property 3:
 
-$$ \left\lVert\nablas(\mathbf{P})\right\rVert = 1 $$
+$$ \left\lVert\nabla s(\mathbf{P})\right\rVert = 1 $$
 
 The length of the gradient of the distancefield is 1, meaning we always get a normalized vector! For this we use another property of the gradient, namely the directional derivative. The directional derivative can be expressed with a unit direction and the gradient. In general for a unit vector $$ \mathbf{u} $$ we have:
 
-$$ \lim_{h\rightarrow 0) \frac{s(\mathbf{P} + h\mathbf{u}) - s(\mathbf{P})}{h} = \nablas(\mathbf{P})\cdot \mathbf{u] = \left\lVert\nablas(\mathbf{P})\right\rVert \left\lVert\mathbf{u}\right\rVert \cos \alpha  = \left\lVert\nablas(\mathbf{P})\right\rVert \cos \alpha$$ 
+$$ \lim_{h\rightarrow 0) \frac{s(\mathbf{P} + h\mathbf{u}) - s(\mathbf{P})}{h} = \nabla s(\mathbf{P})\cdot \mathbf{u] = \left\lVert\nabla s(\mathbf{P})\right\rVert \left\lVert\mathbf{u}\right\rVert \cos \alpha  = \left\lVert\nabla s(\mathbf{P})\right\rVert \cos \alpha$$ 
 
 The last line follows from the fact that $$ \mathbf{u} $$ is a unit vector. If we now choose a vector with the same direction as the gradient, then the angle between them will be zero and the cosine term one. We already know the direction of the gradient, it is along $$ \mathbf{v} $$. So let $$\^{\mathbf{v}} $$ be the unit vector in the direction of $$ \mathbf{v} $$. Then we have:
 
-$$ \lim_{h\rightarrow 0) \frac{s(\mathbf{P} + h\^{\mathbf{v}}) - s(\mathbf{P})}{h} =  = \left\lVert\nablas(\mathbf{P})\right\rVert$$ 
+$$ \lim_{h\rightarrow 0) \frac{s(\mathbf{P} + h\^{\mathbf{v}}) - s(\mathbf{P})}{h} =  = \left\lVert\nabla s(\mathbf{P})\right\rVert$$ 
 
 So if we know the directional derivative in direction of $$ \^{\mathbf{v}} $$, then we know the magnitude of the gradient! But we can compute that derivative very easily by noting the fact, that the distance at a distance $$ h $$ along $$ \^{\mathbf{v}} $$ is just $$ h $$ more than the distance at $$ \mathbf{P} $$ (for small values of $$ h $$ which are less than the distance to a point outside of the circle, but that's a technicality): $$ s(\mathbf{P} + h\^{\mathbf{v}}) = s(\mathbf{P}) + h $$. Putting that in the above equation:
 
@@ -75,11 +75,11 @@ So the result is, that the length of the gradient is exactly one!
 
 Property 4
 
-$$ \mathbf{C} = \mathbf{P} - s(\mathbf{P})\nablas(\mathbf{P})$$
+$$ \mathbf{C} = \mathbf{P} - s(\mathbf{P})\nabla s(\mathbf{P})$$
 
-This says, that we can reconstruct the closest point at $$\mathbf{P} $$ with the distancefield and its gradient. This pretty much follows from the above properties. We know that $$\mathbf{C} $$ lies in the opposite direction of $$\mathbf{v} $$ (by definition). We also know, that the length of $$\mathbf{v} $$ is just the distance from $$\mathbf{C} $$ to $$\mathbf{P} $$, given by $$s(\mathbf{P})$$ (also by defintion). Therefore, we get to $$\mathbf{C} $$ by adding $$-\mathbf{v} $$ to $$\mathbf{P} $$. By property 2, we know that the gradient is parallel to $$\mathbf{v} $$. By property 3 we know, that the gradient is a unit vector. Therefore $$\mathbf{v} = s(\mathbf{P})\nablas(\mathbf{P}) $$. By property 1, we can travel along $$\mathbf{v} $$ without getting to a point, where $$\mathbf{C} $$ is not the closest point. So putting this all together: 
+This says, that we can reconstruct the closest point at $$\mathbf{P} $$ with the distancefield and its gradient. This pretty much follows from the above properties. We know that $$\mathbf{C} $$ lies in the opposite direction of $$\mathbf{v} $$ (by definition). We also know, that the length of $$\mathbf{v} $$ is just the distance from $$\mathbf{C} $$ to $$\mathbf{P} $$, given by $$s(\mathbf{P})$$ (also by defintion). Therefore, we get to $$\mathbf{C} $$ by adding $$-\mathbf{v} $$ to $$\mathbf{P} $$. By property 2, we know that the gradient is parallel to $$\mathbf{v} $$. By property 3 we know, that the gradient is a unit vector. Therefore $$\mathbf{v} = s(\mathbf{P})\nabla s(\mathbf{P}) $$. By property 1, we can travel along $$\mathbf{v} $$ without getting to a point, where $$\mathbf{C} $$ is not the closest point. So putting this all together: 
 
 $$ \begin{align*}
-\mathbf{C} &=  \mathbf{P} - \mathbf{v} \\ &= \mathbf{P} - s(\mathbf{P})\nablas(\mathbf{P}) \end{align*} $$
+\mathbf{C} &=  \mathbf{P} - \mathbf{v} \\ &= \mathbf{P} - s(\mathbf{P})\nabla s(\mathbf{P}) \end{align*} $$
 
 This was all, thanks for reading :)
