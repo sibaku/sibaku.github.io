@@ -184,11 +184,35 @@ function parseCycloid(str)
 	return er;
 }
 
+function randCycloid()
+{
+	
+	var max = 1 + Math.random()*6;
+	
+	var res = [];
+	for(var i = 0; i < max;i++)
+	{
+		var r = Math.random()*40;
+		r = Math.round(r*1000)/1000;
+		var s = 2*Math.random();
+		s = Math.round(s*1000)/1000;
+		res.push([r,s]);
+	}
+	
+	var o = Math.random()*4;
+	o = Math.round(o*100)/100;
+	res[res.length-1] = res[res.length-1].concat(o);
+	
+	
+	return res;
+}
+
 var but;
 var field;
 var infoField;
 var checkCircl;
 var checkBG;
+var butRand;
 window.onload = function () {
 	
 	var canvas = document.getElementById('canvas');
@@ -210,12 +234,19 @@ window.onload = function () {
 	//cycl = [Cycloid.new(50,1/8),Cycloid.new(30,1/5),Cycloid.new(10,1/2),Cycloid.new(5,1),Cycloid.new(5,2,10)];
 	
 	but = document.getElementById("epiButton");
+	butRand = document.getElementById("epiButtonRand");
 	field = document.getElementById("epiInput");
 	infoField = document.getElementById("epiInfo");
 	checkCircl = document.getElementById("epiCirclesDraw");
 	checkBG = document.getElementById("epiDrawBG");
 	field.size = 80;
 	
+	butRand.onclick = function()
+	{
+		var r = randCycloid();
+		field.value = JSON.stringify(r);
+		but.click();
+	};
 	but.onclick = function()
 	{
 		var s = field.value;
@@ -234,13 +265,13 @@ window.onload = function () {
 		
 		
 		
-	}
+	};
 	field.value = JSON.stringify([[50,1/7],[30,1/5],[10,20],[5,40,1]]);
 	but.click();
 	lastTime = Date.now();
 	
 	window.requestAnimationFrame(update);
-} 
+}
 	   </script>
     </head>
 
@@ -253,6 +284,7 @@ window.onload = function () {
 
 		Descriptor: <input type="text" id="epiInput" name="epicycleDescriptor"><br>
 		<button id="epiButton" type="button">Update</button> <br>
+			<button id="epiButtonRand" type="button">Random</button> <br>
 		Info: <input type="text" id="epiInfo" name="epicycleDescriptor" readonly><br>
 		Draw Circles: <input type="checkbox" id="epiCirclesDraw" checked><br>
 		Draw Background: <input type="checkbox" id="epiDrawBG"><br>
