@@ -1,7 +1,7 @@
 <html lang="en">
     <head>
        <script type="text/javascript">
-	   function Cycloid(radius,speed,offset)
+function Cycloid(radius,speed,offset)
 {
 	this.r = radius === undefined ? 10.0 : radius;
 	this.speed = speed === undefined ? 1.0 : speed;
@@ -132,12 +132,23 @@ function update()
 	lastTime = now;
 	
 	clear(ctx);
+	if(checkBG.checked)
+	{
+		ctx.save();
+		ctx.fillStyle = "rgba(255,255,255,1)";
+		ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+		ctx.restore();
+	}
 	clear(ctxCycl);
 	drawAll(ctxCycl);
 	addLine(ctxLine);
 	var w = ctx.canvas.width;
 	var h = ctx.canvas.height;
-	ctx.drawImage(ctxCycl.canvas,0,0,w,h);
+	if(checkCircl.checked)
+	{
+		
+		ctx.drawImage(ctxCycl.canvas,0,0,w,h);
+	}
 	ctx.drawImage(ctxLine.canvas,0,0,w,h);
 	t0 = t;
 	t += delta;
@@ -176,6 +187,8 @@ function parseCycloid(str)
 var but;
 var field;
 var infoField;
+var checkCircl;
+var checkBG;
 window.onload = function () {
 	
 	var canvas = document.getElementById('canvas');
@@ -199,6 +212,8 @@ window.onload = function () {
 	but = document.getElementById("epiButton");
 	field = document.getElementById("epiInput");
 	infoField = document.getElementById("epiInfo");
+	checkCircl = document.getElementById("epiCirclesDraw");
+	checkBG = document.getElementById("epiDrawBG");
 	field.size = 80;
 	
 	but.onclick = function()
@@ -225,8 +240,7 @@ window.onload = function () {
 	lastTime = Date.now();
 	
 	window.requestAnimationFrame(update);
-}
-	   
+} 
 	   </script>
     </head>
 
@@ -240,6 +254,8 @@ window.onload = function () {
 		Descriptor: <input type="text" id="epiInput" name="epicycleDescriptor"><br>
 		<button id="epiButton" type="button">Update</button> <br>
 		Info: <input type="text" id="epiInfo" name="epicycleDescriptor" readonly><br>
+		Draw Circles: <input type="checkbox" id="epiCirclesDraw" checked><br>
+		Draw Background: <input type="checkbox" id="epiDrawBG"><br>
     </body>
 
 </html>
