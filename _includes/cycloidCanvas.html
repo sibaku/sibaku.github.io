@@ -95,8 +95,15 @@ function drawAll(ctx)
 }
 function addLine(ctx)
 {
+	if(checkFade.checked)
+	{
+		ctx.save();
+		ctx.fillStyle = "rgba(255,255,255,0.1)";
+		ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+		ctx.restore();
+	}
 	// split into steps
-	var maxSteps = 40;
+	var maxSteps = 100;
 	ctx.beginPath();
 	if(lastPoint === undefined)
 	{
@@ -144,12 +151,13 @@ function update()
 	addLine(ctxLine);
 	var w = ctx.canvas.width;
 	var h = ctx.canvas.height;
+	ctx.drawImage(ctxLine.canvas,0,0,w,h);
 	if(checkCircl.checked)
 	{
 		
 		ctx.drawImage(ctxCycl.canvas,0,0,w,h);
 	}
-	ctx.drawImage(ctxLine.canvas,0,0,w,h);
+	
 	t0 = t;
 	t += delta;
 	window.requestAnimationFrame(update);
@@ -194,7 +202,11 @@ function randCycloid()
 	{
 		var r = Math.random()*40;
 		r = Math.round(r*1000)/1000;
-		var s = 2*Math.random();
+		
+		
+		// chose exponential
+		var s = Math.random();
+		s = -Math.log(1-s)/1.5;
 		s = Math.round(s*1000)/1000;
 		res.push([r,s]);
 	}
@@ -212,6 +224,7 @@ var field;
 var infoField;
 var checkCircl;
 var checkBG;
+var checkFade;
 var butRand;
 window.onload = function () {
 	
@@ -239,6 +252,7 @@ window.onload = function () {
 	infoField = document.getElementById("epiInfo");
 	checkCircl = document.getElementById("epiCirclesDraw");
 	checkBG = document.getElementById("epiDrawBG");
+	checkFade = document.getElementById("epiFadeLines");
 	field.size = 80;
 	
 	butRand.onclick = function()
@@ -261,6 +275,10 @@ window.onload = function () {
 			clear(ctxCycl);
 			clear(ctxLine);
 			lastPoint = undefined;
+			lastTime = Date.now();
+			t = 0;
+			t0 = 0;
+			infoField.value = "";
 		}
 		
 		
@@ -287,6 +305,7 @@ window.onload = function () {
 			<button id="epiButtonRand" type="button">Random</button> <br>
 		Info: <input type="text" id="epiInfo" name="epicycleDescriptor" readonly><br>
 		Draw Circles: <input type="checkbox" id="epiCirclesDraw" checked><br>
+		Fade Lines: <input type="checkbox" id="epiFadeLines"><br>
 		Draw Background: <input type="checkbox" id="epiDrawBG"><br>
     </body>
 
