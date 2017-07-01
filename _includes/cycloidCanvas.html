@@ -136,6 +136,7 @@ function update()
 	var now = Date.now();
 	var delta = now - lastTime;
 	delta = delta/1000;
+	delta = Math.min(1/15,delta);
 	lastTime = now;
 	
 	clear(ctx);
