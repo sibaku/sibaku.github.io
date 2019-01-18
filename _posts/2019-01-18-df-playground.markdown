@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Camera ray from projection and view matrix"
+title:  "Distance field playground"
 categories: computer-graphics
 tags: [cg, computer-graphics, ray-tracing, tracing, graphics]
 visible: 1
