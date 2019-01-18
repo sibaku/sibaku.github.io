@@ -1,0 +1,76 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="favicon.ico" />
+        <title>Fractals</title>
+
+        <script src="lib/jquery/jquery.js"></script>
+        <link rel="stylesheet" href="lib/jqueryUi/jquery-ui.min.css">
+
+        <script src="lib/jqueryUi/jquery-ui.min.js"></script>
+
+
+        <script src="lib/jquery.jsPlumb-1.7.5-min.js"></script>
+        <script src="lib/gl-matrix-min.js"></script>
+        <script src="lib/functionals.js"></script>
+        <script src="shaderdata.js"></script>
+        <script src="FractalOperator.js"></script>
+        <script src="buildInterface.js"></script>
+        <script src="util.js"></script>
+        <script src="shader.js"></script>
+
+
+
+
+    </head>
+
+
+    <body onload="start()">
+        <div id="canvasDiv">
+        <canvas id="glcanvas" width="1024" height="680">
+            Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+        </canvas>
+        </div>
+        <div id="help"><h3>What is this?</h3>
+            <div>
+                This is a simple distancefield renderer. You can move around in the scene
+                and create scenes via a graph based interface.
+            </div>
+            <h3>Usage</h3>
+            <div>
+                You can move through the scene with your keyboard:
+                <ul>
+                    <li>(W) forward</li>
+                    <li>(A) left</li>
+                    <li>(S) backward</li>
+                    <li>(D) right</li>
+                    <li>(R) up</li>
+                    <li>(F) down</li>
+                    <li>(Z) reset view</li>
+                    <li>(+) double movement speed</li>
+                    <li>(-) halve movement speed</li>
+                </ul>
+                <p>
+                By clicking and draggin on the image, you can rotate the camera.<br>
+                By clicking on "Show build interface" you can display the build GUI. In there you can add nodes to display.
+                There are generally two types of nodes. Each node has one rectangular connector at the top and optional 
+                round connectors at the bottom. The rectangular ones are sources. You can drag them with your mouse to 
+                the round target nodes. Each target node can only have one connection, so you have to disconnect old ones before attaching a new one. One special node is at the top of the screen: The program node. 
+                This is your programs root and you have to plug one of your nodes into that one for the program to run.
+                After you are done connecting all slots, press "Build" in the "Tools" box to apply your changes.
+                You can hide the build interface with "Hide build interface".
+                </p>
+                <p>
+                    You can insert functions into most operations which require numbers. These can be functions of "t" (time).
+                    For example, you could make an object move from top to bottom in a 10 second interval with a translation node. Just add the line "sin(2*pi*t/10)" as the parameter for the y-direction.
+                    Nodes for which this is possible will have this in their description.<br>
+                    As functions, you may use "sin", "cos", "tan", "exp", "log", "sqrt" and "pow". Additionally, terms may be combined by "+", "*", "/", "^", "-". You may also use "e" and "pi" as constants.
+                </p>
+            </div>
+
+        </div>
+    </body>
+
+</html>
