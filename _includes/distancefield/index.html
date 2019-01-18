@@ -4,22 +4,40 @@
         <link rel="shortcut icon" href="favicon.ico" />
         <title>Fractals</title>
 
-        <script src="lib/jquery/jquery.js"></script>
-        <link rel="stylesheet" href="lib/jqueryUi/jquery-ui.min.css">
-
-        <script src="lib/jqueryUi/jquery-ui.min.js"></script>
-
-
-        <script src="lib/jquery.jsPlumb-1.7.5-min.js"></script>
-        <script src="lib/gl-matrix-min.js"></script>
-        <script src="lib/functionals.js"></script>
-        <script src="shaderdata.js"></script>
-        <script src="FractalOperator.js"></script>
-        <script src="buildInterface.js"></script>
-        <script src="util.js"></script>
-        <script src="shader.js"></script>
-
-
+		<script type="text/javascript">
+		{% include_relative {{ lib/jquery/jquery.js }} %}
+		</script>
+		<style>
+		{% include_relative {{ lib/jqueryUi/jquery-ui.min.css}} %}
+		</style>
+		<script type="text/javascript">
+		 {% include_relative {{ lib/jqueryUi/jquery-ui.min.js }} %}
+		 </script>
+		<script type="text/javascript">
+		{% include_relative {{ lib/jquery.jsPlumb-1.7.5-min.js }} %}
+		</script>
+		<script type="text/javascript">
+		{% include_relative {{ lib/gl-matrix-min.js }} %}
+		</script>
+		<script type="text/javascript">
+		{% include_relative {{ lib/functionals.js }} %}
+		</script>
+		<script type="text/javascript">
+		{% include_relative {{ shaderdata.js }} %}
+		</script>
+			<script type="text/javascript">
+		{% include_relative {{ FractalOperator.js }} %}
+		</script>
+			<script type="text/javascript">
+		{% include_relative {{ buildInterface.js }} %}
+		</script>
+			<script type="text/javascript">
+		{% include_relative {{ util.js }} %}
+		</script>
+			<script type="text/javascript">
+		{% include_relative {{ shader.js }} %}
+		</script>
+		
 
 
     </head>
