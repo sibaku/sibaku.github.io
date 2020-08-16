@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/perspective_helper/static/css/main.620acb9e.chunk.css",
+    "main.js": "/perspective_helper/static/js/main.a3eac73c.chunk.js",
+    "main.js.map": "/perspective_helper/static/js/main.a3eac73c.chunk.js.map",
+    "runtime-main.js": "/perspective_helper/static/js/runtime-main.b763fc01.js",
+    "runtime-main.js.map": "/perspective_helper/static/js/runtime-main.b763fc01.js.map",
+    "static/js/2.85cb75f1.chunk.js": "/perspective_helper/static/js/2.85cb75f1.chunk.js",
+    "static/js/2.85cb75f1.chunk.js.map": "/perspective_helper/static/js/2.85cb75f1.chunk.js.map",
+    "index.html": "/perspective_helper/index.html",
+    "precache-manifest.57bfdcc679209b9995b19c7cb9d21fef.js": "/perspective_helper/precache-manifest.57bfdcc679209b9995b19c7cb9d21fef.js",
+    "service-worker.js": "/perspective_helper/service-worker.js",
+    "static/css/main.620acb9e.chunk.css.map": "/perspective_helper/static/css/main.620acb9e.chunk.css.map",
+    "static/js/2.85cb75f1.chunk.js.LICENSE.txt": "/perspective_helper/static/js/2.85cb75f1.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.b763fc01.js",
+    "static/js/2.85cb75f1.chunk.js",
+    "static/css/main.620acb9e.chunk.css",
+    "static/js/main.a3eac73c.chunk.js"
+  ]
+}
