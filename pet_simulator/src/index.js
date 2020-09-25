@@ -712,8 +712,8 @@ function main() {
     const cam = Cam.new({ pos: { x: 50, y: 50 }, fov: deg2Rad(90), near: 0.01 });
 
     const cosFovTarget = Math.cos(cam.fov / 4);
-    const moveSpeed = 5;
-    const rotateSpeed = Math.PI * 2 / 3;
+    const moveSpeed = 4;
+    const rotateSpeed = Math.PI * 2 / 5;
 
     const checkPos = pos => {
         const { x, y } = pos;
