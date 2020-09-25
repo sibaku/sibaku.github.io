@@ -1053,7 +1053,9 @@ window.onload = () => {
         "dog2.png", "dog3.png",
         "cat0.png", "cat1.png",
         "raccoon0.png", "raccoon1.png",
-        "capybara0.png", "badger0.png"];
+        "capybara0.png", "badger0.png",
+        "bear0.png", "panda0.png",
+        "polarbear0.png"];
 
     const hands = ["hand_dark.png", "hand_medium_dark.png",
         "hand_medium.png", "hand_medium_light.png",
