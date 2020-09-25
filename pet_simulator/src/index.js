@@ -611,9 +611,16 @@ function calcTextsize(ctx, maxWidth, text) {
     ctx.save();
     ctx.font = "1px Sans-serif";
     let measure = ctx.measureText(text);
+
+    const px1Width = Math.max(1, measure.width);
+    const textSize = Math.max(1, Math.floor(maxWidth / px1Width));
+
+    ctx.font = `${textSize}px Sans-serif`;
+    measure = ctx.measureText(text);
+
     ctx.restore();
 
-    return Math.floor(maxWidth / measure.width);
+    return [textSize, Math.max(1, measure.width)];
 }
 
 function drawSplashScreen({ ctx, gameState }) {
@@ -631,9 +638,10 @@ function drawSplashScreen({ ctx, gameState }) {
     let yOffset = Math.max(1, 0.05 * height);
 
     const writeText = (text, maxSize) => {
-        let textSize = calcTextsize(ctx, maxSize, text);
+        let [textSize, textWidth] = calcTextsize(ctx, maxSize, text);
         ctx.font = `${textSize}px Sans-serif`;
-        let xOffset = Math.max(1, 0.5 * width - maxSize / 2);
+
+        let xOffset = Math.max(1, 0.5 * width - textWidth / 2);
         yOffset = Math.max(1, yOffset + textSize);
 
         ctx.strokeStyle = 'black';
