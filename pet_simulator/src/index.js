@@ -833,7 +833,7 @@ function main() {
         const cur = performance.now();
         const delta = cur - last;
 
-        const dt = delta / 1000;
+        const dt = Math.min(1 / 20, delta / 1000);
         time += dt;
 
         // update keys
