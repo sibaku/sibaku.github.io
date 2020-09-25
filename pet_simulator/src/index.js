@@ -1041,7 +1041,7 @@ function main() {
 window.onload = () => {
 
 
-    const basePath = "pet_simulator/res/";
+    const basePath = "./res/";
     const images = [
         "wood0.jpg", "wood1.jpg",
         "bricks0.jpg", "bricks1.jpg",
