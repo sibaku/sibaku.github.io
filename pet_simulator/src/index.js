@@ -918,7 +918,7 @@ function main() {
                     texIndex: 0,
                     pos: { x: 0, y: 0 },
                     posRelative: { x: 0, y: 0 },
-                    scale: { x: 0.1, y: 0.1 },
+                    scale: { x: 0.2, y: 0.2 },
                     yOffset: 0.0,
                     imgX: 0,
                     imgZ: 0,
@@ -1040,21 +1040,24 @@ function main() {
 
 window.onload = () => {
 
+
+    const basePath = "pet_simulator/res/";
     const images = [
-        "../res/wood0.jpg", "../res/wood1.jpg",
-        "../res/bricks0.jpg", "../res/bricks1.jpg",
+        "wood0.jpg", "wood1.jpg",
+        "bricks0.jpg", "bricks1.jpg",
     ];
 
 
     const sprites = [
-        "../res/heart.png", "../res/dog0.png", "../res/dog1.png",
-        "../res/cat0.png", "../res/cat1.png",
-        "../res/raccoon0.png", "../res/raccoon1.png",
-        "../res/capybara0.png", "../res/badger0.png"];
+        "heart.png", "dog0.png", "dog1.png",
+        "dog2.png", "dog3.png",
+        "cat0.png", "cat1.png",
+        "raccoon0.png", "raccoon1.png",
+        "capybara0.png", "badger0.png"];
 
-    const hands = ["../res/hand_dark.png", "../res/hand_medium_dark.png",
-        "../res/hand_medium.png", "../res/hand_medium_light.png",
-        "../res/hand_yellow.png"];
+    const hands = ["hand_dark.png", "hand_medium_dark.png",
+        "hand_medium.png", "hand_medium_light.png",
+        "hand_yellow.png"];
 
     shuffle(hands);
 
@@ -1066,7 +1069,7 @@ window.onload = () => {
             img.onload = () => resolve();
             img.onerror = () => resolve();
 
-            img.src = name;
+            img.src = basePath + name;
         });
     };
 
