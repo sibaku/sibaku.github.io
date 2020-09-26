@@ -1354,7 +1354,8 @@ window.onload = () => {
         "quokka0.png", "quokka1.png",
         "penguin0.png",
         "mouse0.png",
-        "ferret0.png"
+        "ferret0.png",
+        "raven0.png"
     ];
 
     const promises = [];
@@ -1373,8 +1374,13 @@ window.onload = () => {
         return new Promise((resolve) => {
             const img = new Image();
             container.push(img);
+
             img.onload = () => resolve();
-            img.onerror = () => resolve();
+            img.onerror = () => {
+                console.log("Could not load image: " + name);
+                resolve();
+            }
+
 
             img.src = basePath + name;
         });
