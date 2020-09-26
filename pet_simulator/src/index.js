@@ -886,7 +886,7 @@ function main() {
 
 
     const textCanvas = document.createElement("canvas");
-    const textSizeInterpolator = 0.6;
+    const textSizeInterpolator = 0.5;
     textCanvas.width = Math.floor(offCanvas.width * (1 - textSizeInterpolator) + canvas.width * textSizeInterpolator);
     textCanvas.height = Math.floor(offCanvas.height * (1 - textSizeInterpolator) + canvas.height * textSizeInterpolator);
 
@@ -1038,7 +1038,7 @@ function main() {
             // draw splash screen
 
             drawSplashScreen({
-                ctx: offCtx,
+                ctx: textCtx,
                 keymap,
                 dt, time,
                 gameState,
@@ -1078,6 +1078,7 @@ function main() {
             }
 
             ctx.drawImage(offCanvas, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(textCanvas, 0, 0, canvas.width, canvas.height);
             requestAnimationFrame(loop);
             return;
         }
