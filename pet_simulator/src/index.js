@@ -78,7 +78,11 @@ function deg2Rad(deg) {
 
 const imageMap = [];
 const spriteMap = [];
-const handMap = [];
+
+
+const HANDEDNESS_RIGHT = 0;
+let rightHandMap = [];
+let leftHandMap = [];
 
 class Cam {
     constructor(values = {}) {
@@ -131,34 +135,130 @@ class Cam {
     }
 }
 
-/**
- * 
- * @param {Map} m 
- * @param {Number} p 
- */
-function randomizeMap(m, p = 0.25) {
+function randomizeMap(m) {
     const w = m.width;
     const h = m.height;
 
-    const randTex = () => Math.min(Math.floor(Math.random() * imageMap.length), imageMap.length - 1) + 1;
-    for (let x = 0; x < w; x++) {
-        m.set(randTex(), x, 0);
-        m.set(randTex(), x, h - 1);
-    }
-    for (let y = 1; y < h - 1; y++) {
-        m.set(randTex(), 0, y);
-        m.set(randTex(), w - 1, y);
+    const randTex = () => Math.min(Math.floor(Math.random() * (imageMap.length - 1)));
+    const minX = 1;
+    const minY = 1;
+    const maxX = w - 2;
+    const maxY = h - 2;
+    const fill = (x0, y0, wr, hr, filler = () => 0) => {
+        let x1 = x0 + wr;
+        let y1 = y0 + hr;
+        if (x0 >= w || y0 >= h || x1 < 0 || y1 < 0) {
+            return;
+        }
+
+        x0 = Math.max(x0, minX);
+        y0 = Math.max(y0, minY);
+
+        x1 = Math.min(x1, maxX);
+        y1 = Math.min(y1, maxY);
+
+        for (let y = y0; y <= y1; y++) {
+            for (let x = x0; x <= x1; x++) {
+                m.set(filler(), x, y);
+            }
+        }
+    };
+
+    const drawThickPath = (x0, y0, x1, y1, r = 1) => {
+        const dx = Math.abs(x1 - x0);
+        const dy = Math.abs(y1 - y0);
+        dda(x0, y0, x1 - x0, y1 - y0, (x, y) => {
+            if (!isInside(x - minX, y - minY, maxX - minX + 1, maxY - minY + 1)) {
+                return false;
+            }
+            if (Math.abs(x - x0) > dx || Math.abs(y - y0) > dy) {
+                return;
+            }
+            fill(x - r, y - r, 2 * r, 2 * r);
+            return true;
+        });
+    };
+
+    let currentTex = randTex();
+    let texIndex = currentTex + 1;
+    const nextTex = () => {
+
+        currentTex = (currentTex + 1) % (imageMap.length - 1);
+        texIndex = currentTex + 1;
     }
 
+    for (let x = 0; x < w; x++) {
+        m.set(texIndex, x, 0);
+        m.set(texIndex, x, h - 1);
+    }
     for (let y = 1; y < h - 1; y++) {
-        for (let x = 1; x < w - 1; x++) {
-            const r = Math.random();
-            if (r > p) {
-                m.set(0, x, y);
-                continue;
-            }
-            const num = randTex();
-            m.set(num, x, y);
+        m.set(texIndex, 0, y);
+        m.set(texIndex, w - 1, y);
+    }
+    nextTex();
+    fill(minX, minY, maxX - minX + 1, maxY - minY + 1, () => texIndex);
+
+    // random Rooms
+    const maxRooms = 4 + Math.random() * 4;
+
+    const rx = (w) => Math.floor(minX + Math.random() * Math.max(0, maxX - minX - w));
+    const ry = (h) => Math.floor(minY + Math.random() * Math.max(0, maxY - minY - h));
+    const rs = () => Math.floor(Math.random() * Math.min(w, h) * 0.2) + 6;
+    const centers = [];
+    const sizes = [];
+    const textures = [];
+    for (let i = 0; i < maxRooms; i++) {
+
+        const hr = rs();
+        const wr = rs();
+
+        const x0 = rx(wr);
+        const y0 = ry(hr);
+        sizes.push([x0, y0, wr, hr]);
+
+        centers.push([x0 + 0.5 * wr, y0 + 0.5 * hr]);
+
+        // make outside
+        textures.push(texIndex);
+        fill(x0 - 1, y0 - 1, wr + 2, hr + 2, () => texIndex);
+        fill(x0, y0, wr, hr);
+
+        nextTex();
+
+    }
+
+    // connect each room to two closest ones
+    for (let i = 0; i < centers.length; i++) {
+        const [xi, yi] = centers[i];
+
+        const distances = [];
+        for (let j = i + 1; j < centers.length; j++) {
+            const [xj, yj] = centers[j];
+
+            const dx = xj - xi;
+            const dy = yj - yi;
+            distances.push({ d: dx * dx + dy * dy, j: j });
+        }
+
+        distances.sort((a, b) => a.d - b.d);
+        for (let j = 0; j < Math.min(distances.length, 2); j++) {
+            const [xj, yj] = centers[distances[j].j];
+            drawThickPath(xi, yi, xj, yj);
+
+        }
+    }
+
+    for (let i = 0; i < sizes.length; i++) {
+        const [x0, y0, wr, hr] = sizes[i];
+        // add a few random pillars
+        const numPillars = Math.min(hr, wr) - 1;
+        const tex = textures[i];
+        for (let j = 0; j < numPillars; j++) {
+            let xp = Math.floor(x0 + Math.random() * wr);
+            let yp = Math.floor(y0 + Math.random() * hr);
+            xp = Math.max(minX, Math.min(maxX, xp));
+            yp = Math.max(minY, Math.min(maxY, yp));
+            m.set(tex, xp, yp);
         }
     }
 
@@ -183,9 +283,13 @@ function isInside(x, y, width, height) {
     return x >= 0 && x < width && y >= 0 && y < height;
 }
 
+
+
 const INSIDE = 0;
 const SIDE_X = 1;
 const SIDE_Y = 2;
+
+
 
 function dda(x0, y0, vx, vy, f) {
     let [x, y] = toGrid(x0, y0);
@@ -623,7 +727,7 @@ function calcTextsize(ctx, maxWidth, text) {
     return [textSize, Math.max(1, measure.width)];
 }
 
-function drawSplashScreen({ ctx, gameState }) {
+function drawSplashScreen({ ctx, gameState, menuState }) {
     ctx.save();
     ctx.fillStyle = 'black';
 
@@ -637,57 +741,128 @@ function drawSplashScreen({ ctx, gameState }) {
 
     let yOffset = Math.max(1, 0.05 * height);
 
-    const writeText = (text, maxSize) => {
+    const writeText = (text, maxSize, { color = 'white', centerx = width / 2 }) => {
         let [textSize, textWidth] = calcTextsize(ctx, maxSize, text);
         ctx.font = `${textSize}px Sans-serif`;
 
-        let xOffset = Math.max(1, 0.5 * width - textWidth / 2);
-        yOffset = Math.max(1, yOffset + textSize);
+        let xOffset = Math.max(1, centerx - textWidth / 2);
+
+        const textY = Math.floor(Math.max(1, yOffset + textSize));
 
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2;
-        ctx.strokeText(text, Math.floor(xOffset), Math.floor(yOffset));
-        ctx.fillStyle = 'white';
-        ctx.fillText(text, Math.floor(xOffset), Math.floor(yOffset));
+        ctx.strokeText(text, Math.floor(xOffset), textY);
+        ctx.fillStyle = color;
+        ctx.fillText(text, Math.floor(xOffset), textY);
+        return [textWidth, textSize];
     };
 
-    writeText(text, 0.9 * width);
-    writeText("---", 0.1 * width);
+    let [textWidth, textSize] = writeText(text, 0.9 * width, {});
+    yOffset = Math.max(1, yOffset + textSize);
+
+    [textWidth, textSize] = writeText("---", 0.1 * width, {});
+    yOffset = Math.max(1, yOffset + textSize);
+
 
     const charsPerLine = 40;
     text = 'Press [Enter] to continue and pet';
 
-    writeText(text, text.length / charsPerLine * width);
-    writeText("---", 0.1 * width);
+    [textWidth, textSize] = writeText(text, text.length / charsPerLine * width, {});
+    yOffset = Math.max(1, yOffset + textSize);
+
+    [textWidth, textSize] = writeText("---", 0.1 * width, {});
+    yOffset = Math.max(1, yOffset + textSize);
+
     text = 'Move with WASD or Arrows';
-    writeText(text, text.length / charsPerLine * width);
+    [textWidth, textSize] = writeText(text, text.length / charsPerLine * width, {});
+    yOffset = Math.max(1, yOffset + textSize);
 
-    const padding = 2;
-
-    const handSize = Math.min(
-        Math.min(width, height) * 0.15, // default size
-        Math.min(width, height) / handMap.length // in case of many hands
-    );
-    const boxSize = handSize + padding;
+    [textWidth, textSize] = writeText("---", 0.1 * width, {});
+    yOffset = Math.max(1, yOffset + textSize);
 
 
-    const hCenter = width / 2;
-    const hLeft = hCenter - 0.5 * handMap.length * boxSize;
-    // draw hands
+    if (gameState.handedness === HANDEDNESS_RIGHT) {
+        text = 'Right handed';
+        [textWidth, textSize] = writeText(text, text.length / charsPerLine * width, {});
 
-    for (let i = 0; i < handMap.length; i++) {
-        ctx.drawImage(handMap[i],
-            Math.floor(hLeft + boxSize * i + padding / 2),
-            Math.floor(0.9 * height - boxSize + padding / 2),
-            handSize, handSize);
+        if (menuState.optionIndex === 0) {
+            const leftOver = 0.5 * (width - textWidth);
+            const centerx = leftOver * 0.5;
+            text = '<';
+            let xOffset = Math.max(1, centerx);
+            const textY = Math.floor(Math.max(1, yOffset + textSize));
+
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            ctx.strokeText(text, Math.floor(xOffset), textY);
+            ctx.fillStyle = 'red';
+            ctx.fillText(text, Math.floor(xOffset), textY);
+
+        }
+        yOffset = Math.max(1, yOffset + textSize);
+    }
+    else {
+        text = 'Left handed';
+        [textWidth, textSize] = writeText(text, text.length / charsPerLine * width, {});
+
+        if (menuState.optionIndex === 0) {
+            const leftOver = 0.5 * (width - textWidth);
+            const centerx = width - + leftOver * 0.5;
+            text = '>';
+
+            let xOffset = Math.max(1, centerx);
+            const textY = Math.floor(Math.max(1, yOffset + textSize));
+
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            ctx.strokeText(text, Math.floor(xOffset), textY);
+            ctx.fillStyle = 'red';
+            ctx.fillText(text, Math.floor(xOffset), textY);
+        }
+
+        yOffset = Math.max(1, yOffset + textSize);
 
     }
-    // selection
-    ctx.strokeStyle = 'white';
-    const hi = gameState.handIndex;
-    ctx.strokeRect(Math.floor(hLeft + boxSize * hi),
-        Math.floor(0.9 * height - boxSize),
-        boxSize, boxSize);
+
+
+    const padding = 1;
+    const handmap = gameState.handedness === HANDEDNESS_RIGHT ? rightHandMap : leftHandMap;
+
+    const handbarsize = Math.min(width, height) * 0.9;
+    const boxSize = Math.min(
+        handbarsize * 0.15, // default size
+        handbarsize / handmap.length // in case of many hands
+    );
+
+    const hCenter = width / 2;
+    const hLeft = hCenter - 0.5 * handmap.length * boxSize;
+    const hTop = Math.floor(0.9 * height - boxSize);
+    // background
+    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.fillRect(0, hTop, width, boxSize);
+    // draw hands
+    for (let i = 0; i < handmap.length; i++) {
+
+        const hi = handmap[i];
+        const a = hi.width / hi.height;
+        const drawHeight = Math.max(1, boxSize - 2 * padding);
+        const drawWidth = Math.max(1, drawHeight * a);
+
+        ctx.drawImage(handmap[i],
+            Math.floor(hLeft + boxSize * (i + 0.5) - drawWidth / 2),
+            hTop + padding,
+            drawWidth, drawHeight);
+
+    }
+    if (menuState.optionIndex === 1) {
+        // selection
+        ctx.strokeStyle = 'red';
+        const hi = gameState.handIndex;
+        ctx.strokeRect(Math.floor(hLeft + boxSize * hi),
+            Math.floor(0.9 * height - boxSize),
+            boxSize, boxSize);
+
+    }
 
 
     ctx.restore();
@@ -809,13 +984,18 @@ function main() {
     const STATE_WELCOME_SCREEN_SWITCH = 1;
     const STATE_WAITING = 2;
     const STATE_PETTING = 3;
+
+    const menuState = {
+        optionIndex: 0
+    }
     const gameState = {
         joy: 0,
         cooldown: 0,
         petTime: 0,
         petTarget: null,
         state: STATE_WELCOME_SCREEN,
-        handIndex: (Math.floor(handMap.length / 2))
+        handedness: 0,
+        handIndex: (Math.floor(rightHandMap.length / 2))
     };
 
     const MAX_COOLDOWN = 2;
@@ -861,19 +1041,42 @@ function main() {
                 ctx: offCtx,
                 keymap,
                 dt, time,
-                gameState
+                gameState,
+                menuState
             });
 
-            if (keymap["Enter"]) {
-                gameState.state = STATE_WAITING;
-            }
-            if (keymap["ArrowRight"] === 1 || keymap["KeyD"] === 1) {
-                gameState.handIndex = (gameState.handIndex + 1) % handMap.length;
-            }
-            if (keymap["ArrowLeft"] === 1 || keymap["KeyA"] === 1) {
-                gameState.handIndex = (gameState.handIndex - 1 + handMap.length) % handMap.length;
+            if (menuState.optionIndex === 0) {
+                if (gameState.handedness === HANDEDNESS_RIGHT) {
+                    if (keymap["ArrowLeft"] === 1 || keymap["KeyA"] === 1) {
+                        gameState.handedness = 1 - gameState.handedness;
 
+                    }
+                }
+                else {
+                    if (keymap["ArrowRight"] === 1 || keymap["KeyD"] === 1) {
+                        gameState.handedness = 1 - gameState.handedness;
+                    }
+                }
+                if (keymap["ArrowDown"] === 1 || keymap["KeyS"] === 1) {
+                    menuState.optionIndex += 1;
+                }
+
+            } else {
+                if (keymap["ArrowUp"] === 1 || keymap["KeyW"] === 1) {
+                    menuState.optionIndex -= 1;
+                }
+                if (keymap["Enter"] === 1) {
+                    gameState.state = STATE_WAITING;
+                }
+                if (keymap["ArrowRight"] === 1 || keymap["KeyD"] === 1) {
+                    gameState.handIndex = (gameState.handIndex + 1) % rightHandMap.length;
+                }
+                if (keymap["ArrowLeft"] === 1 || keymap["KeyA"] === 1) {
+                    gameState.handIndex = (gameState.handIndex - 1 + rightHandMap.length) % rightHandMap.length;
+
+                }
             }
+
             ctx.drawImage(offCanvas, 0, 0, canvas.width, canvas.height);
             requestAnimationFrame(loop);
             return;
@@ -1020,10 +1223,14 @@ function main() {
 
         if (gameState.state === STATE_PETTING) {
             gameState.petTime += dt;
+            const petDirection = gameState.handedness === HANDEDNESS_RIGHT ? 1 : -1;
             const handSpeed = 2 * Math.PI / MAX_COOLDOWN * 2;
-            const handTime = -gameState.petTime * handSpeed;
+            const handTime = -gameState.petTime * handSpeed * petDirection;
             const ctxh = offCtx;
             const c = ctxh.canvas;
+            const handMap = gameState.handedness === HANDEDNESS_RIGHT ? rightHandMap : leftHandMap;
+            const hand = handMap[gameState.handIndex];
+            const aspect = hand.width / hand.height;
             let mx = Math.floor(c.width / 2);
             let my = Math.floor(c.height / 2);
 
@@ -1031,9 +1238,9 @@ function main() {
             let x = Math.floor(mx + Math.cos(handTime) * mx / 3);
             let y = Math.floor(my + Math.sin(handTime) * my / 3);
 
-            let wh = Math.floor(mx / 3);
             let hh = Math.floor(my / 3);
-            ctxh.drawImage(handMap[gameState.handIndex], x - Math.floor(wh / 2), y - Math.floor(hh / 2), wh, hh);
+            let wh = Math.floor(hh * aspect);
+            ctxh.drawImage(hand, x - Math.floor(wh / 2), y - Math.floor(hh / 2), wh, hh);
         }
 
         drawHUD({ ctx: textCtx, gameState });
@@ -1046,6 +1253,80 @@ function main() {
     loop();
 }
 
+function createHands(img) {
+    if (!img) {
+        return;
+    }
+
+    const { width: w, height: h } = img;
+
+    const colors = [
+        [255, 204, 34], // emoji yellow
+        [243, 200, 164],
+        [180, 126, 99],
+        [135, 96, 79],
+        [101, 67, 53],
+        [69, 52, 49],
+        [40, 40, 37]
+    ];
+
+    const imgCanvas = document.createElement("canvas");
+    imgCanvas.width = w;
+    imgCanvas.height = h;
+    const imgCtx = imgCanvas.getContext("2d");
+    imgCtx.drawImage(img, 0, 0);
+
+    const imgData = imgCtx.getImageData(0, 0, w, h);
+    const imgValues = imgData.data;
+
+    const data = new ImageData(w, h);
+    const values = data.data;
+
+    const num = w * h;
+    for (let i = 0; i < colors.length; i++) {
+        const color = colors[i];
+
+        // create hand canvas
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+
+        for (let j = 0; j < num; j++) {
+            const idx = 4 * j;
+            const r = imgValues[idx] / 255;
+            const g = imgValues[idx + 1] / 255;
+            const b = imgValues[idx + 2] / 255;
+            const a = imgValues[idx + 3] / 255;
+
+            values[idx] = r * color[0] * a;
+            values[idx + 1] = g * color[1] * a;
+            values[idx + 2] = b * color[2] * a;
+            values[idx + 3] = a * 255;
+
+        }
+
+        const ctx = canvas.getContext("2d");
+        ctx.putImageData(data, 0, 0);
+        rightHandMap.push(canvas);
+    }
+
+    for (let i = 0; i < rightHandMap.length; i++) {
+        // create left hand canvas
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.scale(-1, 1);
+        ctx.drawImage(rightHandMap[i], 0, 0, w * -1, h);
+        leftHandMap.push(canvas);
+    }
+
+    const indices = [...Array(rightHandMap.length).keys()];
+    shuffle(indices);
+    rightHandMap = indices.map(v => rightHandMap[v]);
+    leftHandMap = indices.map(v => leftHandMap[v]);
+}
+
 window.onload = () => {
 
 
@@ -1053,6 +1334,9 @@ window.onload = () => {
     const images = [
         "wood0.jpg", "wood1.jpg",
         "bricks0.jpg", "bricks1.jpg",
+        "bricks2.jpg",
+        "wall0.jpg", "wall1.jpg",
+        "pattern0.jpg"
     ];
 
 
@@ -1065,12 +1349,17 @@ window.onload = () => {
         "bear0.png", "panda0.png",
         "polarbear0.png"];
 
-    const hands = ["hand_dark.png", "hand_medium_dark.png",
-        "hand_medium.png", "hand_medium_light.png",
-        "hand_yellow.png"];
+    const promises = [];
 
-    shuffle(hands);
+    const baseHandPromise = new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve();
 
+        img.src = basePath + "hand_base.png";
+    });
+
+    promises.push(baseHandPromise.then(img => createHands(img)));
 
     const inserter = (name, container) => {
         return new Promise((resolve) => {
@@ -1083,11 +1372,9 @@ window.onload = () => {
         });
     };
 
-    const promises = [];
 
     promises.push(...images.map(v => inserter(v, imageMap)));
     promises.push(...sprites.map(v => inserter(v, spriteMap)));
-    promises.push(...hands.map(v => inserter(v, handMap)));
 
     Promise.all(promises).then(() => {
         main();
