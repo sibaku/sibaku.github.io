@@ -1348,7 +1348,14 @@ window.onload = () => {
         "raccoon0.png", "raccoon1.png",
         "capybara0.png", "badger0.png",
         "bear0.png", "panda0.png",
-        "polarbear0.png"];
+        "polarbear0.png",
+        "fox0.png", "fox1.png",
+        "tiger0.png", "tiger1.png",
+        "quokka0.png", "quokka1.png",
+        "penguin0.png",
+        "mouse0.png",
+        "ferret0.png"
+    ];
 
     const promises = [];
 
