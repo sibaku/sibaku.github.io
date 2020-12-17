@@ -1,0 +1,1 @@
+let handle=null;function call(){postMessage("")}onmessage=l=>{const e=l.data.msg;1===e?(null!==handle&&clearTimeout(handle),handle=setTimeout((()=>{call()}),1/24)):2===e&&null!==handle&&(clearTimeout(handle),handle=null)};

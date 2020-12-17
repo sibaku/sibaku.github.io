@@ -1,1 +1,0 @@
-let working=!1,handle=null;function runner(){working||(working=!0,postMessage(""))}onmessage=n=>{const e=n.data.msg;1===e?working=!0:2===e?working=!1:3===e?null===handle&&setInterval((()=>{runner()}),1/24):4===e&&null!==handle&&clearInterval(handle)};
