@@ -389,6 +389,9 @@ function iterateIntersection(p, primA, primB, { n = 20 }) {
     }
 
     p = jm.add(p, jm.scale(g, -d));
+    if (Math.abs(d) < 1e-1) {
+      break;
+    }
   }
 
   const da = primA.sdfWorld(p);
@@ -827,6 +830,19 @@ document.body.onload = () => {
       mass: 20,
     })
   );
+
+  primitives.push(
+    new ConvexPoly({
+      points: [
+        v32.from([-100, -20]),
+        v32.from([100, -40]),
+        v32.from([120, 20]),
+        v32.from([0, 40]),
+      ],
+      pos: v32.from([600, 100]),
+      mass: 20,
+    })
+  );
   // applyImpulse(primitives[3], v32.from([720, 200]), v32.from([-50.1, 10.1]));
 
   const options = document.getElementById("options");
@@ -868,7 +884,7 @@ document.body.onload = () => {
   const [checkDrawBounds, labelBounds] = checkbox(
     "Bounds",
     "Draw bounds",
-    true
+    false
   );
   document.body.appendChild(group([checkDrawBounds, labelBounds]));
 
@@ -916,7 +932,7 @@ document.body.onload = () => {
   );
   document.body.appendChild(group([checkDrawVelocity, labelDrawVelocity]));
 
-  let timeDivisor = 120;
+  let timeDivisor = 60;
   const inputTimeDivisor = document.createElement("input");
   inputTimeDivisor.setAttribute("type", "number");
   inputTimeDivisor.value = timeDivisor;
@@ -990,7 +1006,7 @@ document.body.onload = () => {
           jm.add(dir, ck.n, dir);
         }
 
-        if (minSep < 0 && jm.norm2Squared(dir) > 1e-1) {
+        if (minSep < 0 && jm.norm2Squared(dir) > 1e-4) {
           penetrations.push(
             new Penetration(
               primitives[i],
@@ -1012,7 +1028,8 @@ document.body.onload = () => {
       }
     }
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 20; i++) {
+      let changed = false;
       for (let j = 0; j < collisions.length; j++) {
         const c = collisions[j];
 
@@ -1023,6 +1040,11 @@ document.body.onload = () => {
         c.impulse = Math.max(0.0, c.impulse);
         delta = c.impulse - oldImpulse;
         c.applyImpulse(delta);
+        changed |= delta > 0;
+      }
+      if (!changed) {
+        console.log(`Unchanged ${i}`);
+        break;
       }
     }
 
@@ -1031,7 +1053,7 @@ document.body.onload = () => {
     }
     if (running) {
       for (let i = 0; i < penetrations.length; i++) {
-        penetrations[i].resolve(0.85);
+        penetrations[i].resolve(0.95);
       }
     }
     requestAnimationFrame(update);
