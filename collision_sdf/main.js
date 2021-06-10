@@ -1043,7 +1043,6 @@ document.body.onload = () => {
         changed |= delta > 0;
       }
       if (!changed) {
-        console.log(`Unchanged ${i}`);
         break;
       }
     }
