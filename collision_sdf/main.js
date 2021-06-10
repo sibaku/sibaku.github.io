@@ -186,7 +186,62 @@ class Plane extends Primitive {
   }
 }
 
-function combineBounds(ba, bb) {}
+function computeInertia(prim, sampleRes) {
+  // very basic...
+
+  const [c, s] = prim.bounds();
+  const cmin = jm.sub(c, s);
+  const delta = jm.scale(s, 2);
+
+  const dx = delta.at(0) / sampleRes;
+  const dy = delta.at(1) / sampleRes;
+  const areaElement = dx * dy;
+  const halfDiag = jm.norm(v32.from([dx, dy])) / 2.0;
+
+  let count = 0;
+  let sum = 0.0;
+
+  for (let y = 0; y < sampleRes; y++) {
+    for (let x = 0; x < sampleRes; x++) {
+      const p = jm.add(
+        cmin,
+        jm.cwiseMult(
+          delta,
+          v32.from([(x + 0.5) / sampleRes, (y + 0.5) / sampleRes])
+        )
+      );
+      const d = prim.sdf(p);
+      if (d < halfDiag) {
+        count++;
+        const p0 = jm.add(
+          cmin,
+          jm.cwiseMult(delta, v32.from([x / sampleRes, y / sampleRes]))
+        );
+        const p1 = jm.add(
+          cmin,
+          jm.cwiseMult(
+            delta,
+            v32.from([(x + 1) / sampleRes, (y + 1) / sampleRes])
+          )
+        );
+        const x0 = p0.at(0);
+        const x1 = p1.at(0);
+        const y0 = p0.at(1);
+        const y1 = p1.at(1);
+
+        const localI =
+          ((Math.pow(x0, 3) - Math.pow(x1, 3)) * (y0 - y1) +
+            (x0 - x1) * (Math.pow(y0, 3) - Math.pow(y1, 3))) /
+          3;
+        sum += localI;
+      }
+    }
+  }
+
+  // constant density
+  const rho = prim.mass / (count * areaElement);
+  return rho * sum;
+}
 
 class Combination extends Primitive {
   constructor({
@@ -200,65 +255,8 @@ class Combination extends Primitive {
   }) {
     super({ pos, angle, vel, angVel, inertia: 0, mass });
     this.primitives = primitives;
-    const inertia = this.computeInertia(sampleRes);
+    const inertia = computeInertia(this, sampleRes);
     this.setInertia(inertia);
-  }
-
-  computeInertia(sampleRes) {
-    // very basic...
-
-    const [c, s] = this.bounds();
-    const cmin = jm.sub(c, s);
-    const delta = jm.scale(s, 2);
-
-    const dx = delta.at(0) / sampleRes;
-    const dy = delta.at(1) / sampleRes;
-    const areaElement = dx * dy;
-    const halfDiag = jm.norm(v32.from([dx, dy])) / 2.0;
-
-    let count = 0;
-    let sum = 0.0;
-
-    for (let y = 0; y < sampleRes; y++) {
-      for (let x = 0; x < sampleRes; x++) {
-        const p = jm.add(
-          cmin,
-          jm.cwiseMult(
-            delta,
-            v32.from([(x + 0.5) / sampleRes, (y + 0.5) / sampleRes])
-          )
-        );
-        const d = this.sdf(p);
-        if (d < halfDiag) {
-          count++;
-          const p0 = jm.add(
-            cmin,
-            jm.cwiseMult(delta, v32.from([x / sampleRes, y / sampleRes]))
-          );
-          const p1 = jm.add(
-            cmin,
-            jm.cwiseMult(
-              delta,
-              v32.from([(x + 1) / sampleRes, (y + 1) / sampleRes])
-            )
-          );
-          const x0 = p0.at(0);
-          const x1 = p1.at(0);
-          const y0 = p0.at(1);
-          const y1 = p1.at(1);
-
-          const localI =
-            ((Math.pow(x0, 3) - Math.pow(x1, 3)) * (y0 - y1) +
-              (x0 - x1) * (Math.pow(y0, 3) - Math.pow(y1, 3))) /
-            3;
-          sum += localI;
-        }
-      }
-    }
-
-    // constant density
-    const rho = this.mass / (count * areaElement);
-    return rho * sum;
   }
 
   sdf(p) {
@@ -292,6 +290,77 @@ class Combination extends Primitive {
     for (let i = 0; i < this.primitives.length; i++) {
       this.primitives[i].drawWorld(ctx);
     }
+  }
+}
+
+class ConvexPoly extends Primitive {
+  constructor({
+    points = [],
+    pos = v32.zeros(2),
+    angle = 0.0,
+    vel = v32.zeros(2),
+    angVel = 0.0,
+    mass = 1.0,
+    sampleRes = 10,
+  }) {
+    super({ pos, angle, vel, angVel, inertia: 0, mass });
+
+    this.points = points;
+    this.normals = [];
+
+    for (let i = 0; i < points.length; i++) {
+      let ip = (i + 1) % points.length;
+      let v = jm.fromTo(points[i], points[ip]);
+
+      this.normals.push(jm.neg(jm.normalize(crossVec2D(v))));
+    }
+
+    const inertia = computeInertia(this, sampleRes);
+    this.setInertia(inertia);
+  }
+
+  sdf(p) {
+    let d = -Infinity;
+    const points = this.points;
+    const normals = this.normals;
+    for (let i = 0; i < points.length; i++) {
+      const di = jm.dot(normals[i], jm.fromTo(points[i], p));
+      d = Math.max(d, di);
+    }
+    return d;
+  }
+
+  bounds() {
+    let cmin = v32.from([Infinity, Infinity]);
+    let cmax = v32.from([-Infinity, -Infinity]);
+
+    const points = this.points;
+    for (let i = 0; i < points.length; i++) {
+      const pi = points[i];
+
+      jm.cwiseMin(cmin, pi, cmin);
+      jm.cwiseMax(cmax, pi, cmax);
+    }
+
+    const c = jm.scale(jm.add(cmax, cmin), 0.5);
+    const s = jm.scale(jm.sub(cmax, cmin), 0.5);
+    return [c, s];
+  }
+
+  draw(ctx) {
+    const points = this.points;
+    if (points.length < 2) {
+      return;
+    }
+    ctx.beginPath();
+    ctx.moveTo(points[0].at(0), points[0].at(1));
+
+    for (let i = 1; i < points.length; i++) {
+      const pi = points[i];
+      ctx.lineTo(pi.at(0), pi.at(1));
+    }
+    ctx.closePath();
+    ctx.stroke();
   }
 }
 
@@ -750,6 +819,14 @@ document.body.onload = () => {
       ],
     })
   );
+
+  primitives.push(
+    new ConvexPoly({
+      points: [v32.from([-40, -20]), v32.from([40, -40]), v32.from([0, 80])],
+      pos: v32.from([100, 100]),
+      mass: 20,
+    })
+  );
   // applyImpulse(primitives[3], v32.from([720, 200]), v32.from([-50.1, 10.1]));
 
   const options = document.getElementById("options");
@@ -774,6 +851,19 @@ document.body.onload = () => {
     l.appendChild(document.createTextNode(label));
     return [c, l];
   };
+
+  let running = false;
+
+  const runningButton = document.createElement("input");
+  runningButton.type = "button";
+  runningButton.value = "Start";
+
+  runningButton.onclick = () => {
+    running = !running;
+    runningButton.value = running ? "Pause" : "Start";
+  };
+
+  document.body.appendChild(group([runningButton]));
 
   const [checkDrawBounds, labelBounds] = checkbox(
     "Bounds",
@@ -854,8 +944,8 @@ document.body.onload = () => {
   );
 
   const update = () => {
-    const dt = 1 / timeDivisor;
-
+    let dt = 1 / timeDivisor;
+    dt = running ? dt : 0.0;
     const drawBounds = checkDrawBounds.checked;
     const drawInterBounds = checkInterDrawBounds.checked;
     const drawInitPoints = checkDrawPointsInit.checked;
@@ -937,10 +1027,12 @@ document.body.onload = () => {
     }
 
     for (let i = 0; i < primitives.length; i++) {
-      updatePrimitive(primitives[i], 1 / 120);
+      updatePrimitive(primitives[i], dt);
     }
-    for (let i = 0; i < penetrations.length; i++) {
-      penetrations[i].resolve(0.5);
+    if (running) {
+      for (let i = 0; i < penetrations.length; i++) {
+        penetrations[i].resolve(0.85);
+      }
     }
     requestAnimationFrame(update);
   };
