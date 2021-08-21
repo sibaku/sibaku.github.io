@@ -23,4 +23,3 @@ Two circles. The first one takes 10 seconds to rotate, and has a radius of 40 pi
 [[40,0.1],[10,0.5,2]]
 
 {% include cycloidCanvas.html%}
-
