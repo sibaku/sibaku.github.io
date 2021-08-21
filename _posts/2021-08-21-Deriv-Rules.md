@@ -22,12 +22,23 @@ Derivative rules for compositions of functions $$(f \circ g)(x) = f(g(x))$$
 
 #### Gradient Chain Rule
 
+Scalar form
+
 $$ \begin{aligned}
   f &: \mathbb{R} \rightarrow \mathbb{R} \\
   g &: \mathbb{R}^n \rightarrow \mathbb{R}  \\
 \end{aligned} $$
 
 $$ \nabla f(g) = f'\nabla g$$
+
+Multi parameter form
+
+$$ \begin{aligned}
+  f &: \mathbb{R}^k \rightarrow \mathbb{R} \\
+  g &: \mathbb{R}^n \rightarrow \mathbb{R}^k  \\
+\end{aligned} $$
+
+$$ \nabla f(g) = (Jg)^T\nabla f$$
 
 [Derivation](#derivation-gradient-chain-rule)
 
@@ -47,6 +58,8 @@ $$ \begin{aligned}
 
 #### Hessian Chain Rule
 
+Scalar form
+
 $$ \begin{aligned}
   f &: \mathbb{R} \rightarrow \mathbb{R} \\
   g &: \mathbb{R}^n \rightarrow \mathbb{R}
@@ -55,6 +68,18 @@ $$ \begin{aligned}
 $$ \begin{aligned}
     H({f\circ g}) & \in \mathbb{R}^{n \times n} \\
    H({f\circ g}) &= f''\nabla g \nabla^T g + f'Hg
+\end{aligned} $$
+
+Multi argument form
+
+$$ \begin{aligned}
+  f &: \mathbb{R}^k \rightarrow \mathbb{R} \\
+  g &: \mathbb{R}^n \rightarrow \mathbb{R}^k
+\end{aligned} $$
+
+$$ \begin{aligned}
+    H({f\circ g}) & \in \mathbb{R}^{n \times n} \\
+   H({f\circ g}) &= (Jg)^HfJg + \sum_{j=1}^k\frac{\partial f}{\partial x^j}Hg_j
 \end{aligned} $$
 
 [Derivation](#derivation-hessian-chain-rule)
@@ -157,6 +182,8 @@ Here you can find the derivations for the previously stated rules
 
 ### Derivation Gradient Chain Rule
 
+Scalar form:
+
 This is listed in most places, but I put it in because it is used in the other derivations. It is easy to check by looking at a partial derivative and using the usual one dimensional chain rule.
 
 $$ \begin{aligned}
@@ -164,6 +191,10 @@ $$ \begin{aligned}
 \end{aligned}$$
 
 These are exactly the entries of the gradient.
+
+Multi parameter form:
+
+Can be seen from index notation as well or as a special case of the Jacobian Chain Rule, when $$ k=1$$ and using $$ \nabla f = (Jf)^T$$ for a scalar function.
 
 ### Derivation Gradient Product Rule
 
@@ -240,6 +271,8 @@ $$ J({ab}) = aJb + b\nabla^Ta$$
 
 ### Derivation Hessian Chain rule
 
+Scalar form
+
 $$ \begin{aligned}
     Hf(g) &= J\nabla f(g)\\
     \nabla f(g) &= f'\nabla g
@@ -253,6 +286,37 @@ $$ \begin{aligned}
     &= f'Hg + \nabla g\nabla^T(f') \\
     &=  f'Hg + \nabla g f''\nabla^Tg \\
     &= f'Hg + f'' \nabla g \nabla^Tg
+\end{aligned}$$
+
+Multi parameter form
+
+Using index notation:
+
+$$\begin{aligned}
+    (Hf(g))_{i,k} &= \frac{\partial^2f(g)}{\partial x^k \partial x^i}\\
+    &=\frac{\partial}{\partial x^k} (\frac{\partial f}{\partial g^j}\frac{\partial g_j}{\partial x^i}) \\
+    &= \frac{\partial g_j}{\partial x^i}\frac{\partial}{\partial x^k}(\frac{\partial f}{\partial g^j})  + \frac{\partial f}{\partial g^j}\frac{\partial}{\partial x^k}(\frac{\partial g_j}{\partial x^i}) \\
+    &= \frac{\partial g_j}{\partial x^i}\frac{\partial^2 f}{\partial g^m \partial g^j}\frac{\partial g_m}{\partial x^k} + \frac{\partial f}{\partial g^j}\frac{\partial^2 g_j}{\partial x^k \partial x^i}
+\end{aligned}$$
+
+Identify definitions of Jacobians and Hessians.
+
+$$\begin{aligned}
+    (Hf(g))_{i,k} &= \frac{\partial g_j}{\partial x^i}\frac{\partial^2 f}{\partial g^m \partial g^j}\frac{\partial g_m}{\partial x^k} + \frac{\partial f}{\partial g^j}\frac{\partial^2 g_j}{\partial x^k \partial x^i} \\
+    &= (Jg)_{j,i}(Hf)_{j,m}(Jg)_{m,k} + \frac{\partial f}{\partial g^j}(Hg_j)_{i,k}
+\end{aligned}$$
+
+Switch indices of the first expression with the transpose to get matrix product index notation
+
+$$\begin{aligned}
+    (Hf(g))_{i,k} &= (Jg)_{j,i}(Hf)_{j,m}(Jg)_{m,k} + \frac{\partial f}{\partial g^j}(Hg_j)_{i,k} \\
+    &=(Jg)^T_{i,j}(Hf)_{j,m}(Jg)_{m,k} + \frac{\partial f}{\partial g^j}(Hg_j)_{i,k}
+\end{aligned}$$
+
+Write in matrix notation and plug in that there are $$k$$ functions $$g_j$$
+
+$$\begin{aligned}
+    Hf(g) &= (Jg)^THfJg + \sum_{j=1}^kHg_j
 \end{aligned}$$
 
 ### Derivation Hessian Product Rule
