@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Chain, Product and quotient rules for Gradient, Jacobian and Hessian"
+title:  "Chain, Product and Quotient rules for Gradient, Jacobian and Hessian"
 categories: maths
 tags: [maths, derivative, gradient, hessian]
 visible: 1
