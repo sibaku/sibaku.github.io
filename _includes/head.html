@@ -12,56 +12,5 @@
 
 <!-- Load jQuery -->
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<!-- Load KaTeX -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css" integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js" integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8" crossorigin="anonymous"></script>
 
-<script type="text/javascript">
-
-function stripLatexComments(x)
-{
-  // workaround for kramdown placing comments which katex can't process
-	var commentIndex;
-	while((commentIndex = x.indexOf("%") )>= 0)
-	{
-		var left = x.substring(0,commentIndex);
-	  var right = x.substring(commentIndex+1);
-	  
-	  x = left;
-	  if(right === "")
-		{
-		  break;
-		}
-	  var newlineIdx = right.indexOf("\n");
-	  if(newlineIdx < 0)
-	  {
-		break;
-	  }
-	  
-	  x+=right.substring(newlineIdx+1);
-
-	}
-	return x;
-}
-
-  $(document).ready(function()
-  {
-$("script[type='math/tex']").replaceWith(
-  function(){
-    var tex = $(this).text();
-    tex = stripLatexComments(tex);
-    return "<span class=\"inline-equation\">" + 
-           katex.renderToString(tex) +
-           "</span>";
-});
-$("script[type='math/tex; mode=display']").replaceWith(
-  function(){
-    var tex = $(this).text();
-    tex = stripLatexComments(tex);
-    return "<div class=\"equation\">" + 
-           katex.renderToString("\\displaystyle "+ tex) +
-           "</div>";
-});
-  });
-</script>
 </head>

@@ -10,7 +10,7 @@ visible: 1
 
 I recently remade my GLSL automatic differentiation library ([GitHub repository](https://github.com/sibaku/glsl-autodiff)) to include some more functions. Turns out I didn't write down the Jacobians and Hessians in the vector/matrix form that I need. Also turns out that I could not find them anywhere on the internet! So I had to redo them and decided to write them down this time, just in case... maybe someone else might be interested in them.
 
-The next [section](#summary) will summarize the results. [Derivations](#derivations) can be found below. Derivatives are taken with respect to $x$, though I will leave out the $()$ parameter brackets, if they are not needed to make things clear. Gradients ($\nabla$), Jacobians ($J$) and Hessians ($H$) will apply to the object on the right. Brackets are used, if any of them apply to multiple terms.
+The next [section](#summary) will summarize the results. [Derivations](#derivations) can be found below. Derivatives are taken with respect to \(x\), though I will leave out the \(()\) parameter brackets, if they are not needed to make things clear. Gradients (\(\nabla\)), Jacobians (\(J\)) and Hessians (\(H\)) will apply to the object on the right. Brackets are used, if any of them apply to multiple terms.
 
 If you find an error, feel free to tell me.
 
@@ -18,44 +18,44 @@ If you find an error, feel free to tell me.
 
 ### Chain Rules
 
-Derivative rules for compositions of functions $(f \circ g)(x) = f(g(x))$
+Derivative rules for compositions of functions \((f \circ g)(x) = f(g(x))\)
 
 #### Gradient Chain Rule
 
-$$ \begin{aligned}
+\[ \begin{aligned}
   f &: \mathbb{R} \rightarrow \mathbb{R} \\
   g &: \mathbb{R}^n \rightarrow \mathbb{R}  \\
-\end{aligned} $$
+\end{aligned} \]
 
-$$ \nabla f(g) = f'\nabla g$$
+\[ \nabla f(g) = f'\nabla g\]
 
 [Derivation](#derivation-gradient-chain-rule)
 
 #### Jacobian Chain Rule
 
-$$ \begin{aligned}
+\[ \begin{aligned}
   f &: \mathbb{R}^m \rightarrow \mathbb{R}^k \\
   g &: \mathbb{R}^n \rightarrow \mathbb{R}^m
-\end{aligned} $$
+\end{aligned} \]
 
-$$ \begin{aligned}
+\[ \begin{aligned}
     J({f \circ g}) &\in \mathbb{R}^{k \times n} \\
     J({f \circ g}) &= \underbrace{J{f}}_{\in \mathbb{R}^{k\times m}}\underbrace{Jg}_{\in \mathbb{R}^{m \times n}}
-\end{aligned} $$
+\end{aligned} \]
 
 [Derivation](#derivation-jacobian-chain-rule)
 
 #### Hessian Chain Rule
 
-$$ \begin{aligned}
+\[ \begin{aligned}
   f &: \mathbb{R} \rightarrow \mathbb{R} \\
   g &: \mathbb{R}^n \rightarrow \mathbb{R}
-\end{aligned} $$
+\end{aligned} \]
 
-$$ \begin{aligned}
+\[ \begin{aligned}
     H({f\circ g}) & \in \mathbb{R}^{n \times n} \\
    H({f\circ g}) &= f''\nabla g \nabla^T g + f'Hg
-\end{aligned}$$
+\end{aligned} \]
 
 [Derivation](#derivation-hessian-chain-rule)
 
@@ -91,7 +91,7 @@ $$ \begin{aligned}
     J({ab}) &= aJb + b\nabla^Ta
 \end{aligned}$$
 
-Matrix factor using Einstein notation (easier to write/read)(<https://en.wikipedia.org/wiki/Einstein_notation>). 
+Matrix factor using Einstein notation (easier to write/read)(<https://en.wikipedia.org/wiki/Einstein_notation>).
 
 $$ \begin{aligned}
   A &: \mathbb{R}^m \rightarrow \mathbb{R}^{k\times n} \\
@@ -184,7 +184,7 @@ $$ \begin{aligned}
     &= fq
 \end{aligned}$$
 
-Derivatives of $q$
+Derivatives of \(q\)
 
 $$ \begin{aligned}
 q(g) &= g^{-1}\\
@@ -218,7 +218,7 @@ Which is the same as the matrix notation.
 
 ### Derivation Jacobian Product Rule
 
-The elements of $A$ are $a_{i,j}$ and the elements of $b$ are $b_i$. The matrix product is then just $c_i = a_{i,j}b_j$. The Jacobian elements are $J(c)_{i,k} = \frac{\partial c_i}{\partial x^k}$.
+The elements of \(A\) are \(a_{i,j}\) and the elements of \(b\) are \(b_i\). The matrix product is then just \(c_i = a_{i,j}b_j\). The Jacobian elements are \(J(c)_{i,k} = \frac{\partial c_i}{\partial x^k}\).
 
 $$ \begin{aligned}
     J(c)_{i,k} &= \frac{\partial c_i}{\partial x^k} \\
@@ -227,7 +227,7 @@ $$ \begin{aligned}
     &= b_j\frac{\partial a_{i,j}}{\partial x^k} +a_{i,j}J(b)_{j,k}
 \end{aligned} $$
 
-A scalar function $a$ can be represented as a scaled identity matrix $a_{i,j}= a\delta_i^j$ leading to
+A scalar function \(a\) can be represented as a scaled identity matrix \(a_{i,j}= a\delta_i^j\) leading to
 
 $$ \begin{aligned}
     J(c)_{i,k} &=   b_j\frac{\partial a\delta_i^j}{\partial x^k} +a\delta_i^jJ(b)_{j,k} \\
@@ -283,7 +283,7 @@ $$ \begin{aligned}
 
 ### Derivation Hessian Quotient Rule
 
-Start similar to the product rule, but use $q(g) = \frac{1}{g}$. The derivatives of $q$ are listed in the gradient quotient rule derivation.
+Start similar to the product rule, but use \(q(g) = \frac{1}{g}\). The derivatives of \(q\) are listed in the gradient quotient rule derivation.
 
 $$ \begin{aligned}
     H{\frac{f}{g}} &= H({fq}) \\
@@ -296,7 +296,7 @@ $$ \begin{aligned}
     &= fHq+ \nabla q\nabla^Tf
 \end{aligned}$$
 
-Compute $\nabla q$ with the gradient chain rule
+Compute \(\nabla q\) with the gradient chain rule
 
 $$ \begin{aligned}
     \nabla q(g) &= q'\nabla g \\
