@@ -8,7 +8,7 @@ visible: 1
 
 ## Chain, Product And Quotient Rules
 
-I recently remade my GLSL automatic differentiation library ([GitHub repository]([https://link](https://github.com/sibaku/glsl-autodiff))) to include some more functions. Turns out I didn't write down the Jacobians and Hessians in the vector/matrix form that I need. Also turns out that I could not find them anywhere on the internet! So I had to redo them and decided to write them down this time, just in case... maybe someone else might be interested in them.
+I recently remade my GLSL automatic differentiation library ([GitHub repository](https://github.com/sibaku/glsl-autodiff)) to include some more functions. Turns out I didn't write down the Jacobians and Hessians in the vector/matrix form that I need. Also turns out that I could not find them anywhere on the internet! So I had to redo them and decided to write them down this time, just in case... maybe someone else might be interested in them.
 
 The next [section](#summary) will summarize the results. [Derivations](#derivations) can be found below. Derivatives are taken with respect to $x$, though I will leave out the $()$ parameter brackets, if they are not needed to make things clear. Gradients ($\nabla$), Jacobians ($J$) and Hessians ($H$) will apply to the object on the right. Brackets are used, if any of them apply to multiple terms.
 
