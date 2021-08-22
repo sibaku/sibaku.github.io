@@ -79,7 +79,7 @@ $$ \begin{aligned}
 
 $$ \begin{aligned}
     H({f\circ g}) & \in \mathbb{R}^{n \times n} \\
-   H({f\circ g}) &= (Jg)^HfJg + \sum_{j=1}^k\frac{\partial f}{\partial x^j}Hg_j
+   H({f\circ g}) &= (Jg)^THfJg + \sum_{j=1}^k\frac{\partial f}{\partial x^j}Hg_j
 \end{aligned} $$
 
 [Derivation](#derivation-hessian-chain-rule)
