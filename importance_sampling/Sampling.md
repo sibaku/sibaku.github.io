@@ -5,9 +5,11 @@ language: en
 
 version:  1.0.0
 
-script:     three.min.js
-            OrbitControls.js
-            util.js
+@local_path: https://sibaku.github.io/importance_sampling/@0
+
+script:     @local_path(three.min.js)
+            @local_path(OrbitControls.js)
+            @local_path(util.js)
 
 
 @three.project: @three.project_(@uid)
@@ -136,7 +138,7 @@ const controls = new THREE.OrbitControls( camera, renderer.domElement );
 
 const scene = new THREE.Scene();
 
-const sprite = new THREE.TextureLoader().load( 'disc.png' );
+const sprite = new THREE.TextureLoader().load( '@local_path(disc.png)' );
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute('position', new THREE.Float32BufferAttribute(points.xyz, 3));
 scene.add(
@@ -229,7 +231,7 @@ camera.lookAt(0.0,0.0,0.0);
 
 const scene = new THREE.Scene();
 
-const sprite = new THREE.TextureLoader().load( 'disc.png' );
+const sprite = new THREE.TextureLoader().load( '@local_path(disc.png)' );
 
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute('position', new THREE.Float32BufferAttribute(points.xy, 2));
