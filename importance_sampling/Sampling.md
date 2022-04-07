@@ -7,9 +7,9 @@ version:  1.0.0
 
 @local_path: https://sibaku.github.io/importance_sampling/@0
 
-script:     @local_path(three.min.js)
-            @local_path(OrbitControls.js)
-            @local_path(util.js)
+script:     https://sibaku.github.io/importance_sampling/three.min.js
+            https://sibaku.github.io/importance_sampling/OrbitControls.js
+            https://sibaku.github.io/importance_sampling/util.js
 
 
 @three.project: @three.project_(@uid)
