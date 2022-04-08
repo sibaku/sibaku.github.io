@@ -167,8 +167,8 @@ function animation( time ) {
 
 }
 
-const w = 720;
-const h = 480;
+const w = window.innerWidth / 2.0;
+const h = window.innerHeight / 2.0;
 renderer.setSize( w, h );
 
 
@@ -263,8 +263,8 @@ function animation( time ) {
 	renderer.render( scene, camera );
 }
 
-const w = 720;
-const h = 480;
+const w = window.innerWidth / 2.0;
+const h = window.innerHeight / 2.0;
 renderer.setSize( w, h );
 
 // Ortho camera doesn't work as well with PointsMaterial...
