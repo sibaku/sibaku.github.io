@@ -5,11 +5,53 @@ language: en
 
 version:  1.0.0
 
-@local_path: https://sibaku.github.io/importance_sampling/@0
-
 script:     https://sibaku.github.io/importance_sampling/three.min.js
             https://sibaku.github.io/importance_sampling/OrbitControls.js
             https://sibaku.github.io/importance_sampling/util.js
+
+@onload
+// onload scope doesn't seem to put stuff in the global scope...
+window.user_data = {};
+// base path to be used in javascript
+window.user_data.resource_base = "https://sibaku.github.io/importance_sampling/";
+@end
+
+@mutate.remover
+<script>
+// This is a hack to remove added elements from a container, when it was dynamically created
+// A mutation ovserver checks, whether the id was changed and if so, removes the inner parts
+
+let container = window.document.getElementById('@0')
+
+
+// based on the example at https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+const config = { attributes: true };
+
+const callback = (mutationsList, observer) => {
+    for(const mutation of mutationsList) {
+        if (mutation.type === 'attributes') {
+            if(mutation.attributeName === 'id')
+            {
+                // remove inner
+                container.innerHTML = "";
+                // remove observer afterwards
+                observer.disconnect();
+
+            }
+        }
+    }
+    
+};
+
+// Create an observer instance linked to the callback function
+const observer = new MutationObserver(callback);
+
+// Start observing the target node for configured mutations
+observer.observe(container, config);
+
+
+</script>
+@end
 
 
 @three.project: @three.project_(@uid)
@@ -21,7 +63,9 @@ script:     https://sibaku.github.io/importance_sampling/three.min.js
 "LIA: stop"
 </script>
 
-<span id="three-@0" class="lia-code"></span>
+<div id="three-@0"></div>
+@mutate.remover(three-@0)
+
 @end
 
 @three.base_
@@ -138,7 +182,7 @@ const controls = new THREE.OrbitControls( camera, renderer.domElement );
 
 const scene = new THREE.Scene();
 
-const sprite = new THREE.TextureLoader().load( '@local_path(disc.png)' );
+const sprite = new THREE.TextureLoader().load(window.user_data.resource_base + 'disc.png' );
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute('position', new THREE.Float32BufferAttribute(points.xyz, 3));
 scene.add(
@@ -157,7 +201,8 @@ div.renderer = renderer;
 "LIA: stop"
 </script>
 
-<span id="three-cloud-@0" class="lia-code"></span>
+<div id="three-cloud-@0"></div>
+@mutate.remover(three-cloud-@0)
 
 @end
 
@@ -231,12 +276,12 @@ camera.lookAt(0.0,0.0,0.0);
 
 const scene = new THREE.Scene();
 
-const sprite = new THREE.TextureLoader().load( '@local_path(disc.png)' );
+const sprite = new THREE.TextureLoader().load(window.user_data.resource_base + 'disc.png' );
 
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute('position', new THREE.Float32BufferAttribute(points.xy, 2));
-scene.add(
-    new THREE.Points(
+
+const mesh = new THREE.Points(
         geometry,
         new THREE.PointsMaterial({
             size: 0.05,
@@ -244,16 +289,24 @@ scene.add(
             map: sprite,
             transparent : true,
             alphaTest : 0.5
-        })));
+        }));
+mesh.frustumCulled = false;
+scene.add(mesh);
 
 renderer.setAnimationLoop( animation );
 div.renderer = renderer;
+
+
+
 "LIA: stop"
 </script>
 
-<span id="three-cloud-2d-@0" class="lia-code"></span>
+<div id="three-cloud-2d-@0"></div>
+@mutate.remover(three-cloud-2d-@0)
 
 @end
+
+
 
 
 -->
@@ -268,7 +321,7 @@ Each Sampling method will have the algorithm and probability density functions l
 
 In general I tried to include every step in the derivation so hopefully it is easy enough to follow.
 
-You can run and all the presented code and change parameters as you like, such as the number of sampled points. In 3D views, you can move around with your mouse.
+You can run and all the presented code and change parameters as you like, such as the number of sampled points. In 3D views, you can move around with your mouse. 
 
 ## Common helper functions
 
@@ -284,7 +337,7 @@ function spherical_to_cart(theta, phi, r = 1.0) {
     const x = r * st * sp;
     const y = r * ct;
     const z = r * st * cp;
-
+    
     return [x, y, z];
 
 }
