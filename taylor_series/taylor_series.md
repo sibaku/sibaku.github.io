@@ -42,11 +42,11 @@ As an example, look at a quadratic polynomial $\operatorname{p}(x) = a_0 + a_1 x
 When we take the second derivatige we get the following:
 
 $$
-    \begin{align}
+    \begin{align*}
     \operatorname{p}(x) &= a_0 + a_1 x + a_2x^2 \\
     \operatorname{p}(x)' &= a_1 + 2a_2x \\
     \operatorname{p}(x)'' &= 2a_2 
-    \end{align}
+    \end{align*}
 $$
 
 We got (with a factor of $2$) the coefficient of the quadratic term, which regulates how the parabola of a quadratic function looks like.
@@ -62,11 +62,11 @@ First, let's choose an easy point to evaluate: $x=0$.
 Now $\operatorname{f}$ and $\operatorname{p}$ should have the same value at $x=0$:
 
 $$
-    \begin{align}
+    \begin{align*}
     \operatorname{f}(0) &= \operatorname{p}(0) \\
     &= a_0 + a_1 0 + a_2 0^2 + a_3 0^3 + \dots \\
     &= a_0
-    \end{align}
+    \end{align*}
 $$
 
 All the terms with $x$ vanish at $0$! This leaves only the first coefficient.
@@ -75,19 +75,19 @@ And with that, we know that we should choose $a_0 = \operatorname{f}(0)$.
 Let's go further. Let the first derivatives agree as well. First let's compute the first derivative of $\operatorname{p}$.
 
 $$
-    \begin{align}
+    \begin{align*}
     \operatorname{p}'(x) &= (a_0 + a_1 x + a_2 x^2 + a_3 x^3 + a_4x^4 \dots)'\\
     &= a_1 + 2a_2 x + 3a_3 x^2 + 4a_4x^3 \dots
-    \end{align}
+    \end{align*}
 $$
 
 Then add our condition:
 $$
-    \begin{align}
+    \begin{align*}
     \operatorname{f}'(0) &= \operatorname{p}'(0) \\
     &=a_1 + 2a_2 0 + 3a_3 0^2 + 4a_40^3 + \dots \\
     &= a_1
-    \end{align}
+    \end{align*}
 $$
 
 As before, we are only left with one non-zero term: $a_1 = \operatorname{f}'(0)$.
@@ -95,22 +95,22 @@ As before, we are only left with one non-zero term: $a_1 = \operatorname{f}'(0)$
 We will do one last step before the general version. Do a second derivative, that is derive the first derivative again.
 
 $$
-    \begin{align}
+    \begin{align*}
     \operatorname{p}''(x) &=  ( \operatorname{p}'(x))'\\
     &= (a_1 + 2a_2 x + 3a_3 x^2 + 4a_4x^3 \dots)'\\
     &= 2a_2 + 6a_3 x + 12a_4x^2 \dots
-    \end{align}
+    \end{align*}
 $$
 
 The next step is basically the same as before, but has a slight difference:
 
 $$
-    \begin{align}
+    \begin{align*}
     \operatorname{f}''(0) &= \operatorname{p}''(0) \\
     &=2a_2 + 6a_3 0 + 12a_4 0^2 \dots \\
     &= 2a_2 \\
     \frac{\operatorname{f}''(0)}{2} &= a_2
-    \end{align}
+    \end{align*}
 $$
 
 This time, we have a factor of $\frac{1}{2}$!
@@ -125,12 +125,12 @@ It will be after differentiation $n$ times, such that $x^n$ becomes $x^0 = 1$.
 What kind of factor will that give us?
 
 $$
-    \begin{align}
+    \begin{align*}
         (x^n)' &= nx^{n-1} \\
         (nx^{n-1})' &= (n-1)nx^{n-2} \\
         ((n-1)nx^{n-2})' &= (n-2)(n-1)nx^{n-3}\\
         \dots &
-    \end{align}
+    \end{align*}
 $$
 
 From this you might already guess the pattern. 
@@ -155,11 +155,11 @@ To find the coefficient, we just have to divide by the factor in front of it!
 With that we can actually write down the polynomial that agrees with our given function in all derivatives at $x=0$:
 
 $$
-    \begin{align}
+    \begin{align*}
 
     \operatorname{p}(x) &= \operatorname{f}(0) + \operatorname{f}'(0)x + \frac{\operatorname{f}''(0)}{2}x^2+ \frac{\operatorname{f}'''(0)}{6}x^3 + \dots \\
     &= \frac{\operatorname{f}^{(0)}(0)}{0!}x^0 + \frac{\operatorname{f}^{(1)}(0)}{1!}x^1 + \frac{\operatorname{f}^{(2)}(0)}{2!}x^2 + \frac{\operatorname{f}^{(3)}(0)}{3!}x^3 + \dots
-    \end{align}
+    \end{align*}
 
 $$
 
