@@ -9,6 +9,9 @@ language: en
 
 narrator: US English Female
 
+script: https://cdn.plot.ly/plotly-2.12.1.min.js
+        https://cdn.rawgit.com/davidedc/Algebrite/master/dist/algebrite.bundle-for-browser.js
+
 comment:  A short introduction for Taylor Series
 -->
 
@@ -72,6 +75,104 @@ $$
 All the terms with $x$ vanish at $0$! This leaves only the first coefficient.
 And with that, we know that we should choose $a_0 = \operatorname{f}(0)$.
 
+Let's look at a function, say $e^x$. The value at $0$ is $1$, so we have a horizontal line at $y=1$, which is the polynomial with degree zero: $\operatorname{p}(x) = 1$:
+
+<div id="id_0" style="width:100%;height:50%;"></div>
+
+<script>
+
+let expr = Algebrite.run(`exp(x)`);
+
+const k = 1;
+
+let derivatives = [expr];
+for (let i = 1; i < k; i++) {
+    derivatives.push(Algebrite.run(`d(${derivatives[i - 1]},x)`));
+}
+
+let taylor = [];
+
+for (let i = 0; i < k; i++) {
+    const last_expr = i > 0 ? `+ (${taylor[i - 1]})` : "";
+    taylor.push(Algebrite.run(`eval(${derivatives[i]},x,0)/(${i}!) * x^${i} ${last_expr}`))
+}
+let dexpr = Algebrite.run(`d(${expr},x)`);
+
+const div = document.getElementById('id_0');
+
+const xmin = 0;
+const xmax = 4;
+const xdelta = xmax - xmin;
+const n = 1000;
+
+const xs = [];
+for (let i = 0; i < n; i++) {
+    xs.push(i / (n - 1) * xdelta);
+}
+let data = [];
+
+// base function
+const ys = [];
+let ymin = Infinity;
+let ymax = -Infinity;
+for (let i = 0; i < n; i++) {
+    const y = parseFloat(Algebrite.run(`eval(${expr},x,${xs[i]})`));
+    ymin = Math.min(ymin, y);
+    ymax = Math.max(ymax, y);
+    ys.push(y);
+}
+const ycenter = (ymax + ymin) * 0.5;
+const yrad = (ymax - ymin) * 0.5;
+
+
+data.push(
+    {
+        x: xs,
+        y: ys,
+        mode: 'lines',
+        name: expr,
+        visible: true
+
+    }
+);
+
+for (let j = 0; j < k; j++) {
+    const yis = [];
+
+    for (let i = 0; i < n; i++) {
+        const y = parseFloat(Algebrite.run(`eval(${taylor[j]},x,${xs[i]})`));
+        yis.push(y);
+    }
+    data.push(
+        {
+            x: xs,
+            y: yis,
+            mode: 'lines',
+            name: `Taylor Degree: ${j}`,
+            visible: true
+        }
+    );
+}
+
+let layout = {
+    title: 'Approximation of a e^x with a Taylor polynomial of degree 0',
+    xaxis: {
+        title: 'x',
+
+    },
+    yaxis: {
+
+        title: 'y',
+        autorange: false,
+        range: [ycenter - 2 * yrad, ycenter + 2 * yrad]
+    },
+
+};
+Plotly.newPlot(div, data, layout);
+
+"LIA: stop"
+</script>
+
 Let's go further. Let the first derivatives agree as well. First let's compute the first derivative of $\operatorname{p}$.
 
 $$
@@ -91,6 +192,104 @@ $$
 $$
 
 As before, we are only left with one non-zero term: $a_1 = \operatorname{f}'(0)$.
+
+We can look at the previous example and note the nice property, that $(e^x)' = e^x$. So we have $a_1 = e^0 = 1$. And with that a polynomial of degree $1$ with $\operatorname{p}(x) = 1 + x$
+
+<div id="id_1" style="width:100%;height:50%;"></div>
+
+<script>
+
+let expr = Algebrite.run(`exp(x)`);
+
+const k = 2;
+
+let derivatives = [expr];
+for (let i = 1; i < k; i++) {
+    derivatives.push(Algebrite.run(`d(${derivatives[i - 1]},x)`));
+}
+
+let taylor = [];
+
+for (let i = 0; i < k; i++) {
+    const last_expr = i > 0 ? `+ (${taylor[i - 1]})` : "";
+    taylor.push(Algebrite.run(`eval(${derivatives[i]},x,0)/(${i}!) * x^${i} ${last_expr}`))
+}
+let dexpr = Algebrite.run(`d(${expr},x)`);
+
+const div = document.getElementById('id_1');
+
+const xmin = 0;
+const xmax = 4;
+const xdelta = xmax - xmin;
+const n = 1000;
+
+const xs = [];
+for (let i = 0; i < n; i++) {
+    xs.push(i / (n - 1) * xdelta);
+}
+let data = [];
+
+// base function
+const ys = [];
+let ymin = Infinity;
+let ymax = -Infinity;
+for (let i = 0; i < n; i++) {
+    const y = parseFloat(Algebrite.run(`eval(${expr},x,${xs[i]})`));
+    ymin = Math.min(ymin, y);
+    ymax = Math.max(ymax, y);
+    ys.push(y);
+}
+const ycenter = (ymax + ymin) * 0.5;
+const yrad = (ymax - ymin) * 0.5;
+
+
+data.push(
+    {
+        x: xs,
+        y: ys,
+        mode: 'lines',
+        name: expr,
+        visible: true
+
+    }
+);
+
+for (let j = 0; j < k; j++) {
+    const yis = [];
+
+    for (let i = 0; i < n; i++) {
+        const y = parseFloat(Algebrite.run(`eval(${taylor[j]},x,${xs[i]})`));
+        yis.push(y);
+    }
+    data.push(
+        {
+            x: xs,
+            y: yis,
+            mode: 'lines',
+            name: `Taylor Degree: ${j}`,
+            visible: true
+        }
+    );
+}
+
+let layout = {
+    title: 'Approximation of a e^x with a Taylor polynomial of degree 1',
+    xaxis: {
+        title: 'x',
+
+    },
+    yaxis: {
+
+        title: 'y',
+        autorange: false,
+        range: [ycenter - 2 * yrad, ycenter + 2 * yrad]
+    },
+
+};
+Plotly.newPlot(div, data, layout);
+
+"LIA: stop"
+</script>
 
 We will do one last step before the general version. Do a second derivative, that is derive the first derivative again.
 
@@ -114,6 +313,107 @@ $$
 $$
 
 This time, we have a factor of $\frac{1}{2}$!
+
+Continuing with $e^x$ and that it stays the same under differentiation, we have $a_2 = \frac{e^0}{2} = \frac{1}{2}$. This gives us the quadratic polynomial $\operatorname{p}(x) = 1 + x + \frac{x^2}{2}$.
+
+<div id="id_2" style="width:100%;height:50%;"></div>
+
+<script>
+
+let expr = Algebrite.run(`exp(x)`);
+
+const k = 3;
+
+let derivatives = [expr];
+for (let i = 1; i < k; i++) {
+    derivatives.push(Algebrite.run(`d(${derivatives[i - 1]},x)`));
+}
+
+let taylor = [];
+
+for (let i = 0; i < k; i++) {
+    const last_expr = i > 0 ? `+ (${taylor[i - 1]})` : "";
+    taylor.push(Algebrite.run(`eval(${derivatives[i]},x,0)/(${i}!) * x^${i} ${last_expr}`))
+}
+let dexpr = Algebrite.run(`d(${expr},x)`);
+
+const div = document.getElementById('id_2');
+
+const xmin = 0;
+const xmax = 4;
+const xdelta = xmax - xmin;
+const n = 1000;
+
+const xs = [];
+for (let i = 0; i < n; i++) {
+    xs.push(i / (n - 1) * xdelta);
+}
+let data = [];
+
+// base function
+const ys = [];
+let ymin = Infinity;
+let ymax = -Infinity;
+for (let i = 0; i < n; i++) {
+    const y = parseFloat(Algebrite.run(`eval(${expr},x,${xs[i]})`));
+    ymin = Math.min(ymin, y);
+    ymax = Math.max(ymax, y);
+    ys.push(y);
+}
+const ycenter = (ymax + ymin) * 0.5;
+const yrad = (ymax - ymin) * 0.5;
+
+
+data.push(
+    {
+        x: xs,
+        y: ys,
+        mode: 'lines',
+        name: expr,
+        visible: true
+
+    }
+);
+
+for (let j = 0; j < k; j++) {
+    const yis = [];
+
+    for (let i = 0; i < n; i++) {
+        const y = parseFloat(Algebrite.run(`eval(${taylor[j]},x,${xs[i]})`));
+        yis.push(y);
+    }
+    data.push(
+        {
+            x: xs,
+            y: yis,
+            mode: 'lines',
+            name: `Taylor Degree: ${j}`,
+            visible: true
+        }
+    );
+}
+
+let layout = {
+    title: 'Approximation of a e^x with a Taylor polynomial of degree 2',
+    xaxis: {
+        title: 'x',
+
+    },
+    yaxis: {
+
+        title: 'y',
+        autorange: false,
+        range: [ycenter - 2 * yrad, ycenter + 2 * yrad]
+    },
+
+};
+Plotly.newPlot(div, data, layout);
+
+"LIA: stop"
+</script>
+
+As you can see, the starts to look more like the actual function!
+
 If we do the same thing for the third derivative, you can most likely see,
 that the next factor will be $\frac{1}{6}$, since $6$ is the factor added from the repeated differentiation.
 
@@ -182,4 +482,152 @@ While that might look scary at first, I hope you have seen what it means and tha
 
 This is more or less the formula you will find in a textbook, although there the more general form, where you don't need to start at $x=0$ is used, the idea is exactly the same though.
 
-Hopefully this was helpful in understanding Taylor series!
+You can type in any function that you like in the following little input box using standard math notation. If you then click on the small execute symbol below, you can scroll through approximations with increasing numbers of terms. If you feel more adventurous, you can open the second entry box to change parameters of the calculations.
+
+```
+sin(x)
+```
+```javascript -Config.js
+// The number of terms in the approximation, will be at least 1
+// For very high values, this might take a bit to compute
+let k = 11;
+// The minimum x coordinate of the computed region
+const xmin = 0;
+// The maximum x coordinate of the computed region
+const xmax = 2.0*Math.PI;
+```
+<script>
+
+@input(1)
+
+
+// The number of points to be sampled, 
+const n = 1000;
+
+k = Math.max(1,k);
+let expr = Algebrite.run(`@'input(0)`);
+
+
+let derivatives = [expr];
+for (let i = 1; i < k; i++) {
+    derivatives.push(Algebrite.run(`d(${derivatives[i - 1]},x)`));
+}
+
+let taylor = [];
+
+for (let i = 0; i < k; i++) {
+    const last_expr = i > 0 ? `+ (${taylor[i - 1]})` : "";
+    taylor.push(Algebrite.run(`eval(${derivatives[i]},x,0)/(${i}!) * x^${i} ${last_expr}`))
+}
+let dexpr = Algebrite.run(`d(${expr},x)`);
+
+const div = document.getElementById('full_id');
+
+
+const xdelta = xmax - xmin;
+
+const xs = [];
+for (let i = 0; i < n; i++) {
+    xs.push(i / (n - 1) * xdelta);
+}
+
+let data = [];
+
+// base function
+const ys = [];
+let ymin = Infinity;
+let ymax = -Infinity;
+for (let i = 0; i < n; i++) {
+    const y = parseFloat(Algebrite.run(`eval(${expr},x,${xs[i]})`));
+    ymin = Math.min(ymin, y);
+    ymax = Math.max(ymax, y);
+    ys.push(y);
+}
+const ycenter = (ymax + ymin) * 0.5;
+const yrad = (ymax - ymin) * 0.5;
+
+
+data.push(
+    {
+        x: xs,
+        y: ys,
+        mode: 'lines',
+        name: expr,
+        visible: true
+
+    }
+);
+
+for (let j = 0; j < k; j++) {
+    const yis = [];
+
+    for (let i = 0; i < n; i++) {
+        const y = parseFloat(Algebrite.run(`eval(${taylor[j]},x,${xs[i]})`));
+        yis.push(y);
+    }
+    data.push(
+        {
+            x: xs,
+            y: yis,
+            mode: 'lines',
+            name: `Taylor Degree: ${j}`,
+           visible: (j===0)
+
+        }
+    );
+}
+
+const steps = [];
+for (let j = 0; j < k; j++) {
+    const visibilities = [true];
+    for (let i = 0; i < k; i++) {
+        visibilities.push(false);
+    }
+
+    visibilities[j + 1] = true;
+
+    steps.push({
+
+        label: j,
+
+        method: 'restyle',
+
+        args: ['visible', visibilities]
+
+    });
+}
+let layout = {
+    title: 'Approximation of a function with a Taylor polynomial',
+    xaxis: {
+        title: 'x',
+
+    },
+    yaxis: {
+
+        title: 'y',
+        autorange: false,
+        range: [ycenter - 2 * yrad, ycenter + 2 * yrad]
+    },
+    sliders: [{
+
+        pad: { t: 50 },
+        active:0,
+        currentvalue: {
+            xanchor: 'left',
+            prefix: 'Maximum degree: ',
+
+            font: {
+                color: '#888',
+                size: 20
+            }
+
+        },
+        steps
+    }]
+
+};
+Plotly.newPlot(div, data, layout);
+"LIA: stop"
+</script>
+
+<div id="full_id" style="width:100%;height:50%;"></div>
