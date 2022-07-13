@@ -5,9 +5,7 @@ language: en
 
 version:  1.0.0
 
-script:     https://sibaku.github.io/importance_sampling/three.min.js
-            https://sibaku.github.io/importance_sampling/OrbitControls.js
-            https://sibaku.github.io/importance_sampling/util.js
+script: lib/plotly-2.12.1.min.js
 
 @onload
 // onload scope doesn't seem to put stuff in the global scope...
