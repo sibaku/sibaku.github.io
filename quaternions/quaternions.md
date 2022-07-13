@@ -8,11 +8,14 @@ version:  0.0.1
 language: en
 
 
-script: quaternions/src/two.min.js
-        quaternions/src/three.js
+script: https://sibaku.github.io/quaternions/src/two.min.js
+        https://sibaku.github.io/quaternions/src/three.js
 
 comment:  A short introduction to rotation quaternions
 
+attribute: [Sibaku github.io](https://sibaku.github.io/)
+    by [sibaku](https://twitter.com/sibaku1)
+    is licensed under [MIT](https://opensource.org/licenses/MIT)
 
 @mutate.remover
 <script>
