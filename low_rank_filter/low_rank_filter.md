@@ -8,11 +8,10 @@ version:  0.0.1
 language: en
 
 script: 
-        ./src/config.js
+        https://sibaku.github.io/low_rank_filter/src/config.js
         https://cdn.plot.ly/plotly-2.12.1.min.js
-        ./lib/jsmatrix_no_module.js
-        https://cdn.jsdelivr.net/npm/chart.js
-        ./src/main.js
+        https://sibaku.github.io/low_rank_filter/lib/jsmatrix_no_module.js
+        https://sibaku.github.io/low_rank_filter/src/main.js
 
 comment: A small showcase of low-rank filter approximations
 
@@ -90,7 +89,7 @@ In the previous section, the mathematical definition was presented. A more visua
   - Multiply each filter element with the pixel value which it overlays
   - Sum up all the products
 
-![Visual convolution for one entry](img/convolution_2d.png)
+![Visual convolution for one entry](https://sibaku.github.io/low_rank_filter/img/convolution_2d.png)
 
 In the image, the application of a filter to one pixel is shown.
 
