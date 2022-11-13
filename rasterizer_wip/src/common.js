@@ -52,6 +52,9 @@ class Image {
     }
 
     at(x, y) {
+        if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
+            throw `Trying to access element at (${x},${y}) in image with size (${this.w}, ${this.h})`;
+        }
         const v = v32.zeros(this.comp);
         const idx = (x + this.w * y) * this.comp;
         for (let i = 0; i < this.comp; i++) {

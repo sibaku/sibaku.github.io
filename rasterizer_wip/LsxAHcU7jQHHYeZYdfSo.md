@@ -7,9 +7,9 @@ version:  0.0.1
 
 language: en
 
-script: https://sibaku.github.io/rasterizer_wip/lib/jsmatrix_no_module.js
-        https://sibaku.github.io/rasterizer_wip/src/defines.js
-        https://sibaku.github.io/rasterizer_wip/src/common.js
+script: https://sibaku.github.io/rasterizer/lib/jsmatrix_no_module.js
+        https://sibaku.github.io/rasterizer/src/defines.js
+        https://sibaku.github.io/rasterizer/src/common.js
 
 comment:  Basic rasterizer
 
@@ -86,7 +86,7 @@ If you know all of those, you can skip the section, as it will just be a recap w
 
 ### Trigonometry
 <!--
-script: https://sibaku.github.io/rasterizer_wip/lib/two.min.js
+script: https://sibaku.github.io/rasterizer/lib/two.min.js
         https://cdn.plot.ly/plotly-2.12.1.min.js
 -->
 
@@ -772,7 +772,7 @@ Now, with all the preambles out of the way, let's get to the actual topic: How c
 ## 00: Getting started - Drawing points
 
 To get things started we will start by playing a game and putting points on a canvas. 
-The game is a game of chance and might not seem like much, when you see the description, but you will be surprised what can arise from something so simple!
+It is a game of chance and might not seem like much when you see the description, but you will be surprised what can arise from something so simple!
 
 ### Getting lost in a triangle
 
@@ -796,7 +796,8 @@ The picture will appear below the script.
 
 What do you think will be the result?
 
-To avoid spoiling you, the solution with code can be seen in the next section.
+You can scroll below to the next code block to run it and see if your result looks similar!
+To avoid code spoilers, the final code is hidden, but you can just click on it to reveal it.
 
 <!-- data-readOnly="false" data-showGutter="false" -->
 ``` js
@@ -829,7 +830,7 @@ for(let i = 0; i < n; i++)
 }
 ```
 <script>
-    const container = document.getElementById('draw_points_1');
+    const container = document.getElementById('draw_points_0');
     container.innerHTML = "";
     const canvas = document.createElement('canvas');
     
@@ -843,17 +844,14 @@ for(let i = 0; i < n; i++)
     "LIA: stop"
 </script>
 
-<div id="draw_points_1"></div>
-@mutate.remover(draw_points_1)
+<div id="draw_points_0"></div>
+@mutate.remover(draw_points_0)
 
-### Solution
-
-If you run the following script, you can see the solution to the previous section.
-
+Below you can see the solution.
 You can adjust parameters or run it multiple times to see how the randomness affects the result.
 
 <!-- data-readOnly="false" data-showGutter="false" -->
-``` js
+``` js -solution.js
     
 const img = Image.zeroUI8C(300,300,4);
 
@@ -890,7 +888,7 @@ for(let i = 0; i < n; i++)
 }
 ```
 <script>
-    const container = document.getElementById('sierpinski_points_1');
+    const container = document.getElementById('draw_points_1');
     container.innerHTML = "";
     const canvas = document.createElement('canvas');
     
@@ -904,8 +902,8 @@ for(let i = 0; i < n; i++)
     "LIA: stop"
 </script>
 
-<div id="sierpinski_points_1"></div>
-@mutate.remover(sierpinski_points_1)
+<div id="draw_points_1"></div>
+@mutate.remover(draw_points_1)
 
 You are seeing the famous Sierpinski triangle! 
 When plotted, this looks like four triangles cut out of a larger one... repeatedly.
@@ -914,13 +912,122 @@ Sure, the exact point that you see are slightly different, but the overall shape
 And if you use enough points, you won't be able to see a difference anymore!
 
 ## 01: Drawing a line
+
+After the introduction of putting some points on the canvas, we continue with the next primitive: Lines.
+
+Lines are a basic building block of displaying information, so they might be drawn a lot.
+That is why we want to implement this operation very efficiently.
+With this course using JavaScript and trying to use easy to read code, we will only scratch the surface, but still get to the basic idea underlying many efficient line drawing algorithms.
+
+
+### Drawing some lines
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/01_drawing_lines/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/01_drawing_lines/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
+
+We start our journey with drawing a subset of all possible lines, as that makes the initial implementation a lot easier. We also use a very basic implementation, as it is easy to understand, but more advanced versions work very similar, so if you know this one, there will be a smaller barrier of understanding.
+
+We start by characterizing a line as a function in 2D. For any given $x$ coordinate, we compute $y$ as:
+
+$$
+\begin{align*}
+    y &= mx + b
+    &= \operatorname{f}(x)
+\end{align*}
+$$
+
+$b$ is the $y$-intercept, that is where the line intersects the $y$-axis. 
+$m$ is the slope, how much the $y$ coordinate changes with respect to a change in $x$: $m=\frac{\Delta y}{\Delta x}$
+
+When we have two points $\mathbf{a}$ and $\mathbf{b}$ the change in $x$ and $y$ is just the vector from $\mathbf{a}$ to $\mathbf{b}$.
+Then we can find $m$ as:
+
+$$
+\begin{align*}
+m &= \frac{\Delta y}{\Delta x}\\
+&= \frac{b_y - a_y}{b_x - a_x}
+\end{align*}
+$$
+
+From this, you can immediately see one issue. 
+
+What lines are impossible to draw with that definition?
+
+- [( )] Horizontal
+- [(X)] Vertical
+***********************************************************************
+
+For vertical lines, the $x$ coordinate does not change. 
+Thus the denominator will become $b_x - a_x = 0$.
+As we can't divide by zero, this line can't be defined using a slope.
+This will be handled later.
+
+***********************************************************************
+
+We already know two points on the line, $\mathbf{a}$ and $\mathbf{b}$.
+
+The basic idea, that is found in many more efficient variants of the following algorithm is simply this: 
+If we move a unit (a pixel) to the right ($x$-direction), how would $y$ change?
+
+$$
+\begin{align*}
+\operatorname{f}(x+1) &= m(x +1) + b \\
+&= mx + m + b \\
+&= mx + b + m \\
+&= \operatorname{f}(x) + m
+\end{align*}
+$$
+
+So if we know the $y$ value at one point, we can compute the one right next to it by a simple addition.
+
+Which brings us to our basic algorithm:
+
+1. Compute $m = \frac{b_y - a_y}{b_x - a_x}$
+2. Start at the first point ($x$,$y$)
+3. Move from $a_x$ to $b_x$ to the right (increment $x$)
+
+    1. Put a pixel where you currently are ($x$,$y$). This needs to be converted to integer values
+    2. Increase $y$ by $m$
+
+You may already see some issues, but let's implement it first below and see the result!
+
+Below you can see the line drawing function with some basic setup.
+In there you can implement the above procedure.
+You can change the input scene if you like by changing the code in the *scene.js* box.
+Currently, a number of lines are drawn in a circle, although this might not fully work yet...
 
 <!-- data-readOnly="false" data-showGutter="false" -->
 ``` js
+class RasterizerTutorial extends Rasterizer {
+    rasterize_line(pipeline, p0, p1) {
+
+        // use integer coordinates.
+        // we could also do that later with this algorithm...
+        let x0 = Math.floor(p0.at(0));
+        let y0 = Math.floor(p0.at(1));
+
+        let x1 = Math.floor(p1.at(0));
+        let y1 = Math.floor(p1.at(1));
+
+        let px = vec2(x0, y0);
+
+        // the final fragment coordinate
+        const frag_coord = vec4(px.at(0), px.at(1), 0.0, 1.0);
+        // run  fragment shader with data
+
+        // buffer for colors
+        const output_colors = {};
+
+        output_colors[0] = vec4(1, 0, 0, 1);
+
+        this.write_fragment(pipeline, frag_coord, output_colors);
+
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
 
 const img = Image.zeroF32(300, 300, 4);
 
@@ -932,13 +1039,13 @@ const geoms = [];
 
     const vertices = [];
 
-    const num = 100;
+    const num = 20;
     const r = 0.35 * Math.min(img.w,img.h);
     
     for(let i = 0; i < num; i++)
     {
-        const x = r*Math.cos(Math.PI*2 * i/ (num-1));
-        const y = r*Math.sin(Math.PI*2 * i/ (num-1));
+        const x = r*Math.cos(Math.PI*2 * i/ num);
+        const y = r*Math.sin(Math.PI*2 * i/ num);
 
         vertices.push(vec4(img.w / 2, img.h/2,0.0,1.0));
         vertices.push(vec4(img.w / 2 + x,img.h/2+y,0.0,1.0));
@@ -967,7 +1074,7 @@ pipeline.framebuffer = fb;
 
 ```
 <script>
-    const container = document.getElementById('draw_lines_container_0');
+    const container = document.getElementById('draw_some_lines_container_0');
     container.innerHTML = "";
     const canvas = document.createElement('canvas');
     
@@ -979,9 +1086,10 @@ pipeline.framebuffer = fb;
     const Pipeline = r01.Pipeline;
     const Framebuffer = r01.Framebuffer;
 
-    @input0
+    @input(0)
+    @input(1)
 
-    const raster = new Rasterizer();
+    const raster = new RasterizerTutorial();
 
     const render = () => {
         img.fill(vec4(0,0,0,1));
@@ -1000,13 +1108,672 @@ pipeline.framebuffer = fb;
     "LIA: stop"
 </script>
 
-<div id="draw_lines_container_0"></div>
-@mutate.remover(draw_lines_container_0)
+<div id="draw_some_lines_container_0"></div>
+@mutate.remover(draw_some_lines_container_0)
+
+The following hidden code shows the solution:
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -solution.js
+class RasterizerTutorial extends Rasterizer
+{
+    rasterize_line(pipeline, p0, p1)
+    {
+      
+            // use integer coordinates
+            let x0 = Math.floor(p0.at(0));
+            let y0 = Math.floor(p0.at(1));
+
+            let x1 = Math.floor(p1.at(0));
+            let y1 = Math.floor(p1.at(1));
+
+            // compute the change in x and y
+            const dx = x1 - x0;
+            const dy = y1 - y0;
+
+            // starting y value
+            let y = y0;
+
+            // slope
+            let m = dy / dx;
+     
+            for (let x = x0; x <= x1; x++) {
+                let px = vec2(x, y);
+
+                // move px to pixel center
+                add(px, vec2(0.5, 0.5), px);
+
+                // the final fragment coordinate
+                const frag_coord = vec4(px.at(0), px.at(1), 0.0, 1.0);
+                // run  fragment shader with data
+
+                // buffer for colors
+                const output_colors = {};
+
+                output_colors[0] = vec4(1, 0, 0, 1);
+
+                this.write_fragment(pipeline, frag_coord, output_colors);
+
+                // update y value with slope
+                y += m;
+
+            }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+
+const img = Image.zeroF32(300, 300, 4);
+
+const geoms = [];
+
+{
+
+    const attributes = {};
+
+    const vertices = [];
+
+    const num = 20;
+    const r = 0.35 * Math.min(img.w,img.h);
+    
+    for(let i = 0; i < num; i++)
+    {
+        const x = r*Math.cos(Math.PI*2 * i/ num);
+        const y = r*Math.sin(Math.PI*2 * i/ num);
+
+        vertices.push(vec4(img.w / 2, img.h/2,0.0,1.0));
+        vertices.push(vec4(img.w / 2 + x,img.h/2+y,0.0,1.0));
+    }
+
+
+    attributes[Attribute.VERTEX] = vertices;
+
+    const geom = {
+        attributes,
+        topology: Topology.LINES
+    };
+
+    geoms.push(geom);
+}
+
+const pipeline = new Pipeline();
+pipeline.viewport.w = img.w;
+pipeline.viewport.h = img.h;
+
+const fb = Framebuffer.new();
+fb.color_buffers[0] = img;
+
+pipeline.framebuffer = fb;
+
+
+```
+<script>
+    const container = document.getElementById('draw_all_lines_container_1');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+     // Import
+    const Rasterizer = r01.Rasterizer;
+    const Pipeline = r01.Pipeline;
+    const Framebuffer = r01.Framebuffer;
+
+    @input(0)
+    @input(1)
+
+    const raster = new RasterizerTutorial();
+
+    const render = () => {
+        img.fill(vec4(0,0,0,1));
+
+        for(let i = 0; i < geoms.length;i++)
+        {
+            raster.draw(pipeline,geoms[i]);
+        }
+
+        imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
+
+    };
+
+    render();
+
+    "LIA: stop"
+</script>
+
+<div id="draw_all_lines_container_1"></div>
+@mutate.remover(draw_all_lines_container_1)
+
+
+You should be able to see some red lines in the right half of a circle. 
+The left half is missing.
+If you look closely, some of the lines have gaps, which doesn't look that nice.
+
+In the next section, we will fix these issues, but feel free to think about what is causing them and how to solve this!
+
+### Drawing all lines
+<!--
+script: https://sibaku.github.io/rasterizer/src/stages/01_drawing_lines/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+-->
+
+In the last section, we had a problem with only lines going from left to right being drawn, some lines having gaps and vertical lines not even being being defined.
+
+We will start with the first issue, as it is the easiest to solve.
+
+We basically just think about how the line looks on the screen.
+Does it look different, if we go from $\mathbf{b}$ to $\mathbf{a}$ instead of the original order of $\mathbf{a}$ to $\mathbf{b}$?
+
+This will of course still be the same line, if we draw it!
+So we can just switch $$\mathbf{a}$ and $\mathbf{a}$, if the line goes from right to left!
+
+Try it out below!
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js
+class RasterizerTutorial extends Rasterizer
+{
+    rasterize_line(pipeline, p0, p1)
+    {
+      
+            // use integer coordinates
+            let x0 = Math.floor(p0.at(0));
+            let y0 = Math.floor(p0.at(1));
+
+            let x1 = Math.floor(p1.at(0));
+            let y1 = Math.floor(p1.at(1));
+
+            // compute the change in x and y
+            const dx = x1 - x0;
+            const dy = y1 - y0;
+
+            // starting y value
+            let y = y0;
+
+            // slope
+            let m = dy / dx;
+     
+            for (let x = x0; x <= x1; x++) {
+                let px = vec2(x, y);
+
+                // move px to pixel center
+                add(px, vec2(0.5, 0.5), px);
+
+                // the final fragment coordinate
+                const frag_coord = vec4(px.at(0), px.at(1), 0.0, 1.0);
+                // run  fragment shader with data
+
+                // buffer for colors
+                const output_colors = {};
+
+                output_colors[0] = vec4(1, 0, 0, 1);
+
+                this.write_fragment(pipeline, frag_coord, output_colors);
+
+                // update y value with slope
+                y += m;
+
+            }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+
+const img = Image.zeroF32(300, 300, 4);
+
+const geoms = [];
+
+{
+
+    const attributes = {};
+
+    const vertices = [];
+
+    const num = 20;
+    const r = 0.35 * Math.min(img.w,img.h);
+    
+    for(let i = 0; i < num; i++)
+    {
+        const x = r*Math.cos(Math.PI*2 * i/ num);
+        const y = r*Math.sin(Math.PI*2 * i/ num);
+
+        vertices.push(vec4(img.w / 2, img.h/2,0.0,1.0));
+        vertices.push(vec4(img.w / 2 + x,img.h/2+y,0.0,1.0));
+    }
+
+
+    attributes[Attribute.VERTEX] = vertices;
+
+    const geom = {
+        attributes,
+        topology: Topology.LINES
+    };
+
+    geoms.push(geom);
+}
+
+const pipeline = new Pipeline();
+pipeline.viewport.w = img.w;
+pipeline.viewport.h = img.h;
+
+const fb = Framebuffer.new();
+fb.color_buffers[0] = img;
+
+pipeline.framebuffer = fb;
+
+
+```
+<script>
+    const container = document.getElementById('draw_all_lines_container_0');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+     // Import
+    const Rasterizer = r01.Rasterizer;
+    const Pipeline = r01.Pipeline;
+    const Framebuffer = r01.Framebuffer;
+
+    @input(0)
+    @input(1)
+
+    const raster = new RasterizerTutorial();
+
+    const render = () => {
+        img.fill(vec4(0,0,0,1));
+
+        for(let i = 0; i < geoms.length;i++)
+        {
+            raster.draw(pipeline,geoms[i]);
+        }
+
+        imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
+
+    };
+
+    render();
+
+    "LIA: stop"
+</script>
+
+<div id="draw_all_lines_container_0"></div>
+@mutate.remover(draw_all_lines_container_0)
+
+Your solution should now show lines on both sides of the middle.
+You can see the result when you run the next code block without changing it.
+
+Now that we have solved the first issue, we can solve both outstanding problems. 
+As all lines going left are now flipped to the right, we only have to think about the right side.
+
+Which lines do we still have an issue with?
+
+- [(X)] $|m| > 1$
+- [( )] $b < 0$
+- [( )] $mx \neq y$
+***********************************************************************
+
+The slope $m$ determines how much $y$ changes when we move one $x$-unit to the right.
+If $|m|$ is greater than 1, $y$ will change by more than one (pixel).
+Thus, it happens, that the line "skips" a pixel in the vertical direction.
+
+***********************************************************************
+
+We can solve this issue in a similar way to the left-right flip.
+
+Imagine we draw a line with an angle $\alpha < 45^\circ$ with respect to the $x$-axis.
+Now draw another line with $alpha$, but this time with respect to the $y$-axis.
+
+When you look at them both, those line basically look the same, just mirrored along the diagonal!
+You could also flip over your piece of paper and rotate it, such that the $y$-axis now points in the $x$-direction. Then $x$-will point to the old $y$.
+
+We use this knowledge to swap the $x$ and $y$ coordinates, if $|m|>1$. 
+In matrix terms, this is just like transposing the image.
+$|m|$ will be greater than $1$, when the absolute change in $y$ is greater than the one in $x$.
+
+Using this criterion instead of the value of $m$ also allows us to handle vertical lines!
+If we used $m$, we might encounter a division by zero or some other issues beforehand, depending on our language of choice.
+
+Switching out the $x$ and $y$ coordinates does change how the line would like, in contrast to the left-right flip.
+To counter that, we just have to remember, if we switched and switch back when we specify the pixel coordinate to write to.
+
+Keep in mind to do the left-right switch after the transposition, as the line might go from left to right when looked at from the $y$ direction!
+
+Try it out! Below this codeblock, you can find the (hidden) final code, that you can expand to look at. 
+But you can also run it without looking at it to see the expected result.
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js
+class RasterizerTutorial extends Rasterizer
+{
+    rasterize_line(pipeline, p0, p1)
+    {
+      
+            // use integer coordinates
+            let x0 = Math.floor(p0.at(0));
+            let y0 = Math.floor(p0.at(1));
+
+            let x1 = Math.floor(p1.at(0));
+            let y1 = Math.floor(p1.at(1));
+
+            // going from right to left -> flip first and second point
+            // doesn't actually change the line, so no later inversion needed
+            if (x1 < x0) {
+                [x0, x1] = [x1, x0];
+                [y0, y1] = [y1, y0];
+            }
+
+            // compute the change in x and y
+            const dx = x1 - x0;
+            const dy = y1 - y0;
+
+            // starting y value
+            let y = y0;
+
+            // slope
+            let m = dy / dx;
+     
+            for (let x = x0; x <= x1; x++) {
+                let px = vec2(x, y);
+
+                // move px to pixel center
+                add(px, vec2(0.5, 0.5), px);
+
+                // the final fragment coordinate
+                const frag_coord = vec4(px.at(0), px.at(1), 0.0, 1.0);
+                // run  fragment shader with data
+
+                // buffer for colors
+                const output_colors = {};
+
+                output_colors[0] = vec4(1, 0, 0, 1);
+
+                this.write_fragment(pipeline, frag_coord, output_colors);
+
+                // update y value with slope
+                y += m;
+
+            }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+
+const img = Image.zeroF32(300, 300, 4);
+
+const geoms = [];
+
+{
+
+    const attributes = {};
+
+    const vertices = [];
+
+    const num = 20;
+    const r = 0.35 * Math.min(img.w,img.h);
+    
+    for(let i = 0; i < num; i++)
+    {
+        const x = r*Math.cos(Math.PI*2 * i/ num);
+        const y = r*Math.sin(Math.PI*2 * i/ num);
+
+        vertices.push(vec4(img.w / 2, img.h/2,0.0,1.0));
+        vertices.push(vec4(img.w / 2 + x,img.h/2+y,0.0,1.0));
+    }
+
+
+    attributes[Attribute.VERTEX] = vertices;
+
+    const geom = {
+        attributes,
+        topology: Topology.LINES
+    };
+
+    geoms.push(geom);
+}
+
+const pipeline = new Pipeline();
+pipeline.viewport.w = img.w;
+pipeline.viewport.h = img.h;
+
+const fb = Framebuffer.new();
+fb.color_buffers[0] = img;
+
+pipeline.framebuffer = fb;
+
+
+```
+<script>
+    const container = document.getElementById('draw_all_lines_container_1');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+     // Import
+    const Rasterizer = r01.Rasterizer;
+    const Pipeline = r01.Pipeline;
+    const Framebuffer = r01.Framebuffer;
+
+    @input(0)
+    @input(1)
+
+    const raster = new RasterizerTutorial();
+
+    const render = () => {
+        img.fill(vec4(0,0,0,1));
+
+        for(let i = 0; i < geoms.length;i++)
+        {
+            raster.draw(pipeline,geoms[i]);
+        }
+
+        imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
+
+    };
+
+    render();
+
+    "LIA: stop"
+</script>
+
+<div id="draw_all_lines_container_1"></div>
+@mutate.remover(draw_all_lines_container_1)
+
+
+**The final result:**
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -solution.js
+class RasterizerTutorial extends Rasterizer
+{
+    rasterize_line(pipeline, p0, p1)
+    {
+      
+            // use integer coordinates
+            let x0 = Math.floor(p0.at(0));
+            let y0 = Math.floor(p0.at(1));
+
+            let x1 = Math.floor(p1.at(0));
+            let y1 = Math.floor(p1.at(1));
+
+            // slope > 1 -> flip x and y
+            let transposed = false;
+            if (Math.abs(x1 - x0) < Math.abs(y1 - y0)) {
+                transposed = true;
+                [x0, y0] = [y0, x0];
+                [x1, y1] = [y1, x1];
+            }
+
+            // going from right to left -> flip first and second point
+            // doesn't actually change the line, so no later inversion needed
+            if (x1 < x0) {
+                [x0, x1] = [x1, x0];
+                [y0, y1] = [y1, y0];
+            }
+
+            // compute the change in x and y
+            const dx = x1 - x0;
+            const dy = y1 - y0;
+
+            // starting y value
+            let y = y0;
+
+            // slope
+            let m = dy / dx;
+     
+            for (let x = x0; x <= x1; x++) {
+                let px = vec2(x, y);
+
+                // flip x and y for the actual coordinate if they were flipped before
+                if (transposed) {
+                    px = vec2(y, x);
+                }
+
+
+                // move px to pixel center
+                add(px, vec2(0.5, 0.5), px);
+
+                // the final fragment coordinate
+                const frag_coord = vec4(px.at(0), px.at(1), 0.0, 1.0);
+                // run  fragment shader with data
+
+                // buffer for colors
+                const output_colors = {};
+
+                output_colors[0] = vec4(1, 0, 0, 1);
+
+                this.write_fragment(pipeline, frag_coord, output_colors);
+
+                // update y value with slope
+                y += m;
+
+            }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+
+const img = Image.zeroF32(300, 300, 4);
+
+const geoms = [];
+
+{
+
+    const attributes = {};
+
+    const vertices = [];
+
+    const num = 20;
+    const r = 0.35 * Math.min(img.w,img.h);
+    
+    for(let i = 0; i < num; i++)
+    {
+        const x = r*Math.cos(Math.PI*2 * i/ num);
+        const y = r*Math.sin(Math.PI*2 * i/ num);
+
+        vertices.push(vec4(img.w / 2, img.h/2,0.0,1.0));
+        vertices.push(vec4(img.w / 2 + x,img.h/2+y,0.0,1.0));
+    }
+
+
+    attributes[Attribute.VERTEX] = vertices;
+
+    const geom = {
+        attributes,
+        topology: Topology.LINES
+    };
+
+    geoms.push(geom);
+}
+
+const pipeline = new Pipeline();
+pipeline.viewport.w = img.w;
+pipeline.viewport.h = img.h;
+
+const fb = Framebuffer.new();
+fb.color_buffers[0] = img;
+
+pipeline.framebuffer = fb;
+
+
+```
+<script>
+    const container = document.getElementById('draw_all_lines_container_2');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+     // Import
+    const Rasterizer = r01.Rasterizer;
+    const Pipeline = r01.Pipeline;
+    const Framebuffer = r01.Framebuffer;
+
+    @input(0)
+    @input(1)
+
+    const raster = new RasterizerTutorial();
+
+    const render = () => {
+        img.fill(vec4(0,0,0,1));
+
+        for(let i = 0; i < geoms.length;i++)
+        {
+            raster.draw(pipeline,geoms[i]);
+        }
+
+        imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
+
+    };
+
+    render();
+
+    "LIA: stop"
+</script>
+
+<div id="draw_all_lines_container_2"></div>
+@mutate.remover(draw_all_lines_container_2)
+
+### What else can we do?
+
+With the knowledge of the previous algorithm, which is often called the **Digital Differential Analyzer (DDA) line drawing algorithm**, you basically know a whole bunch of similar ones, that can do more or are a bit smarter.
+We will only mention a few improvements/ideas here (though the first one can be found in the course code...) and encourage you to have a look yourself!
+
+First of all, one thing to notice is that we do a bunch of floating point operations. In JavaScript, this doesn't really matter, as only the *Number* type exist, which is a float.
+Many other languages do have integers, which often are (and were) faster than floats. 
+Even if its just a bit, this matters when you draw a lot of lines and pixels, so these kinds of micro optimizations make sense.
+One of the best known examples of such an optimization is the **Bresenham line drawing algorithm**.
+
+The Bresenham algorithm only considers the first octant (angles $0^\circ$ to $45^\circ$) and moves along $x$.
+At each step it asks: "Is middle of the next pixel above or below the line?". If it is below, $y$ is increased by $1$, otherwise it stays the same.
+The important part is, that by some rearranging and manipulation of terms, the computation of this check can be done completely using integers. 
+Lines with different angles are handled the same way we did and in general the code looks nearly identical to our code, so it shouldn't be hard to implement the Bresenham algorithm.
+
+One issue with our current version and especially Bresenham is, that lines look a bit jaggy and can only lie on integers.
+A way to solve that is anti-aliasing. 
+Ony way would be to just draw in a  higher resolution and downsample.
+This is if course a lot of extra work.
+A different idea is for example to adjust the brightness of our pixel writing depending on how close the line is to the center of a pixel.
+If the line is on it, give it full brightness, if it is far away, let the color fade as well.
+
+This is the basic idea of the anti-aliased line drawing algorithm by **Xiaolin Wu**. 
+It is slightly more complicated, but only by a little and produces anti-aliased lines that don't look as pixelated.
+
+Other algorithms and implementations (parallelism, vectorization,...) exist, with various pros and cons, but our current version (or the Bresenham version) is a reasonably fast and nice implementation!
 
 ## 02: Clipping lines
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/02_clipping_lines/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/02_clipping_lines/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -1027,8 +1794,8 @@ const geoms = [];
     
     for(let i = 0; i < num; i++)
     {
-        const x = r*Math.cos(Math.PI*2 * i/ (num-1));
-        const y = r*Math.sin(Math.PI*2 * i/ (num-1));
+        const x = r*Math.cos(Math.PI*2 * i/ num);
+        const y = r*Math.sin(Math.PI*2 * i/ num);
 
         vertices.push(vec4(img.w / 2, img.h/2,0.0,1.0));
         vertices.push(vec4(img.w / 2 + x,img.h/2+y,0.0,1.0));
@@ -1095,8 +1862,8 @@ pipeline.framebuffer = fb;
 
 ## 03: Draw a triangle
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/03_rasterize_tri/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/03_rasterize_tri/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -1190,8 +1957,8 @@ pipeline.framebuffer = fb;
 
 ## 04: Clip polygons
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/04_poly_clip/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/04_poly_clip/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -1287,8 +2054,8 @@ pipeline.framebuffer = fb;
 
 ## 05: Shaders
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/05_shader/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/05_shader/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -1413,8 +2180,8 @@ script: https://sibaku.github.io/rasterizer_wip/src/stages/05_shader/rasterizer.
 
 ## 06: Interpolate attributes
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/06_attrib_interp/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/06_attrib_interp/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -1441,6 +2208,18 @@ script: https://sibaku.github.io/rasterizer_wip/src/stages/06_attrib_interp/rast
             material : {
                 color : vec4(0.85,0.85,0.85,1),
                 tex : rand_tex,
+            }
+        });
+        geoms.push(renderable);
+    }
+
+     {
+        const geom = create_plane_geometry_xy();
+        const renderable = Renderable.new(geom, {
+            local_transform : transform({pos : vec3(4.0 * img.w / 7.0, img.h / 2.0, 0.0), scale : vec3(img.w / 7.0,img.w / 7.0,img.w / 7.0)}),
+            material : {
+                color : vec4(0.85,0.85,0.85,1),
+                tex : checkerboard,
             }
         });
         geoms.push(renderable);
@@ -1536,8 +2315,8 @@ script: https://sibaku.github.io/rasterizer_wip/src/stages/06_attrib_interp/rast
 
 ## 07: Perspective and depth
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/07_perspective/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/07_perspective/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -1708,8 +2487,8 @@ script: https://sibaku.github.io/rasterizer_wip/src/stages/07_perspective/raster
 
 ## 08: Perspective-corrected interpolation
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/08_persp_interp/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/08_persp_interp/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -1883,8 +2662,8 @@ script: https://sibaku.github.io/rasterizer_wip/src/stages/08_persp_interp/raste
 
 ## 09: Application: Turn on the light
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/09_lighting/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/09_lighting/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -2079,8 +2858,8 @@ script: https://sibaku.github.io/rasterizer_wip/src/stages/09_lighting/rasterize
 
 ## 10: Blending
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/10_blending/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/10_blending/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -2327,8 +3106,8 @@ script: https://sibaku.github.io/rasterizer_wip/src/stages/10_blending/rasterize
 
 ## 11: Culling
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/11_culling/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/11_culling/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -2587,7 +3366,7 @@ script: https://sibaku.github.io/rasterizer_wip/src/stages/11_culling/rasterizer
 
 # Test
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/test.js
+script: https://sibaku.github.io/rasterizer/src/test.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -2610,8 +3389,8 @@ class B extends A
 
 # Final
 <!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/final/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer/src/stages/final/rasterizer.js
+        https://sibaku.github.io/rasterizer/src/geometry_utils.js
 -->
 
 Test
@@ -2679,8 +3458,8 @@ Test put image data
         const r = 0.75;
         for(let i = 0; i < num; i++)
         {
-            const x = r*Math.cos(Math.PI*2 * i/ (num-1));
-            const y = r*Math.sin(Math.PI*2 * i/ (num-1));
+            const x = r*Math.cos(Math.PI*2 * i/ num);
+            const y = r*Math.sin(Math.PI*2 * i/ num);
 
             vertices.push(vec4(0.0,0.0,0.0,1.0));
             vertices.push(vec4(x,y,0.0,1.0));
