@@ -7,9 +7,9 @@ version:  0.0.1
 
 language: en
 
-script: http://localhost:3000/rasterizer/lib/jsmatrix_no_module.js
-        http://localhost:3000/rasterizer/src/defines.js
-        http://localhost:3000/rasterizer/src/common.js
+script: https://sibaku.github.io/rasterizer_wip/lib/jsmatrix_no_module.js
+        https://sibaku.github.io/rasterizer_wip/src/defines.js
+        https://sibaku.github.io/rasterizer_wip/src/common.js
 
 comment:  Basic rasterizer
 
@@ -86,7 +86,7 @@ If you know all of those, you can skip the section, as it will just be a recap w
 
 ### Trigonometry
 <!--
-script: http://localhost:3000/rasterizer/lib/two.min.js
+script: https://sibaku.github.io/rasterizer_wip/lib/two.min.js
         https://cdn.plot.ly/plotly-2.12.1.min.js
 -->
 
@@ -922,8 +922,8 @@ With this course using JavaScript and trying to use easy to read code, we will o
 
 ### Drawing some lines
 <!--
-script: http://localhost:3000/rasterizer/src/stages/01_drawing_lines/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/01_drawing_lines/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 We start our journey with drawing a subset of all possible lines, as that makes the initial implementation a lot easier. We also use a very basic implementation, as it is easy to understand, but more advanced versions work very similar, so if you know this one, there will be a smaller barrier of understanding.
@@ -1255,8 +1255,8 @@ In the next section, we will fix these issues, but feel free to think about what
 
 ### Drawing all lines
 <!--
-script: http://localhost:3000/rasterizer/src/stages/01_drawing_lines/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/01_drawing_lines/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 In the last section, we had a problem with only lines going from left to right being drawn, some lines having gaps and vertical lines not even being being defined.
@@ -1793,8 +1793,8 @@ We will split up the procedure into two parts:
 
 ### Region codes
 <!--
-script: http://localhost:3000/rasterizer/src/stages/02_clipping_lines/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/02_clipping_lines/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 In the first step for implementing the Cohen-Sutherland we will assign codes to points based on where they line with respect to a rectangle.
@@ -2116,8 +2116,8 @@ Next we will do the actual clipping by using our region code.
 
 ### Clipping the lines at the screen
 <!--
-script: http://localhost:3000/rasterizer/src/stages/02_clipping_lines/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/02_clipping_lines/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 Now that we can efficiently check, where a point lies in relation to a rectangle (for example our screen), we can use that for clipping.
@@ -3311,8 +3311,8 @@ const viewport = {x: 0, y:0, w : img.w, h : img.h};
 
 ### Putting the triangle together
 <!--
-script: http://localhost:3000/rasterizer/src/stages/03_rasterize_tri/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/03_rasterize_tri/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 This last step is more of a formality. 
@@ -3610,8 +3610,8 @@ Next up, we will implement a more general clipping routine, that can clip a tria
 
 ## 04: Clip polygons
 <!--
-script: http://localhost:3000/rasterizer/src/stages/04_poly_clip/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/04_poly_clip/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 This section will cover clipping polygons at arbitrary planes (lines work pretty much the same way).
@@ -3713,8 +3713,8 @@ pipeline.framebuffer = fb;
 
 ## 05: Shaders
 <!--
-script: http://localhost:3000/rasterizer/src/stages/05_shader/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/05_shader/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -3839,8 +3839,8 @@ script: http://localhost:3000/rasterizer/src/stages/05_shader/rasterizer.js
 
 ## 06: Interpolate attributes
 <!--
-script: http://localhost:3000/rasterizer/src/stages/06_attrib_interp/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/06_attrib_interp/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -3974,8 +3974,8 @@ script: http://localhost:3000/rasterizer/src/stages/06_attrib_interp/rasterizer.
 
 ## 07: Perspective and depth
 <!--
-script: http://localhost:3000/rasterizer/src/stages/07_perspective/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/07_perspective/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -4146,8 +4146,8 @@ script: http://localhost:3000/rasterizer/src/stages/07_perspective/rasterizer.js
 
 ## 08: Perspective-corrected interpolation
 <!--
-script: http://localhost:3000/rasterizer/src/stages/08_persp_interp/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/08_persp_interp/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -4321,8 +4321,8 @@ script: http://localhost:3000/rasterizer/src/stages/08_persp_interp/rasterizer.j
 
 ## 09: Application: Turn on the light
 <!--
-script: http://localhost:3000/rasterizer/src/stages/09_lighting/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/09_lighting/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -4517,8 +4517,8 @@ script: http://localhost:3000/rasterizer/src/stages/09_lighting/rasterizer.js
 
 ## 10: Blending
 <!--
-script: http://localhost:3000/rasterizer/src/stages/10_blending/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/10_blending/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -4765,8 +4765,8 @@ script: http://localhost:3000/rasterizer/src/stages/10_blending/rasterizer.js
 
 ## 11: Culling
 <!--
-script: http://localhost:3000/rasterizer/src/stages/11_culling/rasterizer.js
-        http://localhost:3000/rasterizer/src/geometry_utils.js
+script: https://sibaku.github.io/rasterizer_wip/src/stages/11_culling/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
