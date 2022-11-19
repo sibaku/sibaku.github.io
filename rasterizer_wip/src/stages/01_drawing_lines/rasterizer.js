@@ -20,7 +20,7 @@
 
 
     class Rasterizer {
-        
+
         /**
          * Rasterize a line
          * @param {AbstractMat} a 
@@ -31,7 +31,7 @@
         rasterize_line(pipeline, a, b,
             data_a = {},
             data_b = {}) {
-      
+
             // Bresenham/midpoint line drawing algorithm
             // operates on pixels
             const p0 = a;
@@ -112,7 +112,7 @@
         rasterize_line_bresenham(pipeline, a, b,
             data_a = {},
             data_b = {}) {
-    
+
             // Bresenham/midpoint line drawing algorithm
             // operates on pixels
             const p0 = a;
@@ -204,7 +204,7 @@
 
         }
 
- 
+
 
         /**
          * Draw the given geometry

@@ -64,6 +64,9 @@ class Image {
     }
 
     set(val, x, y) {
+        if (x < 0 || y < 0 || x >= this.w || y >= this.h) {
+            throw `Trying to access element at (${x},${y}) in image with size (${this.w}, ${this.h})`;
+        }
         const c = Math.min(this.comp, val.rows());
         const idx = (x + this.w * y) * this.comp;
         for (let i = 0; i < c; i++) {

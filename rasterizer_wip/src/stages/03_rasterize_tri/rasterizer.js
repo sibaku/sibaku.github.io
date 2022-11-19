@@ -29,7 +29,7 @@
          * @param {Array<AbstractMat>} points The input points
          * @returns [bmin,bmax]
          */
-        compute_bounds(points) {
+        compute_screen_bounds(points) {
             // compute triangle screen bounds
             let bmin = vec2(Infinity, Infinity);
             let bmax = vec2(-Infinity, -Infinity);
@@ -89,23 +89,20 @@
             let code0 = this.region_code(a.at(0), a.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
             let code1 = this.region_code(b.at(0), b.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
 
-            let accept = false;
-
             let x = 0.0;
             let y = 0.0;
             while (true) {
                 if ((code0 | code1) === 0) {
                     // bitwise OR is 0: both points inside window; trivially accept and
                     // exit loop
-                    accept = true;
-                    break;
+                    return [a, b];
                 }
 
                 if ((code0 & code1) > 0) {
                     // bitwise AND is not 0: both points share an outside zone (LEFT,
                     // RIGHT, TOP, or BOTTOM), so both must be outside window; exit loop
                     // (accept is false)
-                    break;
+                    return [];
                 }
 
                 // At least one endpoint is outside the clip rectangle; pick it.
@@ -138,11 +135,6 @@
                 }
             }
 
-            if (!accept) {
-                return [];
-            }
-
-            return [a, b];
         }
 
         /**
@@ -170,7 +162,7 @@
             data_a = {},
             data_b = {}) {
             // clip
-            const clipped = this.clip_screen(a, b, vec2(0, 0), vec2(pipeline.viewport.w - 1, pipeline.viewport.h - 1));
+            const clipped = this.clip_screen(a, b, vec2(pipeline.viewport.x, pipeline.viewport.y), vec2(pipeline.viewport.x + pipeline.viewport.w - 1, pipeline.viewport.y + pipeline.viewport.h - 1));
             if (clipped.length === 0) {
                 return;
             }
@@ -269,7 +261,7 @@
             data_a = {},
             data_b = {}) {
             // clip
-            const clipped = this.clip_screen(a, b, vec2(0, 0), vec2(pipeline.viewport.w - 1, pipeline.viewport.h - 1));
+            const clipped = this.clip_screen(a, b, vec2(pipeline.viewport.x, pipeline.viewport.y), vec2(pipeline.viewport.x + pipeline.viewport.w - 1, pipeline.viewport.y + pipeline.viewport.h - 1));
             if (clipped.length === 0) {
                 return;
             }
@@ -367,46 +359,31 @@
          * @param {AbstractMat} v0 The first vertex
          * @param {AbstractMat} v1 The second vertex
          * @param {AbstractMat} v2 The third vertex
-         * @param {Object<Number|AbstractMat>} data_v0 The attributes for the first vertex
-         * @param {Object<Number|AbstractMat>} data_v1 The attributes for the second vertex
-         * @param {Object<Number|AbstractMat>} data_v2 The attributes for the third vertex
          * @returns 
          */
         rasterize_triangle(pipeline, v0, v1,
-            v2,
-            data_v0 = {},
-            data_v1 = {}, data_v2 = {}) {
+            v2) {
 
             // compute triangle screen bounds
             let points = [v0, v1, v2];
-            let [bmin, bmax] = this.compute_bounds(points);
+            let [bmin, bmax] = this.compute_screen_bounds(points);
 
             // pixel coordinates of bounds
             let ibmin = floor(bmin);
             let ibmax = ceil(bmax);
 
-            const size = vec2(pipeline.viewport.w, pipeline.viewport.h);
-            const size_upper = vec2(pipeline.viewport.w - 1, pipeline.viewport.h - 1);
+            const viewport = pipeline.viewport;
 
+            const viewport_max = vec2(viewport.x + viewport.w - 1, viewport.y + viewport.h - 1);
+            const viewport_min = vec2(viewport.x, viewport.y);
             // clamp bounds so they lie inside the image region
-            cwiseMax(ibmin, vec2(0, 0), ibmin);
-            cwiseMin(ibmax, size_upper, ibmax);
+            cwiseMax(ibmin, viewport_min, ibmin);
+            cwiseMin(ibmax, viewport_max, ibmax);
 
             // handle case where its fully outside
-            if (isAny(ibmin, size, (a, b) => a >= b) ||
-                isAny(ibmax, vec2(0, 0), (a, b) => a < b)) {
+            if (isAny(ibmin, viewport_max, (a, b) => a > b) ||
+                isAny(ibmax, viewport_min, (a, b) => a < b)) {
                 return;
-            }
-
-            // interpolated data buffer
-            const data = {};
-
-            // gather attributes
-            for (let i in data_v0) {
-                if (!data_v1[i] || !data_v2[i]) {
-                    continue;
-                }
-                data[i] = null;
             }
 
             // compute the double triangle area only once
@@ -425,19 +402,20 @@
                     // sample point in center of pixel
                     const p = add(vec2(x, y), vec2(0.5, 0.5));
 
-                    let av1 = this.signed_tri_area_doubled(v2, v0, p);
-                    av1 /= area_tri;
-                    if (av1 + epsilon < 0.0) {
+                    let v = this.signed_tri_area_doubled(v2, v0, p);
+                    v /= area_tri;
+                    if (v + epsilon < 0.0) {
                         continue;
                     }
 
-                    let av2 = this.signed_tri_area_doubled(v0, v1, p);
-                    av2 /= area_tri;
-                    if (av2 + epsilon < 0.0) {
+                    let w = this.signed_tri_area_doubled(v0, v1, p);
+                    w /= area_tri;
+                    if (w + epsilon < 0.0) {
                         continue;
                     }
 
-                    if (av1 + av2 - epsilon > 1.0) {
+                    let u = 1.0 - v - w;
+                    if (u + epsilon < 0.0) {
                         continue;
                     }
 
@@ -459,12 +437,8 @@
          * @param {Pipeline} pipeline The pipeline to use
          * @param {AbstractMat} v0 The first vertex
          * @param {AbstractMat} v1 The second vertex
-         * @param {Object<Number|AbstractMat>} attribs_v0 The attributes of the first vertex
-         * @param {Object<Number|AbstractMat>} attribs_v1 The attributes of the second vertex
          */
-        process_line(pipeline, v0, v1,
-            attribs_v0 = {},
-            attribs_v1 = {}) {
+        process_line(pipeline, v0, v1) {
 
             this.rasterize_line(pipeline, v0, v1);
 
@@ -476,12 +450,8 @@
          * @param {AbstractMat} v0 The first vertex
          * @param {AbstractMat} v1 The second vertex
          * @param {AbstractMat} v2 The third vertex
-         * @param {Object<Number|AbstractMat>} attribs_v0 The attributes of the first vertex
-         * @param {Object<Number|AbstractMat>} attribs_v1 The attributes of the second vertex
-         * @param {Object<Number|AbstractMat>} attribs_v2 The attributes of the third vertex
          */
-        process_triangle(pipeline, v0, v1, v2,
-            attribs_v0 = {}, attribs_v1 = {}, attribs_v2 = {}) {
+        process_triangle(pipeline, v0, v1, v2) {
 
             this.rasterize_triangle(pipeline, v0, v1, v2);
 

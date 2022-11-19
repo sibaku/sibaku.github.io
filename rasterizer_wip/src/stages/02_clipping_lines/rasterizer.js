@@ -29,7 +29,7 @@
          * @param {Array<AbstractMat>} points The input points
          * @returns [bmin,bmax]
          */
-        compute_bounds(points) {
+        compute_screen_bounds(points) {
             // compute bounds
             let bmin = vec2(Infinity, Infinity);
             let bmax = vec2(-Infinity, -Infinity);
@@ -89,23 +89,20 @@
             let code0 = this.region_code(a.at(0), a.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
             let code1 = this.region_code(b.at(0), b.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
 
-            let accept = false;
-
             let x = 0.0;
             let y = 0.0;
             while (true) {
                 if ((code0 | code1) === 0) {
                     // bitwise OR is 0: both points inside window; trivially accept and
                     // exit loop
-                    accept = true;
-                    break;
+                    return [a, b];
                 }
 
                 if ((code0 & code1) > 0) {
                     // bitwise AND is not 0: both points share an outside zone (LEFT,
                     // RIGHT, TOP, or BOTTOM), so both must be outside window; exit loop
                     // (accept is false)
-                    break;
+                    return [];
                 }
 
                 // At least one endpoint is outside the clip rectangle; pick it.
@@ -138,43 +135,21 @@
                 }
             }
 
-            if (!accept) {
-                return [];
-            }
-
-            return [a, b];
         }
 
-  
+
 
         /**
          * Rasterize a line
          * @param {AbstractMat} a 
-         * @param {AbstractMat} b 
-         * @param {Object<Number|AbstractMat>} data_a 
-         * @param {Object<Number|AbstractMat>} data_b 
+         * @param {AbstractMat} b
          */
-        rasterize_line(pipeline, a, b,
-            data_a = {},
-            data_b = {}) {
+        rasterize_line(pipeline, a, b) {
             // clip
-            const clipped = this.clip_screen(a, b, vec2(0, 0), vec2(pipeline.viewport.w - 1, pipeline.viewport.h - 1));
+            const clipped = this.clip_screen(a, b, vec2(pipeline.viewport.x, pipeline.viewport.y), vec2(pipeline.viewport.x + pipeline.viewport.w - 1, pipeline.viewport.y + pipeline.viewport.h - 1));
             if (clipped.length === 0) {
                 return;
             }
-
-            // interpolated data buffer
-            const data = {};
-
-            // gather attributes
-            for (let i in data_a) {
-                if (!data_b[i]) {
-                    continue;
-                }
-                data[i] = null;
-            }
-
-
 
             // Bresenham/midpoint line drawing algorithm
             // operates on pixels
@@ -257,7 +232,7 @@
             data_a = {},
             data_b = {}) {
             // clip
-            const clipped = this.clip_screen(a, b, vec2(0, 0), vec2(pipeline.viewport.w - 1, pipeline.viewport.h - 1));
+            const clipped = this.clip_screen(a, b, vec2(pipeline.viewport.x, pipeline.viewport.y), vec2(pipeline.viewport.x + pipeline.viewport.w - 1, pipeline.viewport.y + pipeline.viewport.h - 1));
             if (clipped.length === 0) {
                 return;
             }
@@ -364,7 +339,7 @@
 
         }
 
- 
+
 
         /**
          * Draw the given geometry

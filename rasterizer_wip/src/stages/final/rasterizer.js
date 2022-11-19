@@ -413,7 +413,7 @@ class RasterizerFinal {
         data_a = {},
         data_b = {}) {
         // clip
-        const clipped = this.clip_screen(a, b, vec2(0, 0), vec2(pipeline.viewport.w - 1, pipeline.viewport.h - 1));
+        const clipped = this.clip_screen(a, b, vec2(pipeline.viewport.x, pipeline.viewport.y), vec2(pipeline.viewport.x + pipeline.viewport.w - 1, pipeline.viewport.y + pipeline.viewport.h - 1));
         if (clipped.length === 0) {
             return;
         }
@@ -548,7 +548,7 @@ class RasterizerFinal {
         data_a = {},
         data_b = {}) {
         // clip
-        const clipped = this.clip_screen(a, b, vec2(0, 0), vec2(pipeline.viewport.w - 1, pipeline.viewport.h - 1));
+        const clipped = this.clip_screen(a, b, vec2(pipeline.viewport.x, pipeline.viewport.y), vec2(pipeline.viewport.x + pipeline.viewport.w - 1, pipeline.viewport.y + pipeline.viewport.h - 1));
         if (clipped.length === 0) {
             return;
         }
@@ -764,8 +764,7 @@ class RasterizerFinal {
 
                 av1 /= area_tri;
                 av2 /= area_tri;
-                const b = v32.from([1.0 - av1 - av2, av1, av2]);
-
+                const b = v32.from([u, v, w]);
                 // use this for a fun effect
                 //            b = glm::vec3(1.0, 0.0, 0.0);
 

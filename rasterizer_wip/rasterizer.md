@@ -7,9 +7,9 @@ version:  0.0.1
 
 language: en
 
-script: https://sibaku.github.io/rasterizer/lib/jsmatrix_no_module.js
-        https://sibaku.github.io/rasterizer/src/defines.js
-        https://sibaku.github.io/rasterizer/src/common.js
+script: http://localhost:3000/rasterizer/lib/jsmatrix_no_module.js
+        http://localhost:3000/rasterizer/src/defines.js
+        http://localhost:3000/rasterizer/src/common.js
 
 comment:  Basic rasterizer
 
@@ -24,32 +24,32 @@ attribute: [Sibaku github.io](https://sibaku.github.io/)
 
 let container = window.document.getElementById('@0')
 
+if(container){
+    // based on the example at https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+    const config = { attributes: true };
 
-// based on the example at https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
-const config = { attributes: true };
+    const callback = (mutationsList, observer) => {
+        for(const mutation of mutationsList) {
+            if (mutation.type === 'attributes') {
+                if(mutation.attributeName === 'id')
+                {
+                    // remove inner
+                    container.innerHTML = "";
+                    // remove observer afterwards
+                    observer.disconnect();
 
-const callback = (mutationsList, observer) => {
-    for(const mutation of mutationsList) {
-        if (mutation.type === 'attributes') {
-            if(mutation.attributeName === 'id')
-            {
-                // remove inner
-                container.innerHTML = "";
-                // remove observer afterwards
-                observer.disconnect();
-
+                }
             }
         }
-    }
-    
-};
+        
+    };
 
-// Create an observer instance linked to the callback function
-const observer = new MutationObserver(callback);
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
 
-// Start observing the target node for configured mutations
-observer.observe(container, config);
-
+    // Start observing the target node for configured mutations
+    observer.observe(container, config);
+}
 
 </script>
 @end
@@ -86,7 +86,7 @@ If you know all of those, you can skip the section, as it will just be a recap w
 
 ### Trigonometry
 <!--
-script: https://sibaku.github.io/rasterizer/lib/two.min.js
+script: http://localhost:3000/rasterizer/lib/two.min.js
         https://cdn.plot.ly/plotly-2.12.1.min.js
 -->
 
@@ -922,8 +922,8 @@ With this course using JavaScript and trying to use easy to read code, we will o
 
 ### Drawing some lines
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/01_drawing_lines/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/01_drawing_lines/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
 We start our journey with drawing a subset of all possible lines, as that makes the initial implementation a lot easier. We also use a very basic implementation, as it is easy to understand, but more advanced versions work very similar, so if you know this one, there will be a smaller barrier of understanding.
@@ -1255,8 +1255,8 @@ In the next section, we will fix these issues, but feel free to think about what
 
 ### Drawing all lines
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/01_drawing_lines/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/01_drawing_lines/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
 In the last section, we had a problem with only lines going from left to right being drawn, some lines having gaps and vertical lines not even being being defined.
@@ -1771,13 +1771,559 @@ It is slightly more complicated, but only by a little and produces anti-aliased 
 Other algorithms and implementations (parallelism, vectorization,...) exist, with various pros and cons, but our current version (or the Bresenham version) is a reasonably fast and nice implementation!
 
 ## 02: Clipping lines
+
+So far, we are able to draw any line that we want... with a caveat. 
+What happens, if we specify a point of the line outside of the image?
+In the current version, the script will just crash, since you will try to write values outside of the allowed range.
+This section will solve that issue.
+
+Clipping refers to the process of restricting our drawing operations to a certain region only and to "clip" away anything not in that region.
+
+As screens or windows are generally rectangular and rectangles have nice geometric properties, it makes sense, that an efficient algorithm exists to clip lines with the screen.
+
+A well-known algorithm for this is called the **Cohen–Sutherland algorithm** [^1], which we will implement.
+
+We will split up the procedure into two parts:
+
+1. Determine where a point lies with respect to a rectangle/the screen
+2. Use the previous information to clip the line
+
+
+[^1]: Robert F. Sproull and Ivan E. Sutherland. 1968. A clipping divider. In Proceedings of the December 9-11, 1968, fall joint computer conference, part I (AFIPS '68 (Fall, part I)). Association for Computing Machinery, New York, NY, USA, 765–775. https://doi.org/10.1145/1476589.1476687
+
+### Region codes
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/02_clipping_lines/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/02_clipping_lines/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
+In the first step for implementing the Cohen-Sutherland we will assign codes to points based on where they line with respect to a rectangle.
+This information can then be used to check, if a line needs to be clipped.
+
+There are 4 lines making up a rectangle and we use those for classification. 
+We identify four regions around a rectangle, two mutually exclusive pairs:
+
+1. Top and bottom
+2. Left and right
+
+These can of course be mixed, so a point could be above and to the left of a rectangle, but it can't be above and below at the same time.
+
+We encode those four regions the following way:
+We use 4 bits $b_3 b_2 b_1 b_0$.
+A bit is set to $1$, if a point is in the corresponding region, and $0$ otherwise, where we arbitrarily use the following order:
+
+0. Top
+1. Bottom
+2. Right
+3. Left
+
+A point to the bottom right would then be $0110$.
+
+**What code do we get, when a point is inside the rectangle?**
+
+    [[0000]]
+
+This bit representation is useful, in that we can combine it with fast bit operations.
+The bottom right point is just the logical *or* operation between *Bottom* ($0010$) and *Right* ($0100$), which is usually written with the $|$-operator: 
+
+```
+code = BOTTOM | RIGHT
+```
+
+We can check, if any of those bits is set ($=1$), by performing a logical *and* operation with a number containing $1$ at the bit positions we are interested in and checking the result, usually written with the $&$ operator.
+
+This whole technique is called a bitmask or bitflags.
+
+The operation to check, if all of the bits set in a variable *FLAGS* are set, you can use the following:
+
+```
+if((code & FLAGS) === FLAGS) {...}
+```
+
+*FLAGS* could for example just be *BOTTOM* or any combination of the four regions.
+
+If we just interpret the bits as digits in a binary number, we can write them down in the decimal system as:
+
+0. Top $= 0001 = 1_{10}$
+1. Bottom $= 0010 = 2_{10}$
+2. Right $= 0100 = 4_{10}$
+3. Left $= 1000 = 8_{10}$
+
+The actual values don't really matter though, the bits they use up just need to be disjoint.
+
+**NOTE:** In JavaScript, all numbers are floating point numbers. The bitwise operations $|,&$ still work.
+Internally, the variables are converted to 32-bit integers and the operations are applied.
+This will introduce some additional overhead, but shouldn't really be noticeable in the grand scheme of things.
+
+One way to specify a rectangle is to specify the lower left point and the top right one.
+We can use that to very easily find the codes as follows:
+
+```
+code = 0;
+if(point is smaller than x_min) {
+    code = code | LEFT;
+}
+if(point is greater than x_max) {
+    code = code | RIGHT;
+}
+if(point is smaller than y_min) {
+    code = code | BOTTOM;
+}
+if(point is greater than y_max) {
+    code = code | TOP;
+}
+```
+
+We will implement this functionality below!
+
+We specify a rectangle in the middle of the frame and color each of the 8 (including the overlaps) with a different color.
+
+
+<!-- data-readOnly="true" data-showGutter="false" -->
+```js defines.js
+const SCREEN_CODE_LEFT = 1;
+const SCREEN_CODE_RIGHT = 2;
+const SCREEN_CODE_TOP = 4;
+const SCREEN_CODE_BOTTOM = 8;
+
+// colors
+const ctl = vec4(1,0,0,1);
+const ctm = vec4(1,1,0,1);
+const ctr = vec4(1,0,1,1);
+
+const cml = vec4(0,1,1,1);
+const cmm = vec4(1,1,1,1);
+const cmr = vec4(0.5,0.5,1,1);
+
+const cbl = vec4(0,0,0,1);
+const cbm = vec4(0,1,0,1);
+const cbr = vec4(0,0,1,1);
+```
 <!-- data-readOnly="false" data-showGutter="false" -->
-``` js
+```js
+function region_code(x, y, minx, miny, maxx, maxy) {
+
+    let result = 0;
+
+    // compute the actual code
+
+    return result;
+}
+```
+``` js -fillImage.js
+const img = Image.zeroF32(300, 300, 4);
+
+
+const bmin = vec2(60,60);
+const bmax = vec2(240,240);
+
+for(let y = 0; y < img.h; y++)
+{
+    for(let x = 0; x < img.w; x++)
+    {
+        const code =  region_code(x, y, bmin.at(0), bmin.at(1), bmax.at(0),bmax.at(1));
+
+        let color = vec4(0,0,0,1);
+
+        // we could also use a switch case in this case, since we use actual equalities
+        if(code === (SCREEN_CODE_LEFT | SCREEN_CODE_TOP))
+        {
+            color = ctl;
+        }
+        else if(code === (SCREEN_CODE_TOP))
+        {
+            color = ctm;
+        }
+        else if(code === (SCREEN_CODE_RIGHT | SCREEN_CODE_TOP))
+        {
+            color = ctr;
+        }
+        else if(code === (SCREEN_CODE_LEFT))
+        {
+            color = cml;
+        }
+        else if(code === (SCREEN_CODE_RIGHT))
+        {
+            color = cmr;
+        }
+        else if(code === (SCREEN_CODE_LEFT | SCREEN_CODE_BOTTOM))
+        {
+            color = cbl;
+        }
+        else if(code === (SCREEN_CODE_BOTTOM))
+        {
+            color = cbm;
+        }
+        else if(code === (SCREEN_CODE_RIGHT | SCREEN_CODE_BOTTOM))
+        {
+            color = cbr;
+        }else
+        {
+            // otherwise point is inside
+            color = cmm;
+        }
+        img.set(color,x,y);
+    }
+}
+```
+<script>
+    const container = document.getElementById('clip_lines_region_code_0');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+
+    @input(0)
+    @input(1)
+    @input(2)
+
+
+    imageToCtx(img,ctx);
+
+
+    "LIA: stop"
+</script>
+
+<div id="clip_lines_region_code_0"></div>
+@mutate.remover(clip_lines_region_code_0)
+
+
+You should see the image you get from running the code below (contains the solution).
+
+
+<!-- data-readOnly="true" data-showGutter="false" -->
+```js -defines.js
+const SCREEN_CODE_LEFT = 1;
+const SCREEN_CODE_RIGHT = 2;
+const SCREEN_CODE_TOP = 4;
+const SCREEN_CODE_BOTTOM = 8;
+
+// colors
+const ctl = vec4(1,0,0,1);
+const ctm = vec4(1,1,0,1);
+const ctr = vec4(1,0,1,1);
+
+const cml = vec4(0,1,1,1);
+const cmm = vec4(1,1,1,1);
+const cmr = vec4(0.5,0.5,1,1);
+
+const cbl = vec4(0,0,0,1);
+const cbm = vec4(0,1,0,1);
+const cbr = vec4(0,0,1,1);
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+```js -solution.js
+function region_code(x, y, minx, miny, maxx, maxy) {
+
+    let result = 0;
+
+    // Binary operators work by converting from/to a 32 bit integer
+    if (x < minx) {
+        result = result | SCREEN_CODE_LEFT;
+    } else if (x > maxx) {
+        result = result | SCREEN_CODE_RIGHT;
+    }
+    if (y < miny) {
+        result = result | SCREEN_CODE_BOTTOM;
+    } else if (y > maxy) {
+        result = result | SCREEN_CODE_TOP;
+    }
+    return result;
+}
+```
+``` js -fillImage.js
+const img = Image.zeroF32(300, 300, 4);
+
+
+const bmin = vec2(60,60);
+const bmax = vec2(240,240);
+
+for(let y = 0; y < img.h; y++)
+{
+    for(let x = 0; x < img.w; x++)
+    {
+        const code =  region_code(x, y, bmin.at(0), bmin.at(1), bmax.at(0),bmax.at(1));
+
+        let color = vec4(0,0,0,1);
+
+        // we could also use a switch case in this case, since we use actual equalities
+        if(code === (SCREEN_CODE_LEFT | SCREEN_CODE_TOP))
+        {
+            color = ctl;
+        }
+        else if(code === (SCREEN_CODE_TOP))
+        {
+            color = ctm;
+        }
+        else if(code === (SCREEN_CODE_RIGHT | SCREEN_CODE_TOP))
+        {
+            color = ctr;
+        }
+        else if(code === (SCREEN_CODE_LEFT))
+        {
+            color = cml;
+        }
+        else if(code === (SCREEN_CODE_RIGHT))
+        {
+            color = cmr;
+        }
+        else if(code === (SCREEN_CODE_LEFT | SCREEN_CODE_BOTTOM))
+        {
+            color = cbl;
+        }
+        else if(code === (SCREEN_CODE_BOTTOM))
+        {
+            color = cbm;
+        }
+        else if(code === (SCREEN_CODE_RIGHT | SCREEN_CODE_BOTTOM))
+        {
+            color = cbr;
+        }else
+        {
+            // otherwise point is inside
+            color = cmm;
+        }
+        img.set(color,x,y);
+    }
+}
+```
+<script>
+    const container = document.getElementById('clip_lines_region_code_1');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+
+    @input(0)
+    @input(1)
+    @input(2)
+
+
+    imageToCtx(img,ctx);
+
+
+    "LIA: stop"
+</script>
+
+<div id="clip_lines_region_code_1"></div>
+@mutate.remover(clip_lines_region_code_1)
+
+Next we will do the actual clipping by using our region code. 
+
+### Clipping the lines at the screen
+<!--
+script: http://localhost:3000/rasterizer/src/stages/02_clipping_lines/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
+-->
+
+Now that we can efficiently check, where a point lies in relation to a rectangle (for example our screen), we can use that for clipping.
+
+The basic idea is to use the codes of the line endpoints to quickly check if we need to clip the line.
+
+There are three cases to consider, with the third having sub-cases:
+
+1. The line is fully inside -> No clipping needed
+2. The line is fully outside -> Line doesn't need to be drawn
+3. Line crosses one of the four lines going through the rectangle sides
+
+The first case happens when both points are inside the rectangle.
+In this case, the region code of both points is $0000$.
+So we can quickly compute the *or* operation of the codes of both endpoints.
+This effectively "gathers" all $1$s that appear in the codes. 
+If the result of that *or* is still $0$, the line is inside and we can return both points.
+
+For the second case, we think about when we can be absolutely sure, that a line will be outside the rectangle.
+Two objects do not intersect, if we can find a line that separates them (this is a case of the so called Separating Axis Theorem, SAT). 
+We have information about four lines, the rectangle sides!
+If a line is completely on the left, right, bottom or top, then it can't intersect the rectangle.
+When you look at how the codes are constructed, we can very easily check for that!
+If the line lines completely on one side, then both point codes will share a $1$ at the same location!
+So we check for that case by combining both codes with *and* and then checking if the result is not zero.
+If it is, the line is fully clipped and does not need to be drawn.
+
+The third case is slightly more involved. At least one point of the line will be outside the rectangle and the line must cross at least one line. 
+To make things easier, we just consider one of the points.
+As $0$ corresponds to a point inside, we choose the larger code of the two, thus ensuring we have the point outside.
+Then we get four cases again:
+
+1. Point is at the top -> The clipped $y$-coordinate is the maximum $y$-coordinate. Calculate $x$.
+2. Point is at the bottom -> The clipped $y$-coordinate is the minimum $y$-coordinate. Calculate $x$.
+3. Point is to the right -> The clipped $x$-coordinate is the maximum $x$-coordinate. Calculate $y$.
+4. Point is at the left -> The clipped $x$-coordinate is the minimum $x$-coordinate. Calculate $y$.
+
+After we have resolved one of these cases, we replace the point corresponding to the greater code with the newly clipped coordinates.
+Then we update that points region code and redo the loop.
+
+When everything is clipped, the line will be fully inside and thus the loop terminates.
+
+The last missing piece is how to compete the missing coordinate in these four cases.
+
+We will show how to get the equation for the first case.
+We have a line defined by the two endpoints $\mathbf{A}$ and $\mathbf{B}$.
+
+We can write the line as
+
+$$
+\begin{align*}
+    \mathbf{p}(t) &= \mathbf{A} + t(\mathbf{B} - \mathbf{A}) \\
+    &= \begin{pmatrix}A_x \\ A_y \end{pmatrix} + t \begin{pmatrix}B_x - A_x \\ B_y - A_y\end{pmatrix}
+\end{align*}
+$$
+
+$t$ describes where we are on the line and for $t\in [0,1]$, we have the segment between the two points (check by plugging $0$ and $1$ in).
+From the equation, we see that the $x$ and $y$ coordinate moves with the same $t$ parameter, so if we have the one that gets us the $y_{\text{max}}$, the same one will give us the corresponding $x$-coordinate.
+So let's find $t$:
+
+$$
+\begin{align*}
+    y_{\text{max}} &= A_y + t (B_y - A_y) \\
+    y_{\text{max}} - A_y &= t(B_y - A_y)  \\
+    \frac{y_{\text{max}} - A_y}{B_y - A_y}  &= t
+\end{align*}
+$$
+
+With that found, we can plug it back in to get the missing $x$-coordinate.
+
+$$
+\begin{align*}
+    p_x &= A_x + t (B_x - A_x) \\
+    &= A_x + \frac{y_{\text{max}} - A_y}{B_y - A_y} (B_x - A_x)  \\
+    &= \frac{A_x(B_y - A_y) + (y_{\text{max}} - A_y)(B_x - A_x)}{B_y - A_y} \\
+    &= \frac{A_x B_y - A_x A_y - A_y(B_x - A_x) +  y_{\text{max}}(B_x - A_x)}{B_y - A_y} \\
+    &= \frac{A_x B_y - A_x A_y - A_y B_x + A_x A_y +  y_{\text{max}}(B_x - A_x)}{B_y - A_y} \\
+    &= \frac{A_x B_y  - A_y B_x  +  y_{\text{max}}(B_x - A_x)}{B_y - A_y} \\
+\end{align*}
+$$
+
+In the solution, the second line is chosen for the implementation, as it is a bit more understandable.
+**Bonus:** If you know the formula for the normal of a 2D vector and the implicit equation defining a 2D line, you might express this in terms of $\mathbf{n}$ and $d$.
+
+As the other cases work the same, just with minimum and maximum or $x$ and $y$ switched, we will only list the results for the 4 cases here:
+
+
+1. Point is at the top -> $y = y_{\text{max}}, x = A_x + \frac{y_{\text{max}} - A_y}{B_y - A_y} (B_x - A_x)$
+2. Point is at the bottom -> $y = y_{\text{min}}, x = A_x + \frac{y_{\text{min}} - A_y}{B_y - A_y} (B_x - A_x)$
+3. Point is to the right -> $x = x_{\text{max}}, y = A_y + \frac{x_{\text{max}} - A_x}{B_x - A_x} (B_y - A_y)$
+4. Point is at the left -> $x = x_{\text{min}}, y = A_y + \frac{x_{\text{min}} - A_x}{B_x - A_x} (B_y - A_y)$
+
+Now, you can implement the full procedure below! 
+The code includes previously written code, with small alterations to call the clipping in the actual rasterization of the line.
+
+The solution can once again be seen hidden after that.
+
+
+<!-- data-readOnly="true" data-showGutter="false" -->
+```js -defines.js
+const SCREEN_CODE_LEFT = 1;
+const SCREEN_CODE_RIGHT = 2;
+const SCREEN_CODE_TOP = 4;
+const SCREEN_CODE_BOTTOM = 8;
+```
+```js
+class RasterizerTutorial extends Rasterizer {
+
+     /**
+     * Efficiently clip a line against the screen
+     * @param {AbstractMat} a The start point
+     * @param {AbstractMat} b The endpoint
+     * @param {AbstractMat} bmin The minimum screen coordinates
+     * @param {AbstractMat} bmax The maximum screen coordinate
+     * @returns Array<AbstractMat> The clipped points. Might be empty, if the whole line was clipped
+     */
+    clip_screen(a, b, bmin, bmax) {
+        // this.region_code calls out previously defined method
+        let code0 = this.region_code(a.at(0), a.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
+        let code1 = this.region_code(b.at(0), b.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
+
+        // TODO Implement the loop
+        return [a,b];
+    }
+
+
+    rasterize_line(pipeline, a, b) {
+
+        // call our new clipping code!
+        // we use the screen coordinates that are given by the pipeline
+        const clipped = this.clip_screen(a, b, vec2(pipeline.viewport.x, pipeline.viewport.y), vec2(pipeline.viewport.x + pipeline.viewport.w - 1, pipeline.viewport.y + pipeline.viewport.h - 1));
+        if (clipped.length === 0) {
+            return;
+        }
+
+        // use the clipped points as input for the previous routine
+        const p0 = clipped[0];
+        const p1 = clipped[1];
+
+        // Bresenham works in integer coordinates
+        let x0 = Math.floor(p0.at(0));
+        let y0 = Math.floor(p0.at(1));
+
+        let x1 = Math.floor(p1.at(0));
+        let y1 = Math.floor(p1.at(1));
+
+        // Bresenham is only defined in the first 2D octant
+        // To make it work for the others, we reorder things, so they are in that
+        // first octant. In the end we have to undo some of that
+
+        // slope > 1 -> flip x and y
+        let transposed = false;
+        if (Math.abs(x1 - x0) < Math.abs(y1 - y0)) {
+            transposed = true;
+            [x0, y0] = [y0, x0];
+            [x1, y1] = [y1, x1];
+        }
+
+        // going from right to left -> flip first and second point
+        // doesn't actually change the line, so no later inversion needed
+        if (x1 < x0) {
+            [x0, x1] = [x1, x0];
+            [y0, y1] = [y1, y0];
+        }
+
+        const dx = x1 - x0;
+        const dy = Math.abs(y1 - y0);
+
+        let y = y0;
+        let m = dy / dx;
+        if (y1 < y0) {
+            m = -m;
+        }
+
+        for (let x = x0; x <= x1; x++) {
+            let px = vec2(x, y);
+
+            // flip x and y for the actual coordinate if they were flipped before
+            if (transposed) {
+                px = vec2(y, x);
+            }
+
+            // move px to pixel center
+            add(px, vec2(0.5, 0.5), px);
+
+            // the final fragment coordinate
+            const frag_coord = vec4(px.at(0), px.at(1), 0.0, 1.0);
+            // run  fragment shader with data
+
+            // buffer for colors
+            const output_colors = {};
+
+            output_colors[0] = vec4(1, 0, 0, 1);
+
+            this.write_fragment(pipeline, frag_coord, output_colors);
+
+
+            y += m;
+
+        }
+
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
 
 const img = Image.zeroF32(300, 300, 4);
 
@@ -1836,9 +2382,11 @@ pipeline.framebuffer = fb;
     const Pipeline = r02.Pipeline;
     const Framebuffer = r02.Framebuffer;
 
-    @input0
+    @input(0)
+    @input(1)
+    @input(2)
 
-    const raster = new Rasterizer();
+    const raster = new RasterizerTutorial();
 
     const render = () => {
         img.fill(vec4(0,0,0,1));
@@ -1860,14 +2408,1089 @@ pipeline.framebuffer = fb;
 <div id="clip_lines_container_0"></div>
 @mutate.remover(clip_lines_container_0)
 
+The following shows the solution. 
+You can run it to check your result.
+
+<!-- data-readOnly="true" data-showGutter="false" -->
+```js -defines.js
+const SCREEN_CODE_LEFT = 1;
+const SCREEN_CODE_RIGHT = 2;
+const SCREEN_CODE_TOP = 4;
+const SCREEN_CODE_BOTTOM = 8;
+```
+```js -solution.js
+class RasterizerTutorial extends Rasterizer {
+
+     /**
+     * Efficiently clip a line against the screen
+     * @param {AbstractMat} a The start point
+     * @param {AbstractMat} b The endpoint
+     * @param {AbstractMat} bmin The minimum screen coordinates
+     * @param {AbstractMat} bmax The maximum screen coordinate
+     * @returns Array<AbstractMat> The clipped points. Might be empty, if the whole line was clipped
+     */
+    clip_screen(a, b, bmin, bmax) {
+
+        let code0 = this.region_code(a.at(0), a.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
+        let code1 = this.region_code(b.at(0), b.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
+
+        let x = 0.0;
+        let y = 0.0;
+        while (true) {
+            if ((code0 | code1) === 0) {
+                // bitwise OR is 0: both points inside window; trivially accept and
+                // exit loop
+               return [a, b];
+            }
+
+            if ((code0 & code1) > 0) {
+                // bitwise AND is not 0: both points share an outside zone (LEFT,
+                // RIGHT, TOP, or BOTTOM), so both must be outside window; exit loop
+                // (accept is false)
+                return [];
+            }
+
+            // At least one endpoint is outside the clip rectangle; pick it.
+            const outcodeOut = code1 > code0 ? code1 : code0;
+
+            if ((outcodeOut & SCREEN_CODE_TOP) !== 0) { // point is above the clip window
+                x = a.at(0) + (b.at(0) - a.at(0)) * (bmax.at(1) - a.at(1)) / (b.at(1) - a.at(1));
+                y = bmax.at(1);
+            } else if ((outcodeOut & SCREEN_CODE_BOTTOM) !== 0) { // point is below the clip window
+                x = a.at(0) + (b.at(0) - a.at(0)) * (bmin.at(1) - a.at(1)) / (b.at(1) - a.at(1));
+                y = bmin.at(1);
+            } else if ((outcodeOut & SCREEN_CODE_RIGHT) !== 0) { // point is to the right of clip window
+                y = a.at(1) + (b.at(1) - a.at(1)) * (bmax.at(0) - a.at(0)) / (b.at(0) - a.at(0));
+                x = bmax.at(0);
+            } else if ((outcodeOut & SCREEN_CODE_LEFT) !== 0) { // point is to the left of clip window
+                y = a.at(1) + (b.at(1) - a.at(1)) * (bmin.at(0) - a.at(0)) / (b.at(0) - a.at(0));
+                x = bmin.at(0);
+            }
+
+            // Now we move outside point to intersection point to clip
+            // and get ready for next pass.
+            if (outcodeOut === code0) {
+                a.set(x, 0);
+                a.set(y, 1);
+                code0 = this.region_code(a.at(0), a.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
+            } else {
+                b.set(x, 0);
+                b.set(y, 1);
+                code1 = this.region_code(b.at(0), b.at(1), bmin.at(0), bmin.at(1), bmax.at(0), bmax.at(1));
+            }
+        }
+
+    }
+
+
+    rasterize_line(pipeline, a, b) {
+
+        // call our new clipping code!
+        // we use the screen coordinates that are given by the pipeline
+        const clipped = this.clip_screen(a, b, vec2(pipeline.viewport.x, pipeline.viewport.y), vec2(pipeline.viewport.x + pipeline.viewport.w - 1, pipeline.viewport.y + pipeline.viewport.h - 1));
+        if (clipped.length === 0) {
+            return;
+        }
+
+        // use the clipped points as input for the previous routine
+        const p0 = clipped[0];
+        const p1 = clipped[1];
+
+        // Bresenham works in integer coordinates
+        let x0 = Math.floor(p0.at(0));
+        let y0 = Math.floor(p0.at(1));
+
+        let x1 = Math.floor(p1.at(0));
+        let y1 = Math.floor(p1.at(1));
+
+        // Bresenham is only defined in the first 2D octant
+        // To make it work for the others, we reorder things, so they are in that
+        // first octant. In the end we have to undo some of that
+
+        // slope > 1 -> flip x and y
+        let transposed = false;
+        if (Math.abs(x1 - x0) < Math.abs(y1 - y0)) {
+            transposed = true;
+            [x0, y0] = [y0, x0];
+            [x1, y1] = [y1, x1];
+        }
+
+        // going from right to left -> flip first and second point
+        // doesn't actually change the line, so no later inversion needed
+        if (x1 < x0) {
+            [x0, x1] = [x1, x0];
+            [y0, y1] = [y1, y0];
+        }
+
+        const dx = x1 - x0;
+        const dy = Math.abs(y1 - y0);
+
+        let y = y0;
+        let m = dy / dx;
+        if (y1 < y0) {
+            m = -m;
+        }
+
+        for (let x = x0; x <= x1; x++) {
+            let px = vec2(x, y);
+
+            // flip x and y for the actual coordinate if they were flipped before
+            if (transposed) {
+                px = vec2(y, x);
+            }
+
+            // move px to pixel center
+            add(px, vec2(0.5, 0.5), px);
+
+            // the final fragment coordinate
+            const frag_coord = vec4(px.at(0), px.at(1), 0.0, 1.0);
+            // run  fragment shader with data
+
+            // buffer for colors
+            const output_colors = {};
+
+            output_colors[0] = vec4(1, 0, 0, 1);
+
+            this.write_fragment(pipeline, frag_coord, output_colors);
+
+
+            y += m;
+
+        }
+
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+
+const img = Image.zeroF32(300, 300, 4);
+
+const geoms = [];
+
+{
+
+    const attributes = {};
+
+    const vertices = [];
+
+    const num = 100;
+    const r = 1.75 * Math.max(img.w,img.h);
+    
+    for(let i = 0; i < num; i++)
+    {
+        const x = r*Math.cos(Math.PI*2 * i/ num);
+        const y = r*Math.sin(Math.PI*2 * i/ num);
+
+        vertices.push(vec4(img.w / 2, img.h/2,0.0,1.0));
+        vertices.push(vec4(img.w / 2 + x,img.h/2+y,0.0,1.0));
+    }
+
+
+    attributes[Attribute.VERTEX] = vertices;
+
+    const geom = {
+        attributes,
+        topology: Topology.LINES
+    };
+
+    geoms.push(geom);
+}
+
+const pipeline = new Pipeline();
+pipeline.viewport.w = img.w;
+pipeline.viewport.h = img.h;
+
+const fb = Framebuffer.new();
+fb.color_buffers[0] = img;
+
+pipeline.framebuffer = fb;
+
+
+```
+<script>
+    const container = document.getElementById('clip_lines_container_1');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+     // Import
+    const Rasterizer = r02.Rasterizer;
+    const Pipeline = r02.Pipeline;
+    const Framebuffer = r02.Framebuffer;
+
+    @input(0)
+    @input(1)
+    @input(2)
+
+    const raster = new RasterizerTutorial();
+
+    const render = () => {
+        img.fill(vec4(0,0,0,1));
+
+        for(let i = 0; i < geoms.length;i++)
+        {
+            raster.draw(pipeline,geoms[i]);
+        }
+
+        imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
+
+    };
+
+    render();
+
+    "LIA: stop"
+</script>
+
+<div id="clip_lines_container_1"></div>
+@mutate.remover(clip_lines_container_1)
+
 ## 03: Draw a triangle
-<!--
-script: https://sibaku.github.io/rasterizer/src/stages/03_rasterize_tri/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
--->
+
+In this section, we will finally move on from lines to get to triangles, probably the most important shape in computer graphics.
+
+There are a lot of variants on how to rasterize triangles, from different ways on how to determine the pixels to parallelization. We will use a very simple approach, that is nethertheless a good basis to understand more complicated algorithms. It is more or less the one presented in a very early paper by Juan Pineda [^1].
+
+[^1]: Juan Pineda. 1988. A parallel algorithm for polygon rasterization. In Proceedings of the 15th annual conference on Computer graphics and interactive techniques (SIGGRAPH '88). Association for Computing Machinery, New York, NY, USA, 17–20. https://doi.org/10.1145/54852.378457
+
+### Defining our drawing area
+
+We will start of by finding the area on the screen, where the triangle could possibly be.
+The simplest such shape is a rectangle.
+
+This rectangle consists of the minumum and maximum coordinates of the triangle.
+These can be found by finding the minimum and maximum values per coordinate of all points making up the triangle.
+To maybe reuse this, we will write a helper function, that computes these values for an array of points.
+
+Additionally, we don't want to run into the same issue as with the lines: Going outside the image.
+Luckily, when we have the minumum and maximum points, we can make sure that our rectangle is inside, with the following two conditions:
+
+* Take the he minimum of the maximum point and the viewport maximum
+* Take the maximum of the minimum point and the viewport minimum
+
+The rectangle could be fully outside though.
+It is fully outside, if either
+
+* Any coordinate of the maximum point is smaller than the correspnding viewport origin
+* Any coordinate of the minimum point is larger or equal to the viewport maximum
+
+With this, we can implement iterating over all pixels that could potentially be covered by a triangle.
+Below is the hidden solution, that you can run to check your solution.
 
 <!-- data-readOnly="false" data-showGutter="false" -->
 ``` js
+/**
+ * Computes the minimum and maximum coordinates of an array of points
+ * @param {Array<AbstractMat>} points The input points
+ * @returns [bmin,bmax]
+*/
+function compute_screen_bounds(points) {
+    // compute triangle screen bounds
+    let bmin = vec2(Infinity, Infinity);
+    let bmax = vec2(-Infinity, -Infinity);
+
+    
+    // TODO
+
+    // Go through all the points and find the minimum and maximum x and y coordinates
+
+
+    return [bmin, bmax];
+}
+
+// Helper function to test our algorithm
+function fill_triangle_area(v0,v1,v2, img, viewport) {
+
+    const points = [v0,v1,v2];
+
+    const [bmin,bmax] = compute_screen_bounds(points);
+
+    // pixel coordinates of bounds
+    let ibmin = floor(bmin);
+    let ibmax = ceil(bmax);
+
+    // extent of the viewport
+    // it starts at viewport.xy and has a width and height
+    const viewport_max = vec2(viewport.x + viewport.w-1, viewport.y + viewport.h-1);
+    const viewport_min = vec2(viewport.x, viewport.y);
+    
+    // TODO
+    // clamp bounds so they lie inside the image region
+
+    // TODO
+    // handle case where its fully outside
+
+    // TODO
+    // iterate over the bounded region
+
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+
+// output image
+const img = Image.zeroF32(300, 300, 4);
+
+// set the viewport to the full image
+const viewport = {x: 0, y:0, w : img.w, h : img.h};
+
+// fill triangle 1
+{
+    // define 3 points
+    const v0 = vec4(-10,-40,0,1);
+    const v1 = vec4(100,40,0,1);
+    const v2 = vec4(120,400,0,1);
+    fill_triangle_area(v0,v1,v2,img,viewport);
+}
+
+
+// fill triangle 2
+{
+    // define 3 points
+    const v0 = vec4(200,40,0,1);
+    const v1 = vec4(260,50,0,1);
+    const v2 = vec4(230,200,0,1);
+    fill_triangle_area(v0,v1,v2,img,viewport);
+}
+
+```
+<script>
+    const container = document.getElementById('draw_tri_bounds_0');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+    @input(0)
+    @input(1)
+
+    imageToCtx(img,ctx);
+
+
+    "LIA: stop"
+</script>
+
+<div id="draw_tri_bounds_0"></div>
+@mutate.remover(draw_tri_bounds_0)
+
+Here is the solution:
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -solution.js
+/**
+ * Computes the minimum and maximum coordinates of an array of points
+ * @param {Array<AbstractMat>} points The input points
+ * @returns [bmin,bmax]
+*/
+function compute_screen_bounds(points) {
+    // compute triangle screen bounds
+    let bmin = vec2(Infinity, Infinity);
+    let bmax = vec2(-Infinity, -Infinity);
+
+    // go through all points and find minimum and maximum values
+    for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        const p2 = vec2(p.at(0), p.at(1));
+        cwiseMin(bmin, p2, bmin);
+        cwiseMax(bmax, p2, bmax);
+    }
+
+    return [bmin, bmax];
+}
+
+function fill_triangle_area(v0,v1,v2, img, viewport) {
+
+    const points = [v0,v1,v2];
+
+    const [bmin,bmax] = compute_screen_bounds(points);
+
+
+    // pixel coordinates of bounds
+    let ibmin = floor(bmin);
+    let ibmax = ceil(bmax);
+
+    const viewport_max = vec2(viewport.x + viewport.w-1, viewport.y + viewport.h-1);
+    const viewport_min = vec2(viewport.x, viewport.y);
+    // clamp bounds so they lie inside the image region
+    cwiseMax(ibmin, viewport_min, ibmin);
+    cwiseMin(ibmax, viewport_max, ibmax);
+
+    // handle case where its fully outside
+    if (isAny(ibmin, viewport_max, (a, b) => a > b) ||
+        isAny(ibmax, viewport_min, (a, b) => a < b)) {
+        return;
+    }
+
+    for (let y = ibmin.at(1); y <= ibmax.at(1); y++) {
+        for (let x = ibmin.at(0); x <= ibmax.at(0); x++) {
+            img.set(vec4(1,0,0,1),x,y);
+        }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+
+// output image
+const img = Image.zeroF32(300, 300, 4);
+
+// set the viewport to the full image
+const viewport = {x: 0, y:0, w : img.w, h : img.h};
+
+
+// fill triangle 1
+{
+    // define 3 points
+    const v0 = vec4(-10,-40,0,1);
+    const v1 = vec4(100,40,0,1);
+    const v2 = vec4(120,400,0,1);
+    fill_triangle_area(v0,v1,v2,img,viewport);
+}
+
+
+// fill triangle 2
+{
+    // define 3 points
+    const v0 = vec4(200,40,0,1);
+    const v1 = vec4(260,50,0,1);
+    const v2 = vec4(230,200,0,1);
+    fill_triangle_area(v0,v1,v2,img,viewport);
+}
+
+```
+<script>
+    const container = document.getElementById('draw_tri_bounds_1');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+    @input(0)
+    @input(1)
+
+    imageToCtx(img,ctx);
+
+
+    "LIA: stop"
+</script>
+
+<div id="draw_tri_bounds_1"></div>
+@mutate.remover(draw_tri_bounds_1)
+
+Now we have the area in which a triangle could potentially be.
+How does that help us?
+The basic idea is, that we will check every of the covered pixels to see if they are inside of the triangle.
+We will see how to do that in the next section and put it all together after that.
+
+### Is this point part of the triangle?
+
+In the literature, you will often see the term **Edge function**.
+This term is absolutely justified, but when we arrive at chapter [06](#06-interpolate-attributes), the values will have a pretty intuitive interpretation anyways, so why not start there directly?
+
+This part has a bit more text than usual, so if your are only interested in what to implement, you can just skip to the end and see the final formulas.
+
+We start with a simple 2D triangle, defined by three vertices $\mathbf{v}_0,\mathbf{v}_1,\mathbf{v}_2$.
+
+While there is no "correct" way to order the vertices, in general we use a counter-clockwise order, although in the following, we will use a variant, that does not care for the order.
+
+From the vertices, we define the two edges from the first vertex:
+
+$$
+\begin{align*}
+\mathbf{e}_{01} &= \mathbf{v}_1 - \mathbf{v}_0 \\
+\mathbf{e}_{02} &= \mathbf{v}_2 - \mathbf{v}_0 
+\end{align*}
+$$
+
+From the properties of the cross product, we know, that $||\mathbf{a} \times \mathbf{b}||$ is the area of the parallelogram spanned by the two vectors or twice the area of the triangle subtended by them!
+We will now use that fact for our case. 
+Our vectors are in 2D though. To use them with the 3D cross product is pretty easy though!
+Just add a third dimension and think of the vectors as lying in the $xy$-plane, with $z=0$.
+
+$$
+\begin{align*}
+\mathbf{e}_{01} &= \begin{pmatrix}e_{01,x} \\ e_{01,y} \\ 0 \end{pmatrix}\\
+\mathbf{e}_{02} &=\begin{pmatrix} e_{02,x} \\ e_{02,y} \\ 0 \end{pmatrix}
+\end{align*}
+$$
+
+We also have:
+
+$$
+\mathbf{a} \times \mathbf{b} = \begin{pmatrix} a_y b_z - a_z b_y \\ a_z b_x - a_x b_z \\ a_x b_y - a_y b_x \end{pmatrix}
+$$
+
+If you look at the components, the resulting $x$ and $y$ terms all have a multiplication with a $z$ component of the inputs in them.
+As in our case that coordinate is $0$, only the $z$ component will survive in $\mathbf{e}_{01} \times \mathbf{e}_{01}$.
+To stay consistent with other resources, we will call this quantity $\operatorname{E}$.
+
+$$
+\begin{align*}
+    \operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{v}_2) &= (\mathbf{e}_{01} \times \mathbf{e}_{01})_z \\
+    &= e_{01,x} e_{02,y} - e_{01,y} e_{02,x} \\
+    &= (v_{1,x} - v_{0,x})(v_{2,y} - v_{0,y}) - (v_{1,y} - v_{0,y})(v_{2,x} - v_{0,x})
+\end{align*}
+$$
+
+$||\mathbf{e}_{01} \times \mathbf{e}_{01}||$ gives us twice the area of the triangle, so $\operatorname{E}$ will give us that as well, since it is the only non-zero part of the cross product.
+But it does have a sign!
+This is important and is basically why it is often called edge function.
+Here is a quick intution about this other way to think about it.
+
+The normal of a vector $\mathbf{a}$ in 2D is just:
+
+$$
+    \mathbf{n}(\mathbf{a}) = \begin{pmatrix}-a_y \\ a_x\end{pmatrix}
+$$
+
+You can check that it is perpendicular to $\mathbf{a}$ with $\mathbf{n}(\mathbf{a}) \cdot \mathbf{a} = -a_y a_x + a_x a_y = 0 $.
+There are of course infinitely more normals (all multiples). 
+If we fix the length to be the same as the original vector, there will still be two: The one we chose and the inverted vector.
+The one we chose is the usual one, as it corresponds to a rotation of $90^\circ$ in the positive mathematical direction (coutner clockwise).
+You can check that for example, the equation will turn the $x$-axis into the $y$-axis, as one might expect.
+The negative direction is also sometimes used, just make sure to be consistent!
+
+Now from the properties of the dot product, when  $\mathbf{a} \cdot \mathbf{b}$ is positive, then both vectors point in the same half space, if it is negative they point in opposite ones.
+
+Putting the 2D normal and this fact together we get:
+
+$$
+\begin{align*}
+    \mathbf{n}(\mathbf{e}_{01}) & = \begin{pmatrix}-e_{01,y} \\ e_{01,x}\end{pmatrix} \\
+    \mathbf{n}(\mathbf{e}_{01}) \cdot \mathbf{e}_{02} &= -e_{01,y} e_{01,x} + e_{01,x}e_{02,y} \\
+    &= e_{01,x}e_{02,y}-e_{01,y} e_{01,x} \\
+    &= \operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{v}_2)
+\end{align*}
+$$
+
+So we get a positive value, if $\mathbf{e}_{02}$ points above (the same direction as the normal) of $\mathbf{e}_{01}$ and a negative one otherwise.
+
+Now, if we plug in a generic third point $\mathbf{p}$, instead of the third triangle vertex, we get:
+
+$$
+    \operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{p}) =  (v_{1,x} - v_{0,x})(p_{y} - v_{0,y}) - (v_{1,y} - v_{0,y})(p_{x} - v_{0,x})
+$$
+
+This value will accordingly be positive, if $\mathbf{p}$ is above (inside) or below (outside) the triangle edge $\mathbf{n}(\mathbf{e}_{01})$. 
+
+This is where we have the "Edge function" interpretation.
+We can now define a triangle as all points, for which the three edge functions $\operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{p}), \operatorname{E}(\mathbf{v}_1,\mathbf{v}_2,\mathbf{p}), \operatorname{E}(\mathbf{v}_2,\mathbf{v}_0,\mathbf{p})$ agree, that the point is inside (all have positive or zero value)!
+We could implement the triangle rasterization with this alone, but just to keep later code smaller, we directly modify this.
+
+With our original interpretation, $\operatorname{E}$ giving us twice the area of the triangle spanned by the parameters, we can still use the insight of the edge function.
+The "area" will get a positive sign, if the triangle is counter-clockwise and a negative  sign otherwise!
+
+The triangle area interpretation is nice, since it leads us to another very useful tool: Barycentric coordinates.
+
+For a triangle, barycentric coordinates assign three coordinates $u,v,w$ to any point. Each weight corresponds to a point on the triangle and represent how much "influence" they have. The sum $u+v+w$ equals $1$, which means, that the "total weight" of the points will always be $1$, that is, we do not add or remove weight.
+
+Now, how to compute barycentric coordinates? With our area interpretation, we are already nearly there. Think about a point $\mathbf{p}$ inside the triangle. Connect it to the three triangle points. Now you have three new triangles! Of course, if you sum their areas, we get the total area of the triangle. In other words, if we divide each of the subtriangle areas by the total area, those values sum to $1$. So we have already found the barycentric coordinates!
+
+It makes sense, that the weight of a point is $1$ (the full weight) the point itself. We used the definition $ \operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{p})$ with the third point being variable and the first two fixed. So it makes sense, that the triangle point that is not fixed is the one associated with the barycentric weight. So $ \operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{p})$ is associated to the missing point $\mathbf{v}_2$. 
+$\operatorname{E}$ gives twice the area for the subtriangles, as well as the full triangles.
+In their ratio, the factor $2$ cancels out and thus corresponds to the ratio of the subtriangle to the triangle!
+
+So we get the three barycentric weights:
+
+$$
+\begin{align*}
+2A &=  \operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{v}_2) \\
+u = \operatorname{weight}(\mathbf{v}_0) &=  \frac{\operatorname{E}(\mathbf{v}_1,\mathbf{v}_2,\mathbf{p})}{2A}\\
+v = \operatorname{weight}(\mathbf{v}_1) &=  \frac{\operatorname{E}(\mathbf{v}_2,\mathbf{v}_0,\mathbf{p})}{2A}\\
+w = \operatorname{weight}(\mathbf{v}_2) &=  \frac{\operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{p})}{2A}\\
+\end{align*}
+$$
+
+Since the coordinates sum to $1$ you only need to calculate two of them, for example $v$ and $w$ and compute the third one as $1 - v - w$.
+
+We only need to worry about one thing: A zero triangle area.
+In that case, we would divide by $0$.
+This is easy to handle though, if the area is zero, we just don't draw the triangle
+
+The fun thing is, that this works, even if $\mathbf{p}$ is outside of the triangle!
+In those cases, the sign of at least one of the subtriangles will get the opposite sign of the full triangle!
+The remaining weights will become greater than $1$ to balance that out.
+So just as with the edge functions, we can check, if any of the weights gets negative, if it does, then the point is outside of the triangle.
+In contrast to the pure edge function, this works regardless of whether the triangle is clock or counter-clockwise (the division by the signed area takes care of that).
+
+With all of that, we can finally calculate the barycentric weights for any point and decide if the point is part of the triangle.
+For now, we will put this in the last bit of code.
+In the next step, we will add this to the full rasterizer, as it needs just a bit of extra busywork, but it will nicely allow us to draw both any number of lines as well as triangles together!
+
+Down below you can run the solution.
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js 
+/**
+ * Computes twice the signed area of a given 2D triangle.
+ * The triangle is assumed to be defined anti-clockwise
+ * @param {AbstractMat} v0 The first 2D point
+ * @param {AbstractMat} v1 The second 2D point
+ * @param {AbstractMat} v2 The third 2D point
+ * @returns Twice the signed area
+ */
+function signed_tri_area_doubled(v0, v1, v2) {
+    // TODO 
+    // compute twice the summed area of the triangle using the edge function
+    return 0.0;
+}
+
+/**
+ * Computes the minimum and maximum coordinates of an array of points
+ * @param {Array<AbstractMat>} points The input points
+ * @returns [bmin,bmax]
+*/
+function compute_screen_bounds(points) {
+    // compute triangle screen bounds
+    let bmin = vec2(Infinity, Infinity);
+    let bmax = vec2(-Infinity, -Infinity);
+
+    // go through all points and find minimum and maximum values
+    for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        const p2 = vec2(p.at(0), p.at(1));
+        cwiseMin(bmin, p2, bmin);
+        cwiseMax(bmax, p2, bmax);
+    }
+
+    return [bmin, bmax];
+}
+
+function fill_triangle_area(v0,v1,v2, img, viewport) {
+
+    const points = [v0,v1,v2];
+
+    const [bmin,bmax] = compute_screen_bounds(points);
+
+
+    // pixel coordinates of bounds
+    let ibmin = floor(bmin);
+    let ibmax = ceil(bmax);
+
+    const viewport_max = vec2(viewport.x + viewport.w-1, viewport.y + viewport.h-1);
+    const viewport_min = vec2(viewport.x, viewport.y);
+    // clamp bounds so they lie inside the image region
+    cwiseMax(ibmin, viewport_min, ibmin);
+    cwiseMin(ibmax, viewport_max, ibmax);
+
+    // handle case where its fully outside
+    if (isAny(ibmin, viewport_max, (a, b) => a > b) ||
+        isAny(ibmax, viewport_min, (a, b) => a < b)) {
+        return;
+    }
+
+    // TODO
+    // compute the double triangle area only once
+
+    // TODO
+    // check if any the triangle has zero area with some epsilon, if so, don't rasterize
+
+
+    for (let y = ibmin.at(1); y <= ibmax.at(1); y++) {
+        for (let x = ibmin.at(0); x <= ibmax.at(0); x++) {
+
+            // sample point in center of pixel
+            const p = add(vec2(x, y), vec2(0.5, 0.5));
+
+            // TODO
+            // compute barycentric coordinates
+            // if any is negative -> continue
+
+            img.set(vec4(1,0,0,1),x,y);
+        }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+
+// output image
+const img = Image.zeroF32(300, 300, 4);
+
+// set the viewport to the full image
+const viewport = {x: 0, y:0, w : img.w, h : img.h};
+
+// fill triangle 1
+{
+    // define 3 points
+    const v0 = vec4(-10,-40,0,1);
+    const v1 = vec4(100,40,0,1);
+    const v2 = vec4(120,400,0,1);
+    fill_triangle_area(v0,v1,v2,img,viewport);
+}
+
+
+// fill triangle 2
+{
+    // define 3 points
+    const v0 = vec4(200,40,0,1);
+    const v1 = vec4(260,50,0,1);
+    const v2 = vec4(230,200,0,1);
+    fill_triangle_area(v0,v1,v2,img,viewport);
+}
+
+```
+<script>
+    const container = document.getElementById('draw_tri_bary_0');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+    @input(0)
+    @input(1)
+
+    imageToCtx(img,ctx);
+
+
+    "LIA: stop"
+</script>
+
+<div id="draw_tri_bary_0"></div>
+@mutate.remover(draw_tri_bary_0)
+
+
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -solution.js
+/**
+ * Computes twice the signed area of a given 2D triangle.
+ * The triangle is assumed to be defined anti-clockwise
+ * @param {AbstractMat} v0 The first 2D point
+ * @param {AbstractMat} v1 The second 2D point
+ * @param {AbstractMat} v2 The third 2D point
+ * @returns Twice the signed area
+ */
+function signed_tri_area_doubled(v0, v1, v2) {
+    // TODO 
+    // compute twice the summed area of the triangle using the edge function
+    return (v1.at(0) - v0.at(0)) * (v2.at(1) - v0.at(1)) - (v1.at(1) - v0.at(1)) * (v2.at(0) - v0.at(0));
+}
+
+/**
+ * Computes the minimum and maximum coordinates of an array of points
+ * @param {Array<AbstractMat>} points The input points
+ * @returns [bmin,bmax]
+*/
+function compute_screen_bounds(points) {
+    // compute triangle screen bounds
+    let bmin = vec2(Infinity, Infinity);
+    let bmax = vec2(-Infinity, -Infinity);
+
+    // go through all points and find minimum and maximum values
+    for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        const p2 = vec2(p.at(0), p.at(1));
+        cwiseMin(bmin, p2, bmin);
+        cwiseMax(bmax, p2, bmax);
+    }
+
+    return [bmin, bmax];
+}
+
+function fill_triangle_area(v0,v1,v2, img, viewport) {
+
+    const points = [v0,v1,v2];
+
+    const [bmin,bmax] = compute_screen_bounds(points);
+
+
+    // pixel coordinates of bounds
+    let ibmin = floor(bmin);
+    let ibmax = ceil(bmax);
+
+    const viewport_max = vec2(viewport.x + viewport.w-1, viewport.y + viewport.h-1);
+    const viewport_min = vec2(viewport.x, viewport.y);
+    // clamp bounds so they lie inside the image region
+    cwiseMax(ibmin, viewport_min, ibmin);
+    cwiseMin(ibmax, viewport_max, ibmax);
+
+    // handle case where its fully outside
+    if (isAny(ibmin, viewport_max, (a, b) => a > b) ||
+        isAny(ibmax, viewport_min, (a, b) => a < b)) {
+        return;
+    }
+
+    // TODO
+    // compute the double triangle area only once
+    const area_tri = signed_tri_area_doubled(v0, v1, v2);
+
+    // TODO
+    // check if any the triangle has zero area with some epsilon, if so, don't rasterize
+    const epsilon = 1E-8;
+    if (Math.abs(area_tri) < epsilon) {
+        return;
+    }
+    for (let y = ibmin.at(1); y <= ibmax.at(1); y++) {
+        for (let x = ibmin.at(0); x <= ibmax.at(0); x++) {
+
+            // sample point in center of pixel
+            const p = add(vec2(x, y), vec2(0.5, 0.5));
+
+            // TODO
+            // compute barycentric coordinates
+            // if any is negative -> continue
+
+            let v = signed_tri_area_doubled(v2, v0, p);
+            v /= area_tri;
+            if (v + epsilon < 0.0) {
+                continue;
+            }
+
+            let w = signed_tri_area_doubled(v0, v1, p);
+            w /= area_tri;
+            if (w + epsilon < 0.0) {
+                continue;
+            }
+
+            let u = 1.0 - v - w;
+            // we could also just compute u as 1
+            if (u + epsilon < 0.0) {
+                continue;
+            }
+
+            img.set(vec4(1,0,0,1),x,y);
+        }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+
+// output image
+const img = Image.zeroF32(300, 300, 4);
+
+// set the viewport to the full image
+const viewport = {x: 0, y:0, w : img.w, h : img.h};
+
+// fill triangle 1
+{
+    // define 3 points
+    const v0 = vec4(-10,-40,0,1);
+    const v1 = vec4(100,40,0,1);
+    const v2 = vec4(120,400,0,1);
+    fill_triangle_area(v0,v1,v2,img,viewport);
+}
+
+
+// fill triangle 2
+{
+    // define 3 points
+    const v0 = vec4(200,40,0,1);
+    const v1 = vec4(260,50,0,1);
+    const v2 = vec4(230,200,0,1);
+    fill_triangle_area(v0,v1,v2,img,viewport);
+}
+
+```
+<script>
+    const container = document.getElementById('draw_tri_bary_1');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+    @input(0)
+    @input(1)
+
+    imageToCtx(img,ctx);
+
+
+    "LIA: stop"
+</script>
+
+<div id="draw_tri_bary_1"></div>
+@mutate.remover(draw_tri_bary_1)
+
+
+### Putting the triangle together
+<!--
+script: http://localhost:3000/rasterizer/src/stages/03_rasterize_tri/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
+-->
+
+This last step is more of a formality. 
+We can now rasterize triangles! 
+The only thing missing is putting this together with the rest of the pipeline.
+
+As this does not really involve anything complicated, we will just look at the relevant code.
+The functions for computing the edge functions and the triangle rasterization of the last steps are integrated into the rasterizer as `signed_tri_area_doubled` and `rasterize_triangle`, the only actual change being writing out a color with the `write_fragment` method instead of directly setting the pixel.
+
+Otherwise, we extend the `draw` method, so it will go through a list of triangles and calls a precessing method `process_triangle` for each of them. The `process_triangle` itself will just call our new `rasterize_triangle` method for now.
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js
+class RasterizerTutorial extends Rasterizer {
+    /**
+     * Computes the minimum and maximum coordinates of an array of points
+     * @param {Array<AbstractMat>} points The input points
+     * @returns [bmin,bmax]
+     */
+    compute_screen_bounds(points) {
+        // compute triangle screen bounds
+        let bmin = vec2(Infinity, Infinity);
+        let bmax = vec2(-Infinity, -Infinity);
+
+        // go through all points and find minimum and maximum values
+        for (let i = 0; i < points.length; i++) {
+            const p = points[i];
+            const p2 = vec2(p.at(0), p.at(1));
+            cwiseMin(bmin, p2, bmin);
+            cwiseMax(bmax, p2, bmax);
+        }
+
+        return [bmin, bmax];
+    }
+
+    /**
+     * Computes twice the signed area of a given 2D triangle.
+     * The triangle is assumed to be defined anti-clockwise
+     * @param {AbstractMat} v0 The first 2D point
+     * @param {AbstractMat} v1 The second 2D point
+     * @param {AbstractMat} v2 The third 2D point
+     * @returns Twice the signed area
+     */
+    signed_tri_area_doubled(v0, v1, v2) {
+        return (v1.at(0) - v0.at(0)) * (v2.at(1) - v0.at(1)) - (v1.at(1) - v0.at(1)) * (v2.at(0) - v0.at(0));
+    }
+
+    /**
+     * 
+     * @param {Pipeline} pipeline The pipeline to use
+     * @param {AbstractMat} v0 The first vertex
+     * @param {AbstractMat} v1 The second vertex
+     * @param {AbstractMat} v2 The third vertex
+     * @returns 
+     */
+    rasterize_triangle(pipeline, v0, v1,
+        v2) {
+
+        // compute triangle screen bounds
+        let points = [v0, v1, v2];
+        let [bmin, bmax] = this.compute_screen_bounds(points);
+
+        // pixel coordinates of bounds
+        let ibmin = floor(bmin);
+        let ibmax = ceil(bmax);
+
+        const viewport = pipeline.viewport;
+
+        const viewport_max = vec2(viewport.x + viewport.w - 1, viewport.y + viewport.h - 1);
+        const viewport_min = vec2(viewport.x, viewport.y);
+        // clamp bounds so they lie inside the image region
+        cwiseMax(ibmin, viewport_min, ibmin);
+        cwiseMin(ibmax, viewport_max, ibmax);
+
+        // handle case where its fully outside
+        if (isAny(ibmin, viewport_max, (a, b) => a > b) ||
+            isAny(ibmax, viewport_min, (a, b) => a < b)) {
+            return;
+        }
+
+        // compute the double triangle area only once
+        const area_tri = this.signed_tri_area_doubled(v0, v1, v2);
+
+        // check if any the triangle has zero area with some epsilon, if so, don't rasterize
+        const epsilon = 1E-8;
+        if (Math.abs(area_tri) < epsilon) {
+            return;
+        }
+
+        // check all pixels in screen bounding box
+        for (let y = ibmin.at(1); y <= ibmax.at(1); y++) {
+            for (let x = ibmin.at(0); x <= ibmax.at(0); x++) {
+
+                // sample point in center of pixel
+                const p = add(vec2(x, y), vec2(0.5, 0.5));
+
+                let v = this.signed_tri_area_doubled(v2, v0, p);
+                v /= area_tri;
+                if (v + epsilon < 0.0) {
+                    continue;
+                }
+
+                let w = this.signed_tri_area_doubled(v0, v1, p);
+                w /= area_tri;
+                if (w + epsilon < 0.0) {
+                    continue;
+                }
+
+                let u = 1.0 - v - w;
+                if(u + epsilon < 0.0)
+                {
+                    continue;
+                }
+
+                // run  fragment shader with data
+                const frag_coord = vec4(x, y, 0.0, 1.0);
+                // run  fragment shader with data
+                const output_colors = {};
+                // write color data
+                output_colors[0] = vec4(1, 1, 1, 1);
+
+                this.write_fragment(pipeline, frag_coord, output_colors);
+
+            }
+        }
+    }
+    /**
+     * Processes a single triangle
+     * @param {Pipeline} pipeline The pipeline to use
+     * @param {AbstractMat} v0 The first vertex
+     * @param {AbstractMat} v1 The second vertex
+     * @param {AbstractMat} v2 The third vertex
+     */
+    process_triangle(pipeline, v0, v1, v2) {
+
+        this.rasterize_triangle(pipeline, v0, v1, v2);
+
+    }
+
+
+    /**
+     * Draw the given geometry
+     * @param {Pipeline} pipeline The pipeline to use
+     * @param {Object} geom Geometry object specifying all information
+     */
+    draw(pipeline, geom) {
+
+        // no vertices
+        // we could also take a parameter specifying the number of vertices to be
+        // drawn and not rely on vertex data
+        if (!geom.attributes[Attribute.VERTEX]) {
+            return;
+        }
+
+        const vertices = geom.attributes[Attribute.VERTEX];
+        const n = vertices.length;
+
+        // go through objects
+        if (geom.topology === Topology.LINES) {
+            // handles lines
+            // handle two vertices per step
+            for (let i = 0; i < n; i += 2) {
+                this.process_line(pipeline, vertices[i], vertices[i + 1]);
+            }
+        } else if (geom.topology === Topology.TRIANGLES) {
+            // handle triangles
+
+            // handle three vertices per step
+            for (let i = 0; i < n; i += 3) {
+                this.process_triangle(pipeline, vertices[i], vertices[i + 1],
+                    vertices[i + 2]);
+            }
+        }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+```js -scene.js
 
 const img = Image.zeroF32(300, 300, 4);
 
@@ -1931,9 +3554,10 @@ pipeline.framebuffer = fb;
     const Pipeline = r03.Pipeline;
     const Framebuffer = r03.Framebuffer;
 
-    @input0
+    @input(0)
+    @input(1)
 
-    const raster = new Rasterizer();
+    const raster = new RasterizerTutorial();
 
     const render = () => {
         img.fill(vec4(0,0,0,1));
@@ -1955,11 +3579,46 @@ pipeline.framebuffer = fb;
 <div id="draw_tri_container_0"></div>
 @mutate.remover(draw_tri_container_0)
 
+### What else can we do with triangle rasterization?
+
+As you might expect, our algorithm isn't the fastest.
+There are a lot of areas, that we could explore, some even mentioned in the initially mentioned early paper by Juan Pineda [^1], but a lot of other follow similar ideas.
+
+Basically we should ask ourselves: Isn't it wasteful, to check every pixel in the triangle bounding rectangle, if it belongs inside of it?
+The worst case would be a very thin triangle oriented along the diagonal of the screen.
+In that case we would need to check the entire screen, but more or less only the diagonal would actaully contain any pixels that we care about.
+
+So, how about some other approaches. 
+We could rasterize the sides and then move from left to right.
+We could go down the center line and procced left and right from that, as needed.
+We could split the rectangle into subrectangles and process them independently.
+
+As you can see, there are many ways to go about it just in that direction.
+
+Another opportunity is the actual work of computation.
+To keep the code simple, we basically just "optimized" calculating the total triangle area once, but we can do a lot more.
+Very similarly to the line drawing algorithm, the edge functions can be computed incrementally.
+If we replace $\mathbf{p}$ in the formula with a point $\mathbf{p} + \mathbf{q}$, we will see that $\operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{p} + \mathbf{q}) =  \operatorname{E}(\mathbf{v}_0,\mathbf{v}_1,\mathbf{p}) + \operatorname{C}(\mathbf{q})$, where $\operatorname{C}(\mathbf{q})$ is some very easy to compete value based on constants of the triangle and $\mathbf{q}$ (**try it out!**).
+So while the edge functions are not super computionally expensive, if we can replace the formula in each loop by just, for example, one addition and multiplication, we might save a lot when we also draw a lot of triangles/pixels.
+There are of course other optimizations to do in that regard.
+
+And of course, although not that great of an option in JavaScript, you could try to compute a lot of things in parallel.
+
+Next up, we will implement a more general clipping routine, that can clip a triangle at an arbitrary plane.
+
+[^1]: Juan Pineda. 1988. A parallel algorithm for polygon rasterization. In Proceedings of the 15th annual conference on Computer graphics and interactive techniques (SIGGRAPH '88). Association for Computing Machinery, New York, NY, USA, 17–20. https://doi.org/10.1145/54852.378457
+
 ## 04: Clip polygons
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/04_poly_clip/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/04_poly_clip/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
+
+This section will cover clipping polygons at arbitrary planes (lines work pretty much the same way).
+While this isn't needed immediately, it fits best here, since we already did simple clipping with a line.
+We will implement it in a way, that is very generic and can be used without change (aside from one part, as we will later add more data) even in 3D (and beyond). 
+We will later on need at least one clipping plane for the full 3D rasterization to work without special cases, so it will be nice to have this already sorted out.
+
 
 <!-- data-readOnly="false" data-showGutter="false" -->
 ``` js
@@ -2028,7 +3687,7 @@ pipeline.framebuffer = fb;
     const Pipeline = r04.Pipeline;
     const Framebuffer = r04.Framebuffer;
 
-    @input0
+    @input(0)
 
     const raster = new Rasterizer();
 
@@ -2054,8 +3713,8 @@ pipeline.framebuffer = fb;
 
 ## 05: Shaders
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/05_shader/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/05_shader/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -2180,8 +3839,8 @@ script: https://sibaku.github.io/rasterizer/src/stages/05_shader/rasterizer.js
 
 ## 06: Interpolate attributes
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/06_attrib_interp/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/06_attrib_interp/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -2315,8 +3974,8 @@ script: https://sibaku.github.io/rasterizer/src/stages/06_attrib_interp/rasteriz
 
 ## 07: Perspective and depth
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/07_perspective/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/07_perspective/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -2487,8 +4146,8 @@ script: https://sibaku.github.io/rasterizer/src/stages/07_perspective/rasterizer
 
 ## 08: Perspective-corrected interpolation
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/08_persp_interp/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/08_persp_interp/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -2662,8 +4321,8 @@ script: https://sibaku.github.io/rasterizer/src/stages/08_persp_interp/rasterize
 
 ## 09: Application: Turn on the light
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/09_lighting/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/09_lighting/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -2858,8 +4517,8 @@ script: https://sibaku.github.io/rasterizer/src/stages/09_lighting/rasterizer.js
 
 ## 10: Blending
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/10_blending/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/10_blending/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -3106,8 +4765,8 @@ script: https://sibaku.github.io/rasterizer/src/stages/10_blending/rasterizer.js
 
 ## 11: Culling
 <!--
-script: https://sibaku.github.io/rasterizer/src/stages/11_culling/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
+script: http://localhost:3000/rasterizer/src/stages/11_culling/rasterizer.js
+        http://localhost:3000/rasterizer/src/geometry_utils.js
 -->
 
 <!-- data-readOnly="false" data-showGutter="false" -->
@@ -3363,526 +5022,3 @@ script: https://sibaku.github.io/rasterizer/src/stages/11_culling/rasterizer.js
 @mutate.remover(culling_container_0)
 
 ## Bonus
-
-# Test
-<!--
-script: https://sibaku.github.io/rasterizer/src/test.js
--->
-
-<!-- data-readOnly="false" data-showGutter="false" -->
-``` js
-class B extends A
-{
-	a() {
-		console.log("A new");
-	}
-}
-```
-<script>
-    @input(0)
-
-    const b = new B();
-    b.a();
-    b.b();
-</script>
-
-
-# Final
-<!--
-script: https://sibaku.github.io/rasterizer/src/stages/final/rasterizer.js
-        https://sibaku.github.io/rasterizer/src/geometry_utils.js
--->
-
-Test
-
-<script>
-
-console.log(jsm.toString(v32.rand(4)));
-console.log(jsm.toString(vec4(1,2,3,4)));
-
-"LIA: stop"
-</script>
-
-
-Test put image data
-
-
-
-<!-- data-readOnly="false" data-showGutter="false" -->
-``` js
-    
-    const img = Image.zeroUI8C(300,300,4);
-
-    img.forEach((x,y,img) => {
-        const v = v32.rand(3);
-        img.set(v,x,y);
-
-    });
-```
-<script>
-    const container = document.getElementById('container_1');
-    container.innerHTML = "";
-    const canvas = document.createElement('canvas');
-    
-    container.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-    
-    @input0
-
-    imageToCtx(img,ctx);
-
-    "LIA: stop"
-</script>
-
-<div id="container_1" width="300" height="300"></div>
-@mutate.remover(container_1)
-
-
-<!-- data-readOnly="false" data-showGutter="false" -->
-``` js
-    
-    const img = Image.zeroF32(300,300,3);
-
-    
-    const geoms = [];
-
-    {
-        const vertices = [];
-        const colors = [];
-        const uvs = [];
-
-        // vertices.push(vec4(-0.5,-0.5,0.0,1.0));
-        // vertices.push(vec4(0.5,-0.5,0.0,1.0));
-
-        const num = 10;
-        const r = 0.75;
-        for(let i = 0; i < num; i++)
-        {
-            const x = r*Math.cos(Math.PI*2 * i/ num);
-            const y = r*Math.sin(Math.PI*2 * i/ num);
-
-            vertices.push(vec4(0.0,0.0,0.0,1.0));
-            vertices.push(vec4(x,y,0.0,1.0));
-
-            colors.push(vec4(1.0,0.0,1.0,1.0));
-            colors.push(vec4(0.0,1.0,0.0,1.0));
-
-            uvs.push(vec2(0.0,0.0));
-            uvs.push(vec2(1.0,0.0));
-        }
-
-        // vertices.push(vec4(0.0,0.0,0.0,1.0));
-        // vertices.push(vec4(-1.2,1.2,0.0,1.0));
-
-        // colors.push(vec4(1.0,0.0,1.0,1.0));
-        // colors.push(vec4(0.0,1.0,0.0,1.0));
-
-        // ts.push(0.0);
-        // ts.push(1.0);
-        // vertices.push(vec4(0.0,0.5,0.0,1.0));
-
-        const attributes = {};
-        attributes[Attribute.VERTEX] = vertices;
-        attributes["color"] = colors;
-        attributes["uv"] = uvs;
-        const geom = {
-            attributes,
-            topology: Topology.LINES
-        };
-
-        geoms.push(geom);
-    }
-
-    {
-        const vertices = [];
-        const colors = [];
-        const uvs = [];
-
-        vertices.push(vec4(0,-0.75,0,1));
-        vertices.push(vec4(0.75,-0.75,0,1));
-        vertices.push(vec4(0.75,-0,0,1));
-
-        colors.push(vec4(1.0,0.0,0.0,1.0));
-        colors.push(vec4(0.0,1.0,0.0,1.0));
-        colors.push(vec4(0.0,0.0,1.0,1.0));
-
-        uvs.push(vec2(0.0,0.0));
-        uvs.push(vec2(1.0,0.0));
-        uvs.push(vec2(1.0,1.0));
-        
-        
-        const attributes = {};
-        attributes[Attribute.VERTEX] = vertices;
-        attributes["color"] = colors;
-        attributes["uv"] = uvs;
-        const geom = {
-            attributes,
-            topology: Topology.TRIANGLES
-        };
-
-        geoms.push(geom);
-    }
-
-     {
-        const vertices = [];
-        const colors = [];
-        const uvs = [];
-
-        vertices.push(vec4(-0.25,-0.75,0.5,1));
-        vertices.push(vec4(0.5,-0.75,0.5,1));
-        vertices.push(vec4(0.5,-0,0.5,1));
-
-        colors.push(vec4(0.0,1.0,1.0,1.0));
-        colors.push(vec4(0.0,1.0,0.0,1.0));
-        colors.push(vec4(1.0,0.0,1.0,1.0));
-
-        uvs.push(vec2(0.0,0.0));
-        uvs.push(vec2(1.0,0.0));
-        uvs.push(vec2(1.0,1.0));
-        
-        
-        const attributes = {};
-        attributes[Attribute.VERTEX] = vertices;
-        attributes["color"] = colors;
-        attributes["uv"] = uvs;
-        const geom = {
-            attributes,
-            topology: Topology.TRIANGLES
-        };
-
-        geoms.push(geom);
-    }
-
-    const checkerboard = Image.zero(9,9);
-    checkerboard.apply((x,y) => {
-        const v = (x+y) % 2 === 0? 1 : 0;
-        return vec4(v,v,v,1);
-    });
-
-    const pipeline = new Pipeline();
-    pipeline.viewport.w = img.w;
-    pipeline.viewport.h = img.h;
-
-    pipeline.uniform_data.M = jsm.MatF32.id(4,4);
-    pipeline.uniform_data.tex = checkerboard;
-
-    const program = {
-        vertex_shader : {
-            run : (attributes, uniforms, outputs) => {
-                outputs["color"] = attributes["color"];
-                outputs["uv"] = attributes["uv"];
-                return mult(uniforms.M,attributes[Attribute.VERTEX]);}
-        },
-        fragment_shader : {
-            run : (frag_coord, data,uniforms, output_colors) => {
-                const uv = data["uv"];
-                // output_colors[0] = vec4(t,t,t,1.0);
-                // output_colors[0] = data["color"];
-                output_colors[0] = sample(uniforms.tex,uv);
-                
-                return true;}
-        }
-    };
-
-    pipeline.program = program;
-
-    const fb = Framebuffer.new();
-    fb.color_buffers[0] = img;
-    fb.depth_buffer = Image.zero(img.w,img.h,1);
-
-    pipeline.framebuffer = fb;
-
-    pipeline.depth_options.enable_depth_test = true;
-
-    const raster = new RasterizerFinal();
-
-    for(let i = 0; i < geoms.length;i++)
-    {
-        raster.draw(pipeline,geoms[i]);
-    }
-
-
-```
-<script>
-    const container = document.getElementById('container_2');
-    container.innerHTML = "";
-    const canvas = document.createElement('canvas');
-    
-    container.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-    
-    @input0
-
-    let t = 0.0;
-
-    const render = () => {
-        img.fill(vec4(0,0,0,1));
-        pipeline.framebuffer.depth_buffer.fill(vec4(1,1,1,1));
-
-        const R = jsm.axisAngle4(vec3(0,1,0),t);
-        pipeline.uniform_data.M = R;
-        t+=0.01;
-        for(let i = 0; i < geoms.length;i++)
-        {
-            raster.draw(pipeline,geoms[i]);
-        }
-
-        // imageToCtx(pipeline.framebuffer.depth_buffer,ctx);
-        imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
-
-
-        // requestAnimationFrame(render);
-
-    };
-
-    render();
-
-    "LIA: stop"
-</script>
-
-<div id="container_2" width="300" height="300"></div>
-@mutate.remover(container_2)
-
-
-
-<!-- data-readOnly="false" data-showGutter="false" -->
-``` js
-    
-    const img = Image.zeroF32(300,300,4);
-
-    
-    const geoms = [];
-
-    const checkerboard = Image.zero(9,9);
-    checkerboard.apply((x,y) => {
-        const v = (x+y) % 2 === 0? 1 : 0;
-        return vec4(v,v,v,1);
-    });
-    
-    const rand_tex = Image.random(128,128);
-
-    {
-        const geom = create_cube_geometry();
-        const renderable = Renderable.new(geom, {
-            local_transform : transform({scale : vec3(0.2,0.2,0.2),
-            rot: jsm.axisAngle4(vec3(1,1,1),jsm.deg2rad(-37))}),
-            material : {
-                color : vec4(1,0,0,1),
-                tex : checkerboard
-            }
-        });
-        geoms.push(renderable);
-    }
-
-     {
-        const geom = create_plane_geometry();
-        const renderable = Renderable.new(geom, {
-            local_transform : transform({pos : vec3(0,-0.05,0), scale : vec3(1.0,1.0,1.0)}),
-            material : {
-                color : vec4(0.1,0.85,0.5,0.75),
-                tex : rand_tex,
-                transparent : true,
-                emission : vec4(0.3,0.3,0.3,0.0)
-            }
-        });
-        geoms.push(renderable);
-    }
-
-    {
-        const geom = create_cube_geometry();
-        const renderable = Renderable.new(geom, {
-            local_transform : transform({
-                pos : vec3(-0.1,0.2, 0.15),
-                scale : vec3(0.2,0.1,0.2),
-            rot: jsm.axisAngle4(vec3(1,0,0),jsm.deg2rad(-37))}),
-            material : {
-                color : vec4(1,1,1,0.75),
-                tex : checkerboard,
-                transparent: true
-            }
-        });
-        geoms.push(renderable);
-    }
-
- 
-
-    const pipeline = new Pipeline();
-    pipeline.viewport.w = img.w;
-    pipeline.viewport.h = img.h;
-
-    pipeline.uniform_data.M = jsm.MatF32.id(4,4);
-    pipeline.uniform_data.tex = checkerboard;
-
-    const P = jsm.perspective(jsm.deg2rad(120), img.w/img.h, 0.1, 100);
-    let V = jsm.lookAt(vec3(-0.5,0,0), vec3(0,0,0), vec3(0,1,0));
-
-    const program = {
-        vertex_shader : {
-            run : (attributes, uniforms, outputs) => {
-                outputs["uv"] = attributes[Attribute.UV];
-                outputs["p_v"] = jsm.copy(jsm.subvec(mult(uniforms.MV,attributes[Attribute.VERTEX]),0,3));
-                outputs["n_v"] = mult(uniforms.MV_ti,attributes[Attribute.NORMAL]);
-                return mult(uniforms.MVP,attributes[Attribute.VERTEX]);}
-        },
-        fragment_shader : {
-            run : (frag_coord, data,uniforms, output_colors) => {
-                const uv = data["uv"];
-                const n = jsm.normalize(data["n_v"]);
-                const p = data["p_v"];
-                let color = uniforms.material.color;
-                
-                if(uniforms.material.tex)
-                {
-                    color = jsm.cwiseMult(sample(uniforms.material.tex,uv),color);
-
-                    // color = sample(uniforms.      material.tex,uv);
-                }
-                const l = mult(uniforms.V,vec4(-1.5,2,-2.7,1));  
-
-                const L = jsm.normalize(jsm.fromTo( p,jsm.subvec(l,0,3)));
-
-                const R = reflect(jsm.neg(L),n);
-                const V = jsm.normalize(jsm.neg(p));
-
-                const diff = clamp(dot(L,n),0,1);
-                const spec = Math.pow(clamp(dot(R,V),0,1),16) * (diff > 0 ? 1 : 0);
-
-                const result = jsm.copy(color);
-                jsm.scale(result,diff,result);
-                jsm.add(result, vec4(spec,spec,spec,1),result);
-
-                if(uniforms.material.emission)
-                {
-                    add(result,uniforms.material.emission,result);
-                }
-                result.set(color.at(3),3);
-                // output_colors[0] = vec4(t,t,t,1.0);
-                // output_colors[0] = data["color"];
-                // output_colors[0] = vec4(diff,diff,diff,1);
-                output_colors[0] = result;
-                
-                return true;}
-        }
-    };
-
-    pipeline.program = program;
-
-    const fb = Framebuffer.new();
-    fb.color_buffers[0] = img;
-    fb.depth_buffer = Image.zero(img.w,img.h,1);
-
-    pipeline.framebuffer = fb;
-
-    pipeline.depth_options.enable_depth_test = true;
-
-
-```
-<script>
-    const container = document.getElementById('container_3');
-    container.innerHTML = "";
-    const canvas = document.createElement('canvas');
-    
-    container.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-    
-    @input0
-
-    let t = 0.0;
-
-    const opaque = [];
-    const transparent = [];
-
-    const raster = new Rasterizer();
-
-
-    for(let i = 0; i < geoms.length;i++)
-    {
-        const gi = geoms[i];
-        if(gi.material && gi.material.transparent)
-        {
-            const {bmin,bmax,center,half_size} = compute_geometry_bounds(gi.geometry.attributes[Attribute.VERTEX]);
-
-            transparent.push({obj: gi, center});
-        }
-        else
-        {
-            opaque.push(gi);
-        }
-    }
-    const render = () => {
-        img.fill(vec4(0,0,0,1));
-        pipeline.framebuffer.depth_buffer.fill(vec4(1,1,1,1));
-
-        V = mult(V,jsm.axisAngle4(vec3(0,1,0),0.01));
-        const VP = mult(P,V);
-        pipeline.uniform_data.V = V;
-        pipeline.uniform_data.P = P;
-        pipeline.uniform_data.VP = VP;
-
-        // compute view z
-        transparent.forEach(currentValue => {
-            const res = mult(V,mult(currentValue.obj.local_to_world, currentValue.center));
-            currentValue.z = res.at(2);
-        });
-
-        transparent.sort((a,b) => a.z - b.z);
-
-
-
-        const R = jsm.axisAngle4(vec3(0,1,0),t);
-        t+=0.01;
-        for(let i = 0; i < opaque.length;i++)
-        {
-            const gi = opaque[i];
-            pipeline.uniform_data.M = gi.local_to_world;
-            pipeline.uniform_data.MVP = mult(pipeline.uniform_data.VP,pipeline.uniform_data.M);
-            pipeline.uniform_data.MV = mult(pipeline.uniform_data.V,pipeline.uniform_data.M);
-            pipeline.uniform_data.MV_ti = jsm.inv(jsm.block(jsm.transpose(pipeline.uniform_data.MV),0,0,3,3));
-            pipeline.uniform_data.material = gi.material;
-
-            raster.draw(pipeline,gi.geometry);
-        }
-
-        pipeline.blend_options.enabled = true;
-        pipeline.blend_options.source_function = BlendFunction.SRC_ALPHA;
-        pipeline.blend_options.destination_function = BlendFunction.ONE_MINUS_SRC_ALPHA;
-
-        pipeline.depth_options.enable_depth_write = false;
-
-
-        pipeline.culling_options.enabled =  true;
-
-        for(let i = 0; i < transparent.length;i++)
-        {
-            const gi = transparent[i].obj;
-            pipeline.uniform_data.M = gi.local_to_world;
-            pipeline.uniform_data.MVP = mult(pipeline.uniform_data.VP,pipeline.uniform_data.M);
-            pipeline.uniform_data.MV = mult(pipeline.uniform_data.V,pipeline.uniform_data.M);
-            pipeline.uniform_data.MV_ti = jsm.inv(jsm.block(jsm.transpose(pipeline.uniform_data.MV),0,0,3,3));
-            pipeline.uniform_data.material = gi.material;
-
-            raster.draw(pipeline, gi.geometry);
-        }
-
-        pipeline.culling_options.enabled=  false;
-
-        pipeline.depth_options.enable_depth_write = true;
-
-        pipeline.blend_options.enabled = false;
-
-        // imageToCtx(pipeline.framebuffer.depth_buffer,ctx);
-        imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
-
-
-        // requestAnimationFrame(render);
-
-    };
-
-    render();
-
-    "LIA: stop"
-</script>
-
-<div id="container_3" width="300" height="300"></div>
-@mutate.remover(container_3)
-
