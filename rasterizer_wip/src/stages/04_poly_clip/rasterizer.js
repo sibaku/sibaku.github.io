@@ -453,17 +453,12 @@
          * @param {Pipeline} pipeline The pipeline to use
          * @param {AbstractMat} v0 The first vertex
          * @param {AbstractMat} v1 The second vertex
-         * @param {Object<Number|AbstractMat>} attribs_v0 The attributes of the first vertex
-         * @param {Object<Number|AbstractMat>} attribs_v1 The attributes of the second vertex
          */
-        process_line(pipeline, v0, v1,
-            attribs_v0 = {},
-            attribs_v1 = {}) {
+        process_line(pipeline, v0, v1) {
             // prepare points and data for clipping
             let points = [v0, v1];
-            let attribs = [attribs_v0, attribs_v1];
             // clip line
-            [points, attribs] = this.clip_line(points, attribs, pipeline.clip_planes);
+            points = this.clip_line(points, pipeline.clip_planes);
 
             // finally rasterize line
             if (points.length === 2) {
@@ -477,18 +472,13 @@
          * @param {AbstractMat} v0 The first vertex
          * @param {AbstractMat} v1 The second vertex
          * @param {AbstractMat} v2 The third vertex
-         * @param {Object<Number|AbstractMat>} attribs_v0 The attributes of the first vertex
-         * @param {Object<Number|AbstractMat>} attribs_v1 The attributes of the second vertex
-         * @param {Object<Number|AbstractMat>} attribs_v2 The attributes of the third vertex
          */
-        process_triangle(pipeline, v0, v1, v2,
-            attribs_v0 = {}, attribs_v1 = {}, attribs_v2 = {}) {
+        process_triangle(pipeline, v0, v1, v2) {
 
             // prepare points and data for clipping
             let points = [v0, v1, v2];
-            let attribs = [attribs_v0, attribs_v1, attribs_v2];
             // clip polygon
-            [points, attribs] = this.clip_polygon(points, attribs, pipeline.clip_planes);
+            points = this.clip_polygon(points, pipeline.clip_planes);
 
             // triangulate polygon (clipping the triangle may result in non triangles
             // polygons) and rasterize
@@ -538,13 +528,10 @@
         /**
          * Clips a polygon against the given clip-planes
          * @param {Array<AbstractMat>} points The input points
-         * @param {Array<Object>} attribs The attributes per point
          * @param {Array<AbstractMat>} planes The clipping planes
          * @returns {[Array<AbstractMat>,Array<Object>]} The clipped points and interpolated attributes
          */
-        clip_polygon(points,
-            attribs,
-            planes) {
+        clip_polygon(points, planes) {
 
             // Implementation of the Sutherland-Hodgman algorithm
             for (let pi = 0; pi < planes.length; pi++) {
@@ -569,7 +556,7 @@
                         if (dp < 0.0) {
                             // intersect prev -> cur
 
-                            const t = dot(pl, prev) / (dot(pl, sub(prev, cur)));
+                            const t = dp / (dp - dc);
                             const p = add(prev, scale(sub(cur, prev), t));
 
                             output.push(p);
@@ -581,8 +568,7 @@
                         // intersect prev->cur
                         // intersect in homogeneous space
 
-                        const t = dot(pl, prev) / (dot(pl, sub(prev, cur)));
-
+                        const t = dp / (dp - dc);
                         const p = add(prev, scale(sub(cur, prev), t));
 
                         output.push(p);
@@ -591,19 +577,17 @@
 
                 points = output;
             }
-            return [points, attribs];
+            return points;
         }
 
 
         /**
          * Clips a line against the given clip-planes
          * @param {Array<AbstractMat>} points The input points
-         * @param {Array<Object>} attribs The attributes per point
          * @param {Array<AbstractMat>} planes The clipping planes
          * @returns {[Array<AbstractMat>,Array<Object>]} The clipped points and interpolated attributes
          */
-        clip_line(points,
-            attribs, planes) {
+        clip_line(points, planes) {
 
             // successive clipping at each plane
             // clpping a line at a plane is more or less one step of the
@@ -614,52 +598,47 @@
                     return;
                 }
 
-                const output = [];
-
-                // same algorithm as polygon... just without the looping around
-                const i = 1;
-                const ip = 0;
-
-                const cur = points[i];
-                const prev = points[ip];
+                // simplified sutherland-hodgman
+                const cur = points[0];
+                const prev = points[1];
                 // compute projective distance
 
                 const dc = dot(pl, cur);
                 const dp = dot(pl, prev);
 
-                // cur inside
-                if (dc >= 0.0) {
-                    // prev outside
-                    if (dp < 0.0) {
-                        // intersect prev -> cur
+                // the four cases
+                // the actual implementation will combine them a bit, as there is a bit of overlap
 
-                        const t = dot(pl, prev) / (dot(pl, sub(prev, cur)));
-                        const p = add(prev, scale(sub(cur, prev), t));
-
-
-                        output.push(p);
-                        output.push(cur);
-                    } else {
-                        // both inside
-                        output.push(prev);
-                        output.push(cur);
-                    }
-
-                } else if (dp >= 0.0) {
-                    // cur outside, prev inside
-                    // intersect prev->cur
-                    // intersect in homogeneous space
-
-                    const t = dot(pl, prev) / (dot(pl, sub(prev, cur)));
+                if (dp < 0.0 && dc < 0.0) {
+                    // case 1 - both outside -> finished
+                    return [];
+                }
+                else if (dp >= 0.0 && dc >= 0.0) {
+                    // case 2 - both inside -> continue with the next plane
+                    continue;
+                }
+                else if (dp >= 0.0 && dc < 0.0) {
+                    // case 3 - start inside, end outside
+                    // compute intersection
+                    const t = dp / (dp - dc);
                     const p = add(prev, scale(sub(cur, prev), t));
 
-                    output.push(prev);
-                    output.push(p);
-                }
+                    //  return startpoint and intersection
+                    // In this case we will just replace the points and continue with the next plane;
+                    points = [prev, p];
+                    continue;
+                } else {
+                    // case 4 - start outside, end inside
+                    // compute intersection
+                    const t = dp / (dp - dc);
+                    const p = add(prev, scale(sub(cur, prev), t));
 
-                points = output;
+                    // return intersection and endpoint
+                    points = [p, cur];
+                    continue;
+                }
             }
-            return [points, attribs];
+            return points;
         }
 
         /**

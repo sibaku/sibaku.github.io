@@ -892,7 +892,7 @@ class RasterizerBonusRasterRules {
         let points = [v0, v1];
         let attribs = [attribs_v0, attribs_v1];
         // clip line
-        [points, attribs] = this.clip_line(points, attribs, pipeline.clip_planes);
+        [points, attribs] = this.clip_line(points, pipeline.clip_planes, attribs);
 
         for (let i = 0; i < points.length; i++) {
 
@@ -923,7 +923,7 @@ class RasterizerBonusRasterRules {
         let points = [v0, v1, v2];
         let attribs = [attribs_v0, attribs_v1, attribs_v2];
         // clip polygon
-        [points, attribs] = this.clip_polygon(points, attribs, pipeline.clip_planes);
+        [points, attribs] = this.clip_polygon(points, pipeline.clip_planes, attribs);
 
         for (let i = 0; i < points.length; i++) {
             points[i] = this.viewport_transform(points[i], pipeline.viewport);

@@ -3609,70 +3609,671 @@ Next up, we will implement a more general clipping routine, that can clip a tria
 [^1]: Juan Pineda. 1988. A parallel algorithm for polygon rasterization. In Proceedings of the 15th annual conference on Computer graphics and interactive techniques (SIGGRAPH '88). Association for Computing Machinery, New York, NY, USA, 17–20. https://doi.org/10.1145/54852.378457
 
 ## 04: Clip polygons
-<!--
-script: https://sibaku.github.io/rasterizer_wip/src/stages/04_poly_clip/rasterizer.js
-        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
--->
 
 This section will cover clipping polygons at arbitrary planes (lines work pretty much the same way).
 While this isn't needed immediately, it fits best here, since we already did simple clipping with a line.
 We will implement it in a way, that is very generic and can be used without change (aside from one part, as we will later add more data) even in 3D (and beyond). 
 We will later on need at least one clipping plane for the full 3D rasterization to work without special cases, so it will be nice to have this already sorted out.
 
+### Sutherland-Hodgman
+
+We will implement the **Sutherland-Hodgman** polygon clipping algorithm [^1], as it is pretty intuitive and not too hard to implement.
+
+First, we will define, what a clipping plane is.
+This is basically the same concept as with the lines in the 2D case.
+There are different ways to define a plane.
+The first is with a normal $\mathbf{n}$ and a point $\mathbf{p}$.
+We want to check, if a point $\mathbf{x}$ is part of the plane. 
+To do that, we compute the vector between both points $\mathbf{x} - \mathbf{p}$ (*Note*: With this and following definitions, you can switch the order of vectors, which will change some signs along the way. Just be careful to be consistent, otherwise it doesn't matter).
+The difference vector is part of the plane, so it has to be perpendicular to the plane normal.
+
+$$
+    \mathbf{n}\cdot(\mathbf{x} - \mathbf{p}) = 0
+$$
+
+Rearranging a bit we will go from this  vector equation to the scalar form:
+
+$$
+\begin{align*}
+\mathbf{n}\cdot(\mathbf{x} - \mathbf{p}) &= 0\\
+\mathbf{n}\cdot\mathbf{x}  \underbrace{-\mathbf{n}\cdot\mathbf{p}}_{d} &= 0\\
+\mathbf{n}\cdot\mathbf{x} +d &= 0
+\end{align*}
+$$
+
+If $\mathbf{n}$ is normalized, $d$ has the nice geometric meaning of being the signed distance of the origin to the plane.
+
+So the function $\operatorname{d}(\mathbf{x}) = \mathbf{n}\cdot\mathbf{x} +d$ gives us the signed distance (scaled by the length of the normal) to the plane, with positive values meaning "$\mathbf{x}$ is in front" aand negative values meaning "$\mathbf{x}$ is in the back".
+
+The function is also liner, which means, we can write the following:
+
+$$
+\operatorname{d}(\mathbf{x} + s\mathbf{y}) = \operatorname{d}(\mathbf{x}) + s\operatorname{d}(\mathbf{y}) 
+$$
+
+For clipping polygons, we only need two operations:
+
+1. Check, if a point lies in front or to the back of a plane
+2. Intersect a line with a plane
+
+The first part is already covered with the sign of $\operatorname{d}$. 
+We will now use the linearity of $\operatorname{d}$  to solve the second point.
+
+The line between two points $\mathbf{A}$ and $\mathbf{B}$ is defined by:
+
+$$
+\begin{align*}
+\mathbf{p}(t) &= \mathbf{A} + t (\mathbf{B} - \mathbf{A}) \\
+&= \mathbf{A} + t\mathbf{v} \\
+t &= \in[0,1]
+\end{align*}
+$$
+
+The intersection of this line with the plane will be a point, that has a distance of zero to the plane.
+We will just plug in the line and solve for the parameter.
+
+$$
+\begin{align*}
+\operatorname{d}(\mathbf{p}(t)) &= 0 \\
+\operatorname{d}(\mathbf{A} + t (\mathbf{B} - \mathbf{A})) &= 0\\
+\operatorname{d}(\mathbf{A}) + t\operatorname{d}(\mathbf{B} - \mathbf{A}) &= 0\\
+\operatorname{d}(\mathbf{A}) + t(\operatorname{d}(\mathbf{B}) - \operatorname{d}(\mathbf{A})) &= 0\\
+\operatorname{d}(\mathbf{A}) + t(\operatorname{d}(\mathbf{B}) - \operatorname{d}(\mathbf{A})) &= 0\\
+t(\operatorname{d}(\mathbf{B}) - \operatorname{d}(\mathbf{A})) &= -\operatorname{d}(\mathbf{A})\\
+t &= -\frac{\operatorname{d}(\mathbf{A})}{\operatorname{d}(\mathbf{B}) - \operatorname{d}(\mathbf{A})}\\
+t &= \frac{\operatorname{d}(\mathbf{A})}{\operatorname{d}(\mathbf{A}) - \operatorname{d}(\mathbf{B})}\\
+\end{align*}
+$$
+
+One last part thaat we will do, to also be prepared for later, is writing our vectors in a specific way.
+For now, you can just think about it as being a different notation.
+We will also use think about 3D vectors in general now, not only 2D.
+
+We will write a point $\mathbf{a} = \begin{pmatrix}a_x \\ a_y \\ a_z\end{pmatrix}$ as $\overline{\mathbf{a}} = \begin{pmatrix}a_x \\ a_y \\ a_z \\ 1\end{pmatrix}$.
+So we will just add a fourth coordinate with a $1$ at the end.
+Calculating a difference vector between to points $\overline{\mathbf{a}} - \overline{\mathbf{b}}$ then obviously results in a $0$ in the last place.
+
+This makes writing $\operatorname{d}$ and defining the plane pretty easy:
+
+$$
+\begin{align*}
+\operatorname{d}(\mathbf{x}) &= \mathbf{n}\cdot\mathbf{x} +d \\
+&= \begin{pmatrix}x_x \\ x_y \\ x_z \\ 1\end{pmatrix} \cdot \begin{pmatrix}n_x \\ n_y \\ n_z\\ d \end{pmatrix} \\
+&= \overline{\mathbf{x}} \cdot \mathbf{l}
+\end{align*}
+$$
+
+So we can just write our plane values in a 4D vector and do a dot product to find $\operatorname{d}$. 
+The definition of the line and calculating the intersection point with the computed $t$ value does not change when we augment our vectors.
+We just treat our vectors as normal 4D vectors when doing any computations, such as addition or scaling.
+This will come in very handy later.
+
+Now on to finally compute the clipping (we already have the most important stuff down now).
+
+We define a polygon by its indexed vertices $\mathbf{P}_0, \dots, \mathbf{P}_n$.
+The edge $i$ is just the line from point $\mathbf{P}_i$ to $\mathbf{P}_{i+1}$, where we overlap the last index.
+So the last edge is $\mathbf{P}_n$ to $\mathbf{P}_0$.
+
+The reason we don't just work with triangles here, is that if we use multiple clipping planes, a triangle might become a quadriliteral or just some general polygon after multiple clippings.
+
+The Sutherland-Hodgman algorithm works by producing a sequence of vertices that correspond to the clipped polygon.
+If nothing needs to be clipped, the original polygon is produced, if it is fully clipped, you will get an empty list.
+
+It works the following way:
+
+1. Define an empty output array *points*
+
+2. Iterate over all polygon edges, starting from the last one (from point $n$ to point $0$)
+
+    1. Compute distances for both edge points
+
+    2. Handle edge (4 cases)
+
+        1. Both points outside? -> Nothing to do
+
+        2. Both points inside? -> Append endpoint of edge to *points*
+
+        3. Startpoint inside, endpoint outside? -> Append intersection to *points*
+
+        4. Startpoint outside, endpoint inside? -> Append intersection and then the endpoint to *points*
+
+3. Return *points* as result
+
+As we are starting with the last edge, we only ever output the end of a line, as that ensures, that with no clipping, the first vertex of the result will be the first vertex of the input.
+Notes for the 4 cases:
+
+1. When both points are outside, that edge can be discarded. Cases 3 and 4 handle the case that the polygon goes out of the plane and comes back in at some point
+2. When both points are inside, we do not need to clip. As the last edge in the point definitions is implicit, we output only the endpoint
+3. The polygon edge will stop at the intersection, so we replace the actual endpoint (it is clipped) with the intersection
+4. The edge comes back into the plane. Normally we would just put the endpoint there, but since we were outside before, the startpoint was clipped and couldn't have been added to the list before, so we need to add the intersection before the endpoint
+
+Determining, where a point lines with respect to the clip plane is simply done by checking the signs of the distances, positive for inside, negative for outside.
+Those distances can then also be used for the intersection calculation.
+
+This took some effort, but we can now implement the steps of the algorithm ourselves!
+For now, we will use the inbuilt Javascript rendering to visualize it, but in the next step, we will integrate it into our framework.
+This will once again be just a bit of bookkeeping, as we need to do something to handle drawing polygons with our current triangle mechanism.
+
+This implementation will take an array of clip planes and just walk through them to clip the results one after another.
+
+You can check the result of the below this code segment.
+
+<!-- data-readOnly="true" data-showGutter="false" -->
+``` js -draw_func.js
+function draw_polygon(points, ctx)
+{
+    // minimum 3 points
+    if(points.length < 3)
+    {
+        return;
+    }
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(points[0].at(0),points[0].at(1));
+    for(let i = 1; i < points.length; i++)
+    {   
+        const pi = points[i];
+        ctx.lineTo(pi.at(0),pi.at(1));
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js
+/**
+ * Clips a polygon against the given clip-planes
+ * @param {Array<AbstractMat>} points The input points
+ * @param {Array<AbstractMat>} planes The clipping planes
+ * @returns {[Array<AbstractMat>,Array<Object>]} The clipped points and interpolated attributes
+ */
+function clip_polygon(points, planes) {
+     // Implementation of the Sutherland-Hodgman algorithm
+    for (let pi = 0; pi < planes.length; pi++) {
+
+        // go through all clip planes
+        const pl = planes[pi];
+        const output = [];
+
+        const size = points.length;
+
+        // TODO
+        // iterate over the edges, starting with the last one
+
+        // TODO for loop
+        // Compute distances
+        // handle cases and place result in output
+        
+        // replace points with the result of the current step
+        points = output;
+    }
+    return points;
+}
+```
+```js -scene.js
+const w = 300;
+const h = 300;
+
+// input polygon points
+// all lie in z = 0
+const points = [
+    vec4(20, 20, 0.0, 1.0),
+    vec4(w - 10, 40, 0.0, 1.0),
+    vec4(40, h - 20, 0.0, 1.0),
+];
+
+// the lines that we want to clip with
+// each entry is defined by two points that define a line in 2D
+const lines = [
+    [vec2(0,0), vec2(w,h*0.6)],
+    [vec2(w,h * 0.8),vec2(0,h*0.7)],
+    [vec2(50,h),vec2(w * 0.3,0)],
+];
+
+// computes the plane equation given two 2d vectors
+function compute_plane(p0, p1)
+{
+    const d = sub(p1, p0);
+    // 2d normal
+    const n = vec2(-d.at(1),d.at(0));
+    // z is 0
+    return vec4(n.at(0),n.at(1), 0, -dot(p0,n));
+}
+
+// simple helper to draw a line define by two points
+function draw_plane(p0,p1)
+{
+    ctx.save();
+
+    const l = w + h;
+    const center = scale(add(p0,p1),0.5);
+    const v = jsm.normalize(jsm.fromTo(p0,p1));
+    const start = add(center, scale(v,-0.5*l));
+    const end = add(center, scale(v,0.5*l));
+
+    ctx.beginPath();
+    ctx.moveTo(start.at(0),start.at(1));
+    ctx.lineTo(end.at(0),end.at(1));
+    ctx.stroke();
+    ctx.restore();
+}
+
+// the clip planes
+const clip_planes = [];
+
+for(let i =0; i < lines.length;i++)
+{
+    clip_planes.push(compute_plane(lines[i][0],lines[i][1]));
+}
+const points_clipped = clip_polygon(points, clip_planes);
+
+```
+<script>
+    const container = document.getElementById('poly_clip_impl_0');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+  
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+    @input(0)
+    @input(1)
+    @input(2)
+
+    canvas.width = w;
+    canvas.height = h;
+
+    // flip canvas
+    ctx.setTransform(1,0,0,-1,0,canvas.height);
+    
+    ctx.save();
+    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillRect(0,0,w,h);
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = "rgb(64,64,64)";
+    ctx.strokeStyle = "rgba(0,0,0,0)";
+    draw_polygon(points,ctx);
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.strokeStyle = "rgba(0,0,0,0)";
+    draw_polygon(points_clipped,ctx);
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = "rgb(255,0,0)";
+
+    for(let i = 0; i < lines.length;i++)
+    {
+        draw_plane(lines[i][0],lines[i][1]);
+    }
+    ctx.restore();
+
+    "LIA: stop"
+</script>
+
+<div id="poly_clip_impl_0"></div>
+@mutate.remover(poly_clip_impl_0)
+
+
+Below is the solution.
+
+<!-- data-readOnly="true" data-showGutter="false" -->
+``` js -draw_func.js
+function draw_polygon(points, ctx)
+{
+    // minimum 3 points
+    if(points.length < 3)
+    {
+        return;
+    }
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(points[0].at(0),points[0].at(1));
+    for(let i = 1; i < points.length; i++)
+    {   
+        const pi = points[i];
+        ctx.lineTo(pi.at(0),pi.at(1));
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -solution.js
+/**
+ * Clips a polygon against the given clip-planes
+ * @param {Array<AbstractMat>} points The input points
+ * @param {Array<AbstractMat>} planes The clipping planes
+ * @returns {[Array<AbstractMat>,Array<Object>]} The clipped points and interpolated attributes
+ */
+function clip_polygon(points, planes) {
+     // Implementation of the Sutherland-Hodgman algorithm
+    for (let pi = 0; pi < planes.length; pi++) {
+
+        const pl = planes[pi];
+        const output = [];
+
+        const size = points.length;
+        for (let i = 0; i < size; i++) {
+
+            const cur = points[i];
+            const ip = (i - 1 + points.length) % points.length;
+            const prev = points[ip];
+
+            // compute distance
+            const dc = dot(pl, cur);
+            const dp = dot(pl, prev);
+
+            // the four cases
+            // the actual implementation will combine them a bit, as there is a bit of overlap
+            
+            if(dp < 0.0 && dc < 0.0)
+            {
+                // case 1 - both outside
+                continue;
+            }
+            else if(dp >= 0.0 && dc >= 0.0)
+            {
+                // case 2 - both inside
+                output.push(cur);
+            }
+            else if(dp >= 0.0 && dc < 0.0)
+            {
+                // case 3 - start inside, end outside
+                // compute intersection
+                const t = dp / (dp - dc);
+                const p = add(prev, scale(sub(cur, prev), t));
+
+                output.push(p);
+            }else
+            {
+                // case 4 - start outside, end inside
+                 // compute intersection
+                const t = dp / (dp - dc);
+                const p = add(prev, scale(sub(cur, prev), t));
+
+                output.push(p);
+                output.push(cur);
+            }
+           
+        }
+        // replace points with the result of the current step
+        points = output;
+    }
+    return points;
+}
+```
+```js -scene.js
+const w = 300;
+const h = 300;
+
+// input polygon points
+// all lie in z = 0
+const points = [
+    vec4(20, 20, 0.0, 1.0),
+    vec4(w - 10, 40, 0.0, 1.0),
+    vec4(40, h - 20, 0.0, 1.0),
+];
+
+// the lines that we want to clip with
+// each entry is defined by two points that define a line in 2D
+const lines = [
+    [vec2(0,0), vec2(w,h*0.6)],
+    [vec2(w,h * 0.8),vec2(0,h*0.7)],
+    [vec2(50,h),vec2(w * 0.3,0)],
+];
+
+// computes the plane equation given two 2d vectors
+function compute_plane(p0, p1)
+{
+    const d = sub(p1, p0);
+    // 2d normal
+    const n = vec2(-d.at(1),d.at(0));
+    // z is 0
+    return vec4(n.at(0),n.at(1), 0, -dot(p0,n));
+}
+
+// simple helper to draw a line define by two points
+function draw_plane(p0,p1)
+{
+    ctx.save();
+
+    const l = w + h;
+    const center = scale(add(p0,p1),0.5);
+    const v = jsm.normalize(jsm.fromTo(p0,p1));
+    const start = add(center, scale(v,-0.5*l));
+    const end = add(center, scale(v,0.5*l));
+
+    ctx.beginPath();
+    ctx.moveTo(start.at(0),start.at(1));
+    ctx.lineTo(end.at(0),end.at(1));
+    ctx.stroke();
+    ctx.restore();
+}
+
+// the clip planes
+const clip_planes = [];
+
+for(let i =0; i < lines.length;i++)
+{
+    clip_planes.push(compute_plane(lines[i][0],lines[i][1]));
+}
+const points_clipped = clip_polygon(points, clip_planes);
+
+```
+<script>
+    const container = document.getElementById('poly_clip_impl_1');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+  
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+    @input(0)
+    @input(1)
+    @input(2)
+
+    canvas.width = w;
+    canvas.height = h;
+
+    // flip canvas
+    ctx.setTransform(1,0,0,-1,0,canvas.height);
+    
+    ctx.save();
+    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillRect(0,0,w,h);
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = "rgb(64,64,64)";
+    ctx.strokeStyle = "rgba(0,0,0,0)";
+    draw_polygon(points,ctx);
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.strokeStyle = "rgba(0,0,0,0)";
+    draw_polygon(points_clipped,ctx);
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = "rgb(255,0,0)";
+
+    for(let i = 0; i < lines.length;i++)
+    {
+        draw_plane(lines[i][0],lines[i][1]);
+    }
+    ctx.restore();
+
+    "LIA: stop"
+</script>
+
+<div id="poly_clip_impl_1"></div>
+@mutate.remover(poly_clip_impl_1)
+
+
+
+[^1]: Ivan E. Sutherland and Gary W. Hodgman. 1974. Reentrant polygon clipping. Commun. ACM 17, 1 (Jan. 1974), 32–42. https://doi.org/10.1145/360767.360802
+
+### Integrating the clipping
+<!--
+script: https://sibaku.github.io/rasterizer_wip/src/stages/04_poly_clip/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+-->
+
+We will now integrate the previous clipping into our framework.
+There isn't actually much that we have to do, but we have to apply the clipping and also handle the output.
+As we are only able to rasterize triangles, what can we do, when the clipping result is a general polygon?
+
+The answer is actually simple: We decompose the polygon into multiple triangles! 
+There might be algorithms to find the nicest decomposition, for example such that we avoid very thing triangles, but we can also do it simply.
+
+We start with the first triangle with vertices $0,1,2$.
+That way, we have basically "surrounded" the middle vertex, as the polygon line will just continue at the last vertex.
+So the next triangle will skip the second vertex and start with the third, giving us the triangle $0,2,3$.
+
+In general, the $i$-th triangle will have the indices $0,i+1,i+2$.
+
+We will incorporate this into our `process_triangle` method, that finally gets something to do.
+The `clip_polygon` function from the last section is already included as a member function of the rasterizer.
+Clip planes are stored in the same format as before as an array in the `Pipeline` class, that holds all the state options.
+
+Since we can't yet output different color per shape, our image will be a bit simpler than the one in the previous section, but we will get there in the next part!
+
+Below that is the solution
 
 <!-- data-readOnly="false" data-showGutter="false" -->
 ``` js
+class RasterizerTutorial extends Rasterizer {
 
-const img = Image.zeroF32(300, 300, 4);
+    /**
+     * Processes a single triangle
+     * @param {Pipeline} pipeline The pipeline to use
+     * @param {AbstractMat} v0 The first vertex
+     * @param {AbstractMat} v1 The second vertex
+     * @param {AbstractMat} v2 The third vertex
+     */
+    process_triangle(pipeline, v0, v1, v2) {
 
-const geoms = [];
+        // prepare points and data for clipping
+        let points = [v0, v1, v2];
+        // clip polygon
+        points = this.clip_polygon(points, pipeline.clip_planes);
 
-{
-
-    const attributes = {};
-    attributes[Attribute.VERTEX] = [
-        vec4(10, 10, 0.0, 1.0),
-        vec4(img.w - 10, 10, 0.0, 1.0),
-        vec4(20, img.h / 2, 0.0, 1.0),
-
-    ];
-
-    const geom = {
-        attributes,
-        topology: Topology.TRIANGLES
-    };
-
-    geoms.push(geom);
+        // TODO
+        // decompose the result from the clipping into a number of triangles
+        // call the this.rasterize_triangle(p0,p1,p2) methd for each of those
+    }
 }
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+const w = 300;
+const h = 300;
+const img = Image.zeroF32(w, h, 4);
+
+// input polygon points
+// all lie in z = 0
+const points = [
+    vec4(20, 20, 0.0, 1.0),
+    vec4(w - 10, 40, 0.0, 1.0),
+    vec4(40, h - 20, 0.0, 1.0),
+];
+
+// the lines that we want to clip with
+// each entry is defined by two points that define a line in 2D
+const lines = [
+    [vec2(0,0), vec2(w,h*0.6)],
+    [vec2(w,h * 0.8),vec2(0,h*0.7)],
+    [vec2(50,h),vec2(w * 0.3,0)],
+];
+
+// computes the plane equation given two 2d vectors
+function compute_plane(p0, p1)
 {
-
-    const attributes = {};
-    attributes[Attribute.VERTEX] = [
-        vec4(10, img.h - 10, 0.0, 1.0),
-        vec4(img.w - 10, img.h/ 2.0, 0.0, 1.0),
-
-    ];
-
-    const geom = {
-        attributes,
-        topology: Topology.LINES
-    };
-
-    geoms.push(geom);
+    const d = sub(p1, p0);
+    // 2d normal
+    const n = vec2(-d.at(1),d.at(0));
+    // z is 0
+    return vec4(n.at(0),n.at(1), 0, -dot(p0,n));
 }
+
 
 const pipeline = new Pipeline();
 pipeline.viewport.w = img.w;
 pipeline.viewport.h = img.h;
-
-pipeline.clip_planes.push(vec4(-1,1,0,img.w/2));
 
 const fb = Framebuffer.new();
 fb.color_buffers[0] = img;
 
 pipeline.framebuffer = fb;
 
+// add the clip planes
+for(let i =0; i < lines.length;i++)
+{
+    pipeline.clip_planes.push(compute_plane(lines[i][0],lines[i][1]));
+}
 
+// we will try to draw a similar image to the one in the last step!
+// for that, we change the state during the drawing operation
+
+// the full example code already includes clipping lines with the same planes, we need to split them up
+// we currently use only one object in each of them, but we could add multiple, so we use the same setup as in other examples
+const geoms_tri = [];
+const geoms_lines = [];
+
+{
+
+    const attributes = {};
+    attributes[Attribute.VERTEX] = points;
+
+    const geom = {
+        attributes,
+        topology: Topology.TRIANGLES
+    };
+
+    geoms_tri.push(geom);
+}
+{
+
+    const attributes = {};
+
+    // generate lines
+    const line_vertices = [];
+     for(let i = 0; i < lines.length;i++)
+    {
+        const [p0,p1] = lines[i];
+        // create points far enough to cover the screen
+        const l = w + h;
+        const center = scale(add(p0,p1),0.5);
+        const v = jsm.normalize(jsm.fromTo(p0,p1));
+        const start = add(center, scale(v,-0.5*l));
+        const end = add(center, scale(v,0.5*l));
+        // put them into a vec4
+        line_vertices.push(vec4(start.at(0),start.at(1),0,1));
+        line_vertices.push(vec4(end.at(0),end.at(1),0,1));
+    }
+    attributes[Attribute.VERTEX] = line_vertices;
+
+    const geom = {
+        attributes,
+        topology: Topology.LINES
+    };
+
+    geoms_lines.push(geom);
+}
 ```
 <script>
     const container = document.getElementById('poly_clip_container_0');
@@ -3688,15 +4289,26 @@ pipeline.framebuffer = fb;
     const Framebuffer = r04.Framebuffer;
 
     @input(0)
+    @input(1)
 
-    const raster = new Rasterizer();
+    const raster = new RasterizerTutorial();
 
     const render = () => {
         img.fill(vec4(0,0,0,1));
 
-        for(let i = 0; i < geoms.length;i++)
+        // draw the clipped triangle first
+        for(let i = 0; i < geoms_tri.length;i++)
         {
-            raster.draw(pipeline,geoms[i]);
+            raster.draw(pipeline,geoms_tri[i]);
+        }
+        // reset the clip planes and render the lines
+        // depending on the implementation, we might just put it all together,
+        // as lying on the clip plane counts as being inside, so the lines wouldnt be clipped.
+        // But there might be some numerical inaccuracies, so better to do it this way
+        pipeline.clip_planes = [];
+        for(let i = 0; i < geoms_lines.length;i++)
+        {
+            raster.draw(pipeline,geoms_lines[i]);
         }
 
         imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
@@ -3710,6 +4322,455 @@ pipeline.framebuffer = fb;
 
 <div id="poly_clip_container_0"></div>
 @mutate.remover(poly_clip_container_0)
+
+Here is the solution:
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -solution.js
+class RasterizerTutorial extends Rasterizer {
+
+    /**
+     * Processes a single triangle
+     * @param {Pipeline} pipeline The pipeline to use
+     * @param {AbstractMat} v0 The first vertex
+     * @param {AbstractMat} v1 The second vertex
+     * @param {AbstractMat} v2 The third vertex
+     */
+    process_triangle(pipeline, v0, v1, v2) {
+
+        // prepare points and data for clipping
+        let points = [v0, v1, v2];
+        // clip polygon
+        points = this.clip_polygon(points, pipeline.clip_planes);
+
+        // triangulate polygon (clipping the triangle may result in non triangles
+        // polygons) and rasterize
+        for (let i = 0; i + 2 < points.length; i++) {
+
+            this.rasterize_triangle(pipeline, points[0], points[i + 1], points[i + 2]);
+        }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+const w = 300;
+const h = 300;
+const img = Image.zeroF32(w, h, 4);
+
+// input polygon points
+// all lie in z = 0
+const points = [
+    vec4(20, 20, 0.0, 1.0),
+    vec4(w - 10, 40, 0.0, 1.0),
+    vec4(40, h - 20, 0.0, 1.0),
+];
+
+// the lines that we want to clip with
+// each entry is defined by two points that define a line in 2D
+const lines = [
+    [vec2(0,0), vec2(w,h*0.6)],
+    [vec2(w,h * 0.8),vec2(0,h*0.7)],
+    [vec2(50,h),vec2(w * 0.3,0)],
+];
+
+// computes the plane equation given two 2d vectors
+function compute_plane(p0, p1)
+{
+    const d = sub(p1, p0);
+    // 2d normal
+    const n = vec2(-d.at(1),d.at(0));
+    // z is 0
+    return vec4(n.at(0),n.at(1), 0, -dot(p0,n));
+}
+
+
+const pipeline = new Pipeline();
+pipeline.viewport.w = img.w;
+pipeline.viewport.h = img.h;
+
+const fb = Framebuffer.new();
+fb.color_buffers[0] = img;
+
+pipeline.framebuffer = fb;
+
+// add the clip planes
+for(let i =0; i < lines.length;i++)
+{
+    pipeline.clip_planes.push(compute_plane(lines[i][0],lines[i][1]));
+}
+
+// we will try to draw a similar image to the one in the last step!
+// for that, we change the state during the drawing operation
+
+// the full example code already includes clipping lines with the same planes, we need to split them up
+// we currently use only one object in each of them, but we could add multiple, so we use the same setup as in other examples
+const geoms_tri = [];
+const geoms_lines = [];
+
+{
+
+    const attributes = {};
+    attributes[Attribute.VERTEX] = points;
+
+    const geom = {
+        attributes,
+        topology: Topology.TRIANGLES
+    };
+
+    geoms_tri.push(geom);
+}
+{
+
+    const attributes = {};
+
+    // generate lines
+    const line_vertices = [];
+     for(let i = 0; i < lines.length;i++)
+    {
+        const [p0,p1] = lines[i];
+        // create points far enough to cover the screen
+        const l = w + h;
+        const center = scale(add(p0,p1),0.5);
+        const v = jsm.normalize(jsm.fromTo(p0,p1));
+        const start = add(center, scale(v,-0.5*l));
+        const end = add(center, scale(v,0.5*l));
+        // put them into a vec4
+        line_vertices.push(vec4(start.at(0),start.at(1),0,1));
+        line_vertices.push(vec4(end.at(0),end.at(1),0,1));
+    }
+    attributes[Attribute.VERTEX] = line_vertices;
+
+    const geom = {
+        attributes,
+        topology: Topology.LINES
+    };
+
+    geoms_lines.push(geom);
+}
+```
+<script>
+    const container = document.getElementById('poly_clip_container_1');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+     // Import
+    const Rasterizer = r04.Rasterizer;
+    const Pipeline = r04.Pipeline;
+    const Framebuffer = r04.Framebuffer;
+
+    @input(0)
+    @input(1)
+
+    const raster = new RasterizerTutorial();
+
+    const render = () => {
+        img.fill(vec4(0,0,0,1));
+
+        // draw the clipped triangle first
+        for(let i = 0; i < geoms_tri.length;i++)
+        {
+            raster.draw(pipeline,geoms_tri[i]);
+        }
+        // reset the clip planes and render the lines
+        // depending on the implementation, we might just put it all together,
+        // as lying on the clip plane counts as being inside, so the lines wouldnt be clipped.
+        // But there might be some numerical inaccuracies, so better to do it this way
+        pipeline.clip_planes = [];
+        for(let i = 0; i < geoms_lines.length;i++)
+        {
+            raster.draw(pipeline,geoms_lines[i]);
+        }
+
+        imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
+
+    };
+
+    render();
+
+    "LIA: stop"
+</script>
+
+<div id="poly_clip_container_1"></div>
+@mutate.remover(poly_clip_container_1)
+
+### What about lines?
+<!--
+script: https://sibaku.github.io/rasterizer_wip/src/stages/04_poly_clip/rasterizer.js
+        https://sibaku.github.io/rasterizer_wip/src/geometry_utils.js
+-->
+
+Lines can (and must later on) also be clipped like triangles.
+
+As you can probably expect, this works nearly the same way as with the polygons, its just simpler.
+
+Basically, we do only one step of the Sutherland-Hodgman algorithm: The one line against the plane.
+Since the polygons loop over, we can't use exactly the same algorithm, as that would reverse our lines or miss a vertex.
+
+So we basically just do the 4 cases described in the Sutherland-Hodgman section, just adapted for only having two points as input:
+
+1. Both points outside? -> return empty array
+2. Both points inside? -> return original line
+3. Startpoint inside, endpoint outside? -> return startpoint and intersection
+4. Startpoint outside, endpoint inside? -> return intersection and endpoint
+
+we also need to enhance the `process_line` method the same way as the `process_triangle` method, but it is even easier, since the clipping produces either an empty array or a new line, so we don't have to decompose the result into anything.
+We just need to check, if we have to points and if so, call the `rasterize_line` method as before.
+
+As this is more or less copy and paste from the more complicated triangle code, we will just show you the result here.
+We added some additional lines gto the geometry that is clipped.
+
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -solution.js
+class RasterizerTutorial extends Rasterizer {
+    /**
+     * Clips a line against the given clip-planes
+     * @param {Array<AbstractMat>} points The input points
+     * @param {Array<AbstractMat>} planes The clipping planes
+     * @returns {[Array<AbstractMat>,Array<Object>]} The clipped points and interpolated attributes
+     */
+    clip_line(points, planes) {
+
+        // successive clipping at each plane
+        // clpping a line at a plane is more or less one step of the
+        // Sutherland-Hodgman algorithm, but without the polygon wrap-around
+        for (let pi = 0; pi < planes.length; pi++) {
+            const pl = planes[pi];
+            if (points.length === 0) {
+                return;
+            }
+
+            // simplified sutherland-hodgman
+            const cur = points[0];
+            const prev = points[1];
+            // compute projective distance
+
+            const dc = dot(pl, cur);
+            const dp = dot(pl, prev);
+
+            // the four cases
+            // the actual implementation will combine them a bit, as there is a bit of overlap
+
+            if (dp < 0.0 && dc < 0.0) {
+                // case 1 - both outside -> finished
+                return [];
+            }
+            else if (dp >= 0.0 && dc >= 0.0) {
+                // case 2 - both inside -> continue with the next plane
+                continue;
+            }
+            else if (dp >= 0.0 && dc < 0.0) {
+                // case 3 - start inside, end outside
+                // compute intersection
+                const t = dp / (dp - dc);
+                const p = add(prev, scale(sub(cur, prev), t));
+
+                //  return startpoint and intersection
+                // In this case we will just replace the points and continue with the next plane;
+                points = [prev, p];
+                continue;
+            } else {
+                // case 4 - start outside, end inside
+                // compute intersection
+                const t = dp / (dp - dc);
+                const p = add(prev, scale(sub(cur, prev), t));
+
+                // return intersection and endpoint
+                points = [p, cur];
+                continue;
+            }
+        }
+        return points;
+    }
+
+    /**
+     * Processes a single line
+     * @param {Pipeline} pipeline The pipeline to use
+     * @param {AbstractMat} v0 The first vertex
+     * @param {AbstractMat} v1 The second vertex
+     */
+    process_line(pipeline, v0, v1) {
+        // prepare points and data for clipping
+        let points = [v0, v1];
+        // clip line
+        points = this.clip_line(points, pipeline.clip_planes);
+
+        // finally rasterize line
+        if (points.length === 2) {
+            this.rasterize_line(pipeline, points[0], points[1]);
+        }
+    }
+}
+```
+<!-- data-readOnly="false" data-showGutter="false" -->
+``` js -scene.js
+const w = 300;
+const h = 300;
+const img = Image.zeroF32(w, h, 4);
+
+// input polygon points
+// all lie in z = 0
+const points = [
+    vec4(20, 20, 0.0, 1.0),
+    vec4(w - 10, 40, 0.0, 1.0),
+    vec4(40, h - 20, 0.0, 1.0),
+];
+
+// the lines that we want to clip with
+// each entry is defined by two points that define a line in 2D
+const lines = [
+    [vec2(0,0), vec2(w,h*0.6)],
+    [vec2(w,h * 0.8),vec2(0,h*0.7)],
+    [vec2(50,h),vec2(w * 0.3,0)],
+];
+
+// computes the plane equation given two 2d vectors
+function compute_plane(p0, p1)
+{
+    const d = sub(p1, p0);
+    // 2d normal
+    const n = vec2(-d.at(1),d.at(0));
+    // z is 0
+    return vec4(n.at(0),n.at(1), 0, -dot(p0,n));
+}
+
+
+const pipeline = new Pipeline();
+pipeline.viewport.w = img.w;
+pipeline.viewport.h = img.h;
+
+const fb = Framebuffer.new();
+fb.color_buffers[0] = img;
+
+pipeline.framebuffer = fb;
+
+// add the clip planes
+for(let i =0; i < lines.length;i++)
+{
+    pipeline.clip_planes.push(compute_plane(lines[i][0],lines[i][1]));
+}
+
+// we will try to draw a similar image to the one in the last step!
+// for that, we change the state during the drawing operation
+
+// the full example code already includes clipping lines with the same planes, we need to split them up
+// we currently use only one object in each of them, but we could add multiple, so we use the same setup as in other examples
+const geoms_tri = [];
+const geoms_lines = [];
+
+{
+
+    const attributes = {};
+    attributes[Attribute.VERTEX] = points;
+
+    const geom = {
+        attributes,
+        topology: Topology.TRIANGLES
+    };
+
+    geoms_tri.push(geom);
+}
+
+{
+    // add some additional lines that are clipped
+    const attributes = {};
+    attributes[Attribute.VERTEX] = 
+    [
+        vec4(10,h * 0.7,0,1), vec4(w-10, h*0.5,0,1),
+        vec4(w * 0.4,h * 0.4,0,1), vec4(w*0.1, h*0.2,0,1),
+        vec4(w * 0.8,h * 0.9,0,1), vec4(w*0.7, h*0.2,0,1),
+    ];
+
+    const geom = {
+        attributes,
+        topology: Topology.LINES
+    };
+
+    geoms_tri.push(geom);
+}
+
+{
+
+    const attributes = {};
+
+    // generate lines
+    const line_vertices = [];
+     for(let i = 0; i < lines.length;i++)
+    {
+        const [p0,p1] = lines[i];
+        // create points far enough to cover the screen
+        const l = w + h;
+        const center = scale(add(p0,p1),0.5);
+        const v = jsm.normalize(jsm.fromTo(p0,p1));
+        const start = add(center, scale(v,-0.5*l));
+        const end = add(center, scale(v,0.5*l));
+        // put them into a vec4
+        line_vertices.push(vec4(start.at(0),start.at(1),0,1));
+        line_vertices.push(vec4(end.at(0),end.at(1),0,1));
+    }
+    attributes[Attribute.VERTEX] = line_vertices;
+
+    const geom = {
+        attributes,
+        topology: Topology.LINES
+    };
+
+    geoms_lines.push(geom);
+}
+```
+<script>
+    const container = document.getElementById('poly_clip_line_container_0');
+    container.innerHTML = "";
+    const canvas = document.createElement('canvas');
+    
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+     // Import
+    const Rasterizer = r04.Rasterizer;
+    const Pipeline = r04.Pipeline;
+    const Framebuffer = r04.Framebuffer;
+
+    @input(0)
+    @input(1)
+
+    const raster = new RasterizerTutorial();
+
+    const render = () => {
+        img.fill(vec4(0,0,0,1));
+
+        // draw the clipped triangle first
+        for(let i = 0; i < geoms_tri.length;i++)
+        {
+            raster.draw(pipeline,geoms_tri[i]);
+        }
+        // reset the clip planes and render the lines
+        // depending on the implementation, we might just put it all together,
+        // as lying on the clip plane counts as being inside, so the lines wouldnt be clipped.
+        // But there might be some numerical inaccuracies, so better to do it this way
+        pipeline.clip_planes = [];
+        for(let i = 0; i < geoms_lines.length;i++)
+        {
+            raster.draw(pipeline,geoms_lines[i]);
+        }
+
+        imageToCtx(pipeline.framebuffer.color_buffers[0],ctx);
+
+    };
+
+    render();
+
+    "LIA: stop"
+</script>
+
+<div id="poly_clip_line_container_0"></div>
+@mutate.remover(poly_clip_line_container_0)
+
+The next section will be the beginning of some incredible flexibility! 
+Even in the first step, we will be able to freely move objects on the screen and for example change their color!
 
 ## 05: Shaders
 <!--

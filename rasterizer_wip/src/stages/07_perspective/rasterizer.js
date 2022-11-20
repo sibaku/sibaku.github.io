@@ -634,7 +634,7 @@
             let points = [v0, v1];
             let attribs = [attribs_v0, attribs_v1];
             // clip line
-            [points, attribs] = this.clip_line(points, attribs, pipeline.clip_planes);
+            [points, attribs] = this.clip_line(points, pipeline.clip_planes, attribs);
 
             for (let i = 0; i < points.length; i++) {
 
@@ -665,7 +665,7 @@
             let points = [v0, v1, v2];
             let attribs = [attribs_v0, attribs_v1, attribs_v2];
             // clip polygon
-            [points, attribs] = this.clip_polygon(points, attribs, pipeline.clip_planes);
+            [points, attribs] = this.clip_polygon(points, pipeline.clip_planes, attribs);
 
             for (let i = 0; i < points.length; i++) {
                 points[i] = this.viewport_transform(points[i], pipeline.viewport);
@@ -754,9 +754,8 @@
          * @param {Array<AbstractMat>} planes The clipping planes
          * @returns {[Array<AbstractMat>,Array<Object>]} The clipped points and interpolated attributes
          */
-        clip_polygon(points,
-            attribs,
-            planes) {
+        clip_polygon(points, planes
+            , attribs) {
 
             // Implementation of the Sutherland-Hodgman algorithm
             for (let pi = 0; pi < planes.length; pi++) {
@@ -781,7 +780,7 @@
                         if (dp < 0.0) {
                             // intersect prev -> cur
 
-                            const t = dot(pl, prev) / (dot(pl, sub(prev, cur)));
+                            const t = dp / (dp - dc);
                             const p = add(prev, scale(sub(cur, prev), t));
 
                             // interpolate attributes
@@ -802,8 +801,7 @@
                         // intersect prev->cur
                         // intersect in homogeneous space
 
-                        const t = dot(pl, prev) / (dot(pl, sub(prev, cur)));
-
+                        const t = dp / (dp - dc);
                         const p = add(prev, scale(sub(cur, prev), t));
 
                         // interpolate attributes
@@ -832,8 +830,8 @@
          * @param {Array<AbstractMat>} planes The clipping planes
          * @returns {[Array<AbstractMat>,Array<Object>]} The clipped points and interpolated attributes
          */
-        clip_line(points,
-            attribs, planes) {
+        clip_line(points, planes,
+            attribs) {
 
             // successive clipping at each plane
             // clpping a line at a plane is more or less one step of the
