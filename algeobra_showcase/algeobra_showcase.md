@@ -5,7 +5,7 @@ version:  0.0.1
 
 language: en
 
-script: ./algeobra_showcase/src/demoShowCase.js
+script: ./algeobra_showcase/src/demoShowcase.js
 
 comment:  Showcase for the algeobra library
 
