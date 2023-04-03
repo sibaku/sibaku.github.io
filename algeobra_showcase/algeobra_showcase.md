@@ -22,17 +22,34 @@ let container = window.document.getElementById('@0')
 
 if(container){
     // based on the example at https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
-    const config = { attributes: true };
-
+    const config = { attributes: true, subtree: true, childList : true};
     const callback = (mutationsList, observer) => {
+
         for(const mutation of mutationsList) {
+
+            // check for changes to the child list
+            if (mutation.type === 'childList') {
+
+                for (const rn of mutation.removedNodes) {
+                    if (rn === container) {
+                        container.replaceChildren();
+                        observer.disconnect();
+                        return;
+                    }
+                }
+            }
+
+            if(mutation.target !== container){
+                continue;
+            }
             if (mutation.type === 'attributes') {
                 if(mutation.attributeName === 'id')
                 {
                     // remove inner
-                    container.innerHTML = "";
+                    container.replaceChildren();
                     // remove observer afterwards
                     observer.disconnect();
+                    return;
 
                 }
             }
@@ -44,7 +61,7 @@ if(container){
     const observer = new MutationObserver(callback);
 
     // Start observing the target node for configured mutations
-    observer.observe(container, config);
+    observer.observe(document.body, config);
 }
 
 </script>
@@ -104,7 +121,7 @@ A vector has a length and direction.
 The length $||\mathbf{v}||$ can be found by applying the pythagorean theorem to the components of the vector.
 
 $$
-    ||\mathbf{v}|| = \sqrt{v_x^2 + v_y^2} \\
+    ||\mathbf{v}|| = \sqrt{v_x^2 + v_y^2}
     ||\mathbf{v}||^2 = v_x^2 + v_y^2 
 $$
 
