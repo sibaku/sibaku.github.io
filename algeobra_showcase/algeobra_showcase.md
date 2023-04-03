@@ -6,6 +6,7 @@ version:  0.0.1
 language: en
 
 script: ./algeobra_showcase/src/demoShowcase.js
+link: ./algeobra_showcase/customStyle.css
 
 comment:  Showcase for the algeobra library
 
@@ -74,8 +75,9 @@ if(container){
 <script>
     const container = document.getElementById("@0");
     const canvas = document.getElementById("@0-canvas");
+    canvas.classList.add("demoCanvas");
 
-    // TODO remove, only for editing, as devserver doesn't work correctly
+    // TODO Maybe remove, only for editing, as devserver doesn't seem to work correctly with script loading order
     
     let num = 0;
     const maxTry = 20;
@@ -102,8 +104,20 @@ if(container){
 
 # Introduction
 
-This is a selection of some demos to showcase some of the capabilities of the algeobra library. 
-These are not full notes, proofs or write-ups. Demos are accompanied by a short description and sometimes example text to see the way the library could be used to enhance some explanations.
+This is a selection of some demos to showcase some of the capabilities of the **algeobra** library. 
+The name is a homage to the wonderful **GeoGebra** which this library is not a substitute for. **algeobra** aims to give you an easy to include and customize alternative to the 2D geometry functionality found in tools such as GeoGebra, but for use in JavaScript. That means, all demos can be created in Code and combined with various other tools.
+For example, you can build simple interfaces such as sliders with the provided geometry itself or just use the usual HTML based interaction. 
+A basic canvas visualization is included, together with tools for moving points with the mouse or touches, but you could just write your own output, for example to create an SVG.
+Custom object types can also be added, as the base system is independent of actual types. For example, you could add graphs or images as objects that can be attached to others.
+
+The following are not full notes, proofs or write-ups. Demos are accompanied by a short description and sometimes example text to see the way the library could be used to enhance explanations.
+
+All demos have some kind of dynamic or interactive component to them. Usually you can grab the bigger highlighted points or adjust some sliders or checkboxes.
+Diagrams don't need to be that way though and you can just make static scenes that showcase what you try to illustrate.
+
+Mobile interaction should also work, but might be a bit finnicky.
+
+The library is currently being finished up for its initial version and will then be accessible vie Github.
 
 # Vectors
 
@@ -261,6 +275,8 @@ The following demo shows various parametric curves (lines, line segments, Bézie
 # Application
 
 This section is about applying the algeobra library to slightly more complex examples.
+
+FYI: The next demo might load for a bit, don't worry.
 
 
 ## Simple lens
