@@ -234,7 +234,7 @@ You can see and play around with those in the following diagram.
 
 @algeobra.demo(@uid,demoTriangleCircles)
 
-A Beziér curve can be constructed from its control points by a simple geometric process:
+A Bézier curve can be constructed from its control points by a simple geometric process:
 
 1. Choose a parameter $t$. This parameter in $[0,1]$ specifies, which point on the curve is constructed
 2. If there is only one point, that is the final point
