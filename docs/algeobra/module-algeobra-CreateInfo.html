@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: CreateInfo</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: CreateInfo</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>CreateInfo<span class="signature">(name, dependencies, params, ignoreInvalids)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description">Container for information used in object definitions</div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="CreateInfo"><span class="type-signature"></span>new CreateInfo<span class="signature">(name, dependencies, params, ignoreInvalids)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The name of the create struct. Only needs to be unique per definition type</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dependencies</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The objects the definition depends on. Might be an array or an object as a table (only key->val pairs) The keys of the dependencies will be replicated for consumption in definitions. When creating the definitions, the values should be the indices gained from the GeometryScene object or EMPTY, if the specific dependency is optional. Definitions will receve a CreateInfo like object containing the same keys as the one specified at the beginning, but filled with the requested dependencies. One may also fill a CreateInfo with values instead of index handles themselves and pass them to the compute method of a definition</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Any parameters that are not dependant on the scene, but instead provide additional information for a specific construction method</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignoreInvalids</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Specifies, whether INVALID values are ignored, when gathering dependencies.  Generally, a definition can only be valid, if its dependencies are valid. Sometimes, it might be useful to use INVALID inputs anyways. For example, when gathering the results of multiple intersections, which might not all be defined. This way, INVALID parts can just be filtered out</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line798">line 798</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".new"><span class="type-signature">(static) </span>new<span class="signature">(name, dependencies, params, ignoreInvalids)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Create a new CreatInfo instance
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The name of the create struct. Only needs to be unique per definition type</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dependencies</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The objects the definition depends on. Might be an array or an object as a table (only key->val pairs) The keys of the dependencies will be replicated for consumption in definitions. When creating the definitions, the values should be the indices gained from the GeometryScene object or EMPTY, if the specific dependency is optional. Definitions will receve a CreateInfo like object containing the same keys as the one specified at the beginning, but filled with the requested dependencies. One may also fill a CreateInfo with values instead of index handles themselves and pass them to the compute method of a definition</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Any parameters that are not dependant on the scene, but instead provide additional information for a specific construction method</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ignoreInvalids</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Specifies, whether INVALID values are ignored, when gathering dependencies.  Generally, a definition can only be valid, if its dependencies are valid. Sometimes, it might be useful to use INVALID inputs anyways. For example, when gathering the results of multiple intersections, which might not all be defined. This way, INVALID parts can just be filtered out</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line835">line 835</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A new CreateInfo instance
+</div>
+
+
+
+    
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-algeobra.html">algeobra</a></li><li><a href="module-algeobraCanvas.html">algeobraCanvas</a></li></ul><h3>Classes</h3><ul><li><a href="module-algeobraCanvas-CoordinateMapper.html">CoordinateMapper</a></li><li><a href="module-algeobraCanvas-DiagramCanvas.html">DiagramCanvas</a></li><li><a href="module-algeobraCanvas-DiagramPainter.html">DiagramPainter</a></li><li><a href="module-algeobraCanvas-PointManipulator.html">PointManipulator</a></li><li><a href="module-algeobraCanvas-ScenePainter.html">ScenePainter</a></li><li><a href="module-algeobra-ClosestPointRegistry.html">ClosestPointRegistry</a></li><li><a href="module-algeobra-Complex.html">Complex</a></li><li><a href="module-algeobra-CreateInfo.html">CreateInfo</a></li><li><a href="module-algeobra-DefAngle.html">DefAngle</a></li><li><a href="module-algeobra-DefArc.html">DefArc</a></li><li><a href="module-algeobra-DefArcLength.html">DefArcLength</a></li><li><a href="module-algeobra-DefArray.html">DefArray</a></li><li><a href="module-algeobra-DefBezier.html">DefBezier</a></li><li><a href="module-algeobra-DefBezierSpline.html">DefBezierSpline</a></li><li><a href="module-algeobra-DefBoolean.html">DefBoolean</a></li><li><a href="module-algeobra-DefChainApply.html">DefChainApply</a></li><li><a href="module-algeobra-DefClosestPoint.html">DefClosestPoint</a></li><li><a href="module-algeobra-DefConditional.html">DefConditional</a></li><li><a href="module-algeobra-DefCurveNormal.html">DefCurveNormal</a></li><li><a href="module-algeobra-DefCurveParam.html">DefCurveParam</a></li><li><a href="module-algeobra-DefCurvePoint.html">DefCurvePoint</a></li><li><a href="module-algeobra-DefCurveTangent.html">DefCurveTangent</a></li><li><a href="module-algeobra-DefEllipse.html">DefEllipse</a></li><li><a href="module-algeobra-DefEllipseFocus.html">DefEllipseFocus</a></li><li><a href="module-algeobra-DefFunc.html">DefFunc</a></li><li><a href="module-algeobra-DefInterpolate.html">DefInterpolate</a></li><li><a href="module-algeobra-DefIntersection.html">DefIntersection</a></li><li><a href="module-algeobra-DefLength.html">DefLength</a></li><li><a href="module-algeobra-DefLengthSquared.html">DefLengthSquared</a></li><li><a href="module-algeobra-DefLine.html">DefLine</a></li><li><a href="module-algeobra-DefLineStrip.html">DefLineStrip</a></li><li><a href="module-algeobra-DefMap.html">DefMap</a></li><li><a href="module-algeobra-DefMidPoint.html">DefMidPoint</a></li><li><a href="module-algeobra-DefNormalVector.html">DefNormalVector</a></li><li><a href="module-algeobra-DefNumber.html">DefNumber</a></li><li><a href="module-algeobra-DefParallelLine.html">DefParallelLine</a></li><li><a href="module-algeobra-DefPerpendicularLine.html">DefPerpendicularLine</a></li><li><a href="module-algeobra-DefPoint.html">DefPoint</a></li><li><a href="module-algeobra-DefPolarCoord.html">DefPolarCoord</a></li><li><a href="module-algeobra-DefPolarVector.html">DefPolarVector</a></li><li><a href="module-algeobra-DefPolygon.html">DefPolygon</a></li><li><a href="module-algeobra-DefReflection.html">DefReflection</a></li><li><a href="module-algeobra-DefRefraction.html">DefRefraction</a></li><li><a href="module-algeobra-DefSelect.html">DefSelect</a></li><li><a href="module-algeobra-DefTangentLines.html">DefTangentLines</a></li><li><a href="module-algeobra-DefTangentPoints.html">DefTangentPoints</a></li><li><a href="module-algeobra-DefText.html">DefText</a></li><li><a href="module-algeobra-DefVector.html">DefVector</a></li><li><a href="module-algeobra-DefinitionRemovedEvent.html">DefinitionRemovedEvent</a></li><li><a href="module-algeobra-DefinitionUpdateEvent.html">DefinitionUpdateEvent</a></li><li><a href="module-algeobra-EventType.html">EventType</a></li><li><a href="module-algeobra-GeometryScene.html">GeometryScene</a></li><li><a href="module-algeobra-IntersectionRegistry.html">IntersectionRegistry</a></li><li><a href="module-algeobra-PropertyUpdateEvent.html">PropertyUpdateEvent</a></li><li><a href="module-algeobra-Vec2.html">Vec2</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 05 2023 14:30:58 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

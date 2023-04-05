@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: DiagramPainter</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: DiagramPainter</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"><a href="module-algeobraCanvas.html">algeobraCanvas</a>~</span>DiagramPainter<span class="signature">(scene, diagram, options)</span><span class="type-signature"></span></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    
+    <h4 class="name" id="DiagramPainter"><span class="type-signature"></span>new DiagramPainter<span class="signature">(scene, diagram, options)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>scene</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GeometryScene</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>diagram</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">DiagramCanvas</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The background configuration</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>autoResize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Element</span>
+|
+
+<span class="param-type">SVGElement</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The target which the canvas size should be adjusted to</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>minWidth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last">The minimum width that will be preserved</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>widthFactor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0.9
+                
+                </td>
+            
+
+            <td class="description last">The percentage of the container that the canvas should occupy</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>keepAspect</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">If true, the autoresize will keep the previous aspect ratio, if false not</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line2111">line 2111</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-algeobra.html">algeobra</a></li><li><a href="module-algeobraCanvas.html">algeobraCanvas</a></li></ul><h3>Classes</h3><ul><li><a href="module-algeobraCanvas-CoordinateMapper.html">CoordinateMapper</a></li><li><a href="module-algeobraCanvas-DiagramCanvas.html">DiagramCanvas</a></li><li><a href="module-algeobraCanvas-DiagramPainter.html">DiagramPainter</a></li><li><a href="module-algeobraCanvas-PointManipulator.html">PointManipulator</a></li><li><a href="module-algeobraCanvas-ScenePainter.html">ScenePainter</a></li><li><a href="module-algeobra-ClosestPointRegistry.html">ClosestPointRegistry</a></li><li><a href="module-algeobra-Complex.html">Complex</a></li><li><a href="module-algeobra-CreateInfo.html">CreateInfo</a></li><li><a href="module-algeobra-DefAngle.html">DefAngle</a></li><li><a href="module-algeobra-DefArc.html">DefArc</a></li><li><a href="module-algeobra-DefArcLength.html">DefArcLength</a></li><li><a href="module-algeobra-DefArray.html">DefArray</a></li><li><a href="module-algeobra-DefBezier.html">DefBezier</a></li><li><a href="module-algeobra-DefBezierSpline.html">DefBezierSpline</a></li><li><a href="module-algeobra-DefBoolean.html">DefBoolean</a></li><li><a href="module-algeobra-DefChainApply.html">DefChainApply</a></li><li><a href="module-algeobra-DefClosestPoint.html">DefClosestPoint</a></li><li><a href="module-algeobra-DefConditional.html">DefConditional</a></li><li><a href="module-algeobra-DefCurveNormal.html">DefCurveNormal</a></li><li><a href="module-algeobra-DefCurveParam.html">DefCurveParam</a></li><li><a href="module-algeobra-DefCurvePoint.html">DefCurvePoint</a></li><li><a href="module-algeobra-DefCurveTangent.html">DefCurveTangent</a></li><li><a href="module-algeobra-DefEllipse.html">DefEllipse</a></li><li><a href="module-algeobra-DefEllipseFocus.html">DefEllipseFocus</a></li><li><a href="module-algeobra-DefFunc.html">DefFunc</a></li><li><a href="module-algeobra-DefInterpolate.html">DefInterpolate</a></li><li><a href="module-algeobra-DefIntersection.html">DefIntersection</a></li><li><a href="module-algeobra-DefLength.html">DefLength</a></li><li><a href="module-algeobra-DefLengthSquared.html">DefLengthSquared</a></li><li><a href="module-algeobra-DefLine.html">DefLine</a></li><li><a href="module-algeobra-DefLineStrip.html">DefLineStrip</a></li><li><a href="module-algeobra-DefMap.html">DefMap</a></li><li><a href="module-algeobra-DefMidPoint.html">DefMidPoint</a></li><li><a href="module-algeobra-DefNormalVector.html">DefNormalVector</a></li><li><a href="module-algeobra-DefNumber.html">DefNumber</a></li><li><a href="module-algeobra-DefParallelLine.html">DefParallelLine</a></li><li><a href="module-algeobra-DefPerpendicularLine.html">DefPerpendicularLine</a></li><li><a href="module-algeobra-DefPoint.html">DefPoint</a></li><li><a href="module-algeobra-DefPolarCoord.html">DefPolarCoord</a></li><li><a href="module-algeobra-DefPolarVector.html">DefPolarVector</a></li><li><a href="module-algeobra-DefPolygon.html">DefPolygon</a></li><li><a href="module-algeobra-DefReflection.html">DefReflection</a></li><li><a href="module-algeobra-DefRefraction.html">DefRefraction</a></li><li><a href="module-algeobra-DefSelect.html">DefSelect</a></li><li><a href="module-algeobra-DefTangentLines.html">DefTangentLines</a></li><li><a href="module-algeobra-DefTangentPoints.html">DefTangentPoints</a></li><li><a href="module-algeobra-DefText.html">DefText</a></li><li><a href="module-algeobra-DefVector.html">DefVector</a></li><li><a href="module-algeobra-DefinitionRemovedEvent.html">DefinitionRemovedEvent</a></li><li><a href="module-algeobra-DefinitionUpdateEvent.html">DefinitionUpdateEvent</a></li><li><a href="module-algeobra-EventType.html">EventType</a></li><li><a href="module-algeobra-GeometryScene.html">GeometryScene</a></li><li><a href="module-algeobra-IntersectionRegistry.html">IntersectionRegistry</a></li><li><a href="module-algeobra-PropertyUpdateEvent.html">PropertyUpdateEvent</a></li><li><a href="module-algeobra-Vec2.html">Vec2</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 05 2023 14:30:58 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
