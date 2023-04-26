@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: DefArc</title>
+    <title>JSDoc: Class: DefVector3</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: DefArc</h1>
+    <h1 class="page-title">Class: DefVector3</h1>
 
     
 
@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>DefArc<span class="signature">(params, r<span class="signature-attributes">opt</span>, center<span class="signature-attributes">opt</span>, startAngle<span class="signature-attributes">opt</span>, endAngle<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-algeobra3d.html">algeobra3d</a>~</span>DefVector3<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Definition of an arc</div>
+            <div class="class-description">Definition of a vector in 3D space</div>
         
     
 </header>
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="DefArc"><span class="type-signature"></span>new DefArc<span class="signature">(params, r<span class="signature-attributes">opt</span>, center<span class="signature-attributes">opt</span>, startAngle<span class="signature-attributes">opt</span>, endAngle<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="DefVector3"><span class="type-signature"></span>new DefVector3<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -82,8 +82,6 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -109,33 +107,52 @@
             
                 <td class="attributes">
                 
-
+                    &lt;optional><br>
                 
 
                 
-                </td>
-            
 
-            
-                <td class="default">
                 
                 </td>
             
 
-            <td class="description last"></td>
-        </tr>
+            
 
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>r</code></td>
+                <td class="name"><code>v</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">THREE.Vector3</span>
 
 
             
@@ -154,27 +171,21 @@
             
 
             
-                <td class="default">
-                
-                    1
-                
-                </td>
-            
 
-            <td class="description last">The radius</td>
+            <td class="description last">The vector components</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>center</code></td>
+                <td class="name"><code>ref</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">THREE.Vector3</span>
 
 
             
@@ -193,27 +204,21 @@
             
 
             
-                <td class="default">
-                
-                    {x:0,y:0}
-                
-                </td>
-            
 
-            <td class="description last">The center</td>
+            <td class="description last">The point this vector is attached to</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>startAngle</code></td>
+                <td class="name"><code>normalize</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">Boolean</span>
 
 
             
@@ -232,53 +237,15 @@
             
 
             
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
 
-            <td class="description last">The starting angle</td>
+            <td class="description last">Whether the vector is normalized</td>
         </tr>
 
     
+    </tbody>
+</table>
 
-        <tr>
-            
-                <td class="name"><code>endAngle</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
             </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    2.0 * Math.PI
-                
-                </td>
-            
-
-            <td class="description last">The end angle</td>
         </tr>
 
     
@@ -319,7 +286,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8980">line 8980</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line287">line 287</a>
     </li></ul></dd>
     
 
@@ -375,7 +342,7 @@
     
 
     
-    <h4 class="name" id="compute"><span class="type-signature"></span>compute<span class="signature">(createInfo)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="compute"><span class="type-signature"></span>compute<span class="signature">(info)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -383,7 +350,7 @@
 
 
 <div class="description">
-    Compute the arc
+    Computes the vector
 </div>
 
 
@@ -419,7 +386,7 @@
 
         <tr>
             
-                <td class="name"><code>createInfo</code></td>
+                <td class="name"><code>info</code></td>
             
 
             <td class="type">
@@ -476,7 +443,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line9106">line 9106</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line359">line 359</a>
     </li></ul></dd>
     
 
@@ -505,7 +472,7 @@
 
         
 <div class="param-desc">
-    The arc of type TYPE_ARC
+    An object of type TYPE_VECTOR3
 </div>
 
 
@@ -534,7 +501,7 @@
     
 
     
-    <h4 class="name" id=".computeParametersFromPoints"><span class="type-signature">(static) </span>computeParametersFromPoints<span class="signature">(p0, p1, p2, fullCircle)</span><span class="type-signature"> &rarr; {Object|null}</span></h4>
+    <h4 class="name" id=".fromLineRef"><span class="type-signature">(static) </span>fromLineRef<span class="signature">(line, params<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
     
 
     
@@ -542,7 +509,7 @@
 
 
 <div class="description">
-    Create an arc from three points
+    Computes the vector from a line. The vector is attached to the first point of the line and points to the second.If any value is EMPTY, the default values are used
 </div>
 
 
@@ -566,6 +533,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -578,7 +547,41 @@
 
         <tr>
             
-                <td class="name"><code>p0</code></td>
+                <td class="name"><code>line</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_LINE3. The line</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
             
 
             <td class="type">
@@ -591,22 +594,56 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The first point</td>
-        </tr>
+            <td class="description last">
+                <h6>Properties</h6>
+                
 
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>p1</code></td>
+                <td class="name"><code>ref</code></td>
             
 
             <td class="type">
             
                 
+<span class="param-type">Number</span>
+|
+
 <span class="param-type">Object</span>
 
 
@@ -614,22 +651,35 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The second point</td>
+            <td class="description last">Either the index or value of a TYPE_POINT3. The point this vector is attached to</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>p2</code></td>
+                <td class="name"><code>normalize</code></td>
             
 
             <td class="type">
             
                 
+<span class="param-type">Number</span>
+|
+
 <span class="param-type">Object</span>
 
 
@@ -637,33 +687,27 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The third point</td>
+            <td class="description last">Either the index or value of a TYPE_BOOLEAN. WWhether the vector is normalized</td>
         </tr>
 
     
+    </tbody>
+</table>
 
-        <tr>
-            
-                <td class="name"><code>fullCircle</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
             </td>
-
-            
-
-            
-
-            <td class="description last">If true, the resulting arc will be a circle, otherwise the arc will only be the range specified by the points</td>
         </tr>
 
     
@@ -704,224 +748,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line9045">line 9045</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The computed arc or null, if no such arc can exist
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-|
-
-<span class="param-type">null</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromCenterAndPoints"><span class="type-signature">(static) </span>fromCenterAndPoints<span class="signature">(center, p0, p1)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create an arc from a center and going through the segment specified by two points on the circle
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>center</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The center</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>p0</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The first point</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>p1</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The second point</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line9033">line 9033</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line350">line 350</a>
     </li></ul></dd>
     
 
@@ -979,7 +806,7 @@
     
 
     
-    <h4 class="name" id=".fromPoints"><span class="type-signature">(static) </span>fromPoints<span class="signature">(params)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    <h4 class="name" id=".fromSpherical"><span class="type-signature">(static) </span>fromSpherical<span class="signature">(params)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
     
 
     
@@ -987,7 +814,7 @@
 
 
 <div class="description">
-    Create an arc from three points
+    Computes the vector from spherical coordinatesIf any value is EMPTY, the default values are used
 </div>
 
 
@@ -1067,7 +894,7 @@
 
         <tr>
             
-                <td class="name"><code>p0</code></td>
+                <td class="name"><code>s</code></td>
             
 
             <td class="type">
@@ -1077,105 +904,6 @@
 |
 
 <span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The first point</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>p10</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The second point</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>p2</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The third point</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>fullCircle</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
 
 
             
@@ -1195,7 +923,79 @@
 
             
 
-            <td class="description last">If true, the resulting arc will be a circle, otherwise the arc will only be the range specified by the points</td>
+            <td class="description last">Either the index or value of a TYPE_SPHERICAL. The spherical coordinates</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ref</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_POINT3. The point this vector is attached to</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>normalize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_BOOLEAN. WWhether the vector is normalized</td>
         </tr>
 
     
@@ -1243,7 +1043,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line9022">line 9022</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line311">line 311</a>
     </li></ul></dd>
     
 
@@ -1309,7 +1109,7 @@
 
 
 <div class="description">
-    Create an arc from individual values
+    Computes the vector from valuesIf any value is EMPTY, the default values are used
 </div>
 
 
@@ -1389,7 +1189,7 @@
 
         <tr>
             
-                <td class="name"><code>r</code></td>
+                <td class="name"><code>x</code></td>
             
 
             <td class="type">
@@ -1418,14 +1218,14 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_NUMBER. The radius</td>
+            <td class="description last">Either the index or value of a TYPE_NUMBER. The x coordinate</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>center</code></td>
+                <td class="name"><code>y</code></td>
             
 
             <td class="type">
@@ -1454,14 +1254,14 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_POINT. The center</td>
+            <td class="description last">Either the index or value of a TYPE_NUMBER. The y coordinate</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>startAngle</code></td>
+                <td class="name"><code>z</code></td>
             
 
             <td class="type">
@@ -1490,14 +1290,14 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_NUMBER. The starting angle</td>
+            <td class="description last">Either the index or value of a TYPE_NUMBER. The z coordinate</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>endAngle</code></td>
+                <td class="name"><code>ref</code></td>
             
 
             <td class="type">
@@ -1526,7 +1326,43 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_NUMBER. The end angle</td>
+            <td class="description last">Either the index or value of a TYPE_POINT3. The point this vector is attached to</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>normalize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_BOOLEAN. WWhether the vector is normalized</td>
         </tr>
 
     
@@ -1574,7 +1410,302 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line9005">line 9005</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line325">line 325</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The creation info
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">CreateInfo</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".fromVectorRef"><span class="type-signature">(static) </span>fromVectorRef<span class="signature">(params)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Computes the vector from another vectorIf any value is EMPTY, the default values are used
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_VECTOR3. The other vector</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ref</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_POINT3. The point this vector is attached to</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>normalize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_BOOLEAN. WWhether the vector is normalized</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line337">line 337</a>
     </li></ul></dd>
     
 

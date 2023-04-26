@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: DefinitionUpdateEvent</title>
+    <title>JSDoc: Class: DrawFuncRegistry</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: DefinitionUpdateEvent</h1>
+    <h1 class="page-title">Class: DrawFuncRegistry</h1>
 
     
 
@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>DefinitionUpdateEvent<span class="signature">(scene, index)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-algeobraCanvas.html">algeobraCanvas</a>~</span>DrawFuncRegistry<span class="signature">(params)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Event that is fired when a definition is updated in a @see{GeometryScene}.This happens every time its value is computed</div>
+            <div class="class-description">Class to bundle a number of drawing functions for differently typed objectsA default drawing function can be provided to handle all-non provided typed objectsAn drawing function for untyped objects allows to draw arbitrary objects</div>
         
     
 </header>
@@ -46,12 +46,16 @@
     
 
     
-    <h4 class="name" id="DefinitionUpdateEvent"><span class="type-signature"></span>new DefinitionUpdateEvent<span class="signature">(scene, index)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="DrawFuncRegistry"><span class="type-signature"></span>new DrawFuncRegistry<span class="signature">(params)</span><span class="type-signature"></span></h4>
     
 
     
 
 
+
+<div class="description">
+    A drawing function has the same signature as DrawFuncRegistry.drawAll of the provided fields can be changed later as well
+</div>
 
 
 
@@ -86,13 +90,13 @@
 
         <tr>
             
-                <td class="name"><code>scene</code></td>
+                <td class="name"><code>params</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">GeometryScene</span>
+<span class="param-type">Object</span>
 
 
             
@@ -102,30 +106,134 @@
 
             
 
-            <td class="description last">The scene from which this event originated</td>
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>typedDrawFuncs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">A map of typename -> drawing function pairs</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>index</code></td>
+                <td class="name"><code>defaultDrawFunc</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">function</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The index of the changed object</td>
+            <td class="description last">The function called for non registered types</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>untypedDrawFunc</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The drawing function for general untyped objects</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -166,7 +274,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line9789">line 9789</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line2156">line 2156</a>
     </li></ul></dd>
     
 
@@ -213,6 +321,193 @@
 
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="draw"><span class="type-signature"></span>draw<span class="signature">(output, object, properties)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draw an object to an output
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>output</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The output object. Must be compatible with the registered functions</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The object to be drawn</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>properties</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Properties corresponding to the object</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line2180">line 2180</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
 
     

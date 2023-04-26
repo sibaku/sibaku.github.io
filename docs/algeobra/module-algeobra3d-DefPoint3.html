@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: DefFunc</title>
+    <title>JSDoc: Class: DefPoint3</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: DefFunc</h1>
+    <h1 class="page-title">Class: DefPoint3</h1>
 
     
 
@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>DefFunc<span class="signature">(f)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-algeobra3d.html">algeobra3d</a>~</span>DefPoint3<span class="signature">(p<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Definition of a generic function</div>
+            <div class="class-description">Definition of a point in 3D space</div>
         
     
 </header>
@@ -46,12 +46,16 @@
     
 
     
-    <h4 class="name" id="DefFunc"><span class="type-signature"></span>new DefFunc<span class="signature">(f)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="DefPoint3"><span class="type-signature"></span>new DefPoint3<span class="signature">(p<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
 
 
+
+<div class="description">
+    Default values
+</div>
 
 
 
@@ -74,6 +78,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -86,23 +92,33 @@
 
         <tr>
             
-                <td class="name"><code>f</code></td>
+                <td class="name"><code>p</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">THREE.Vector3</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The function to be computed. The function will be called like f(dependencies, params), where those parameters are specified by the creation info</td>
+            <td class="description last">The point</td>
         </tr>
 
     
@@ -143,7 +159,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8090">line 8090</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line213">line 213</a>
     </li></ul></dd>
     
 
@@ -199,7 +215,7 @@
     
 
     
-    <h4 class="name" id="compute"><span class="type-signature"></span>compute<span class="signature">(createInfo)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="compute"><span class="type-signature"></span>compute<span class="signature">(info)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -207,7 +223,7 @@
 
 
 <div class="description">
-    Computes the result of this.f on the given arguments
+    Computes the point
 </div>
 
 
@@ -243,7 +259,7 @@
 
         <tr>
             
-                <td class="name"><code>createInfo</code></td>
+                <td class="name"><code>info</code></td>
             
 
             <td class="type">
@@ -300,7 +316,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8115">line 8115</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line250">line 250</a>
     </li></ul></dd>
     
 
@@ -329,10 +345,22 @@
 
         
 <div class="param-desc">
-    The result of this.f(dependencies, params)
+    Object of type TYPE_POINT3
 </div>
 
 
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
 
     
 
@@ -346,7 +374,7 @@
     
 
     
-    <h4 class="name" id=".from"><span class="type-signature">(static) </span>from<span class="signature">(dependencies, params, ignoreInvalids)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    <h4 class="name" id=".fromSpherical"><span class="type-signature">(static) </span>fromSpherical<span class="signature">(s<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
     
 
     
@@ -354,7 +382,7 @@
 
 
 <div class="description">
-    Defines the signature of a function
+    Computes the point from spherical coordinates
 </div>
 
 
@@ -378,9 +406,9 @@
         <th>Type</th>
 
         
-
+        <th>Attributes</th>
         
-        <th>Default</th>
+
         
 
         <th class="last">Description</th>
@@ -392,89 +420,36 @@
 
         <tr>
             
-                <td class="name"><code>dependencies</code></td>
+                <td class="name"><code>s</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">Number</span>
 |
 
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Either the indices or values of the objects this function depends on</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
 <span class="param-type">Object</span>
-|
-
-<span class="param-type">Array</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
-            
-                <td class="default">
+                
+
                 
                 </td>
             
 
-            <td class="description last">Additional parameters</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ignoreInvalids</code></td>
             
 
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">If true, this function is called even if any inputs are INVALID</td>
+            <td class="description last">Either the index or value of a TYPE_SPHERICAL. The spherical coordinates</td>
         </tr>
 
     
@@ -515,7 +490,302 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8106">line 8106</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line228">line 228</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The creation info
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">CreateInfo</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".fromValues"><span class="type-signature">(static) </span>fromValues<span class="signature">(params)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Computes the point from valuesIf any value is EMPTY, the default values are used
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_NUMBER. The x coordinate</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_NUMBER. The y coordinate</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>z</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_NUMBER. The z coordinate</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line241">line 241</a>
     </li></ul></dd>
     
 

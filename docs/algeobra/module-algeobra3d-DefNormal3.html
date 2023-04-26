@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: DefFunc</title>
+    <title>JSDoc: Class: DefNormal3</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: DefFunc</h1>
+    <h1 class="page-title">Class: DefNormal3</h1>
 
     
 
@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>DefFunc<span class="signature">(f)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-algeobra3d.html">algeobra3d</a>~</span>DefNormal3<span class="signature">(normalize<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Definition of a generic function</div>
+            <div class="class-description">Definition of a 3D normalCreates TYPE_VECTOR3</div>
         
     
 </header>
@@ -46,12 +46,16 @@
     
 
     
-    <h4 class="name" id="DefFunc"><span class="type-signature"></span>new DefFunc<span class="signature">(f)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="DefNormal3"><span class="type-signature"></span>new DefNormal3<span class="signature">(normalize<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
 
 
+
+<div class="description">
+    Default values for the normal
+</div>
 
 
 
@@ -74,7 +78,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -86,23 +94,39 @@
 
         <tr>
             
-                <td class="name"><code>f</code></td>
+                <td class="name"><code>normalize</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">Boolean</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last">The function to be computed. The function will be called like f(dependencies, params), where those parameters are specified by the creation info</td>
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Whether or not to normalize the normal</td>
         </tr>
 
     
@@ -143,7 +167,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8090">line 8090</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line862">line 862</a>
     </li></ul></dd>
     
 
@@ -199,7 +223,7 @@
     
 
     
-    <h4 class="name" id="compute"><span class="type-signature"></span>compute<span class="signature">(createInfo)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="compute"><span class="type-signature"></span>compute<span class="signature">(info)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -207,7 +231,7 @@
 
 
 <div class="description">
-    Computes the result of this.f on the given arguments
+    Computes the normal
 </div>
 
 
@@ -243,7 +267,7 @@
 
         <tr>
             
-                <td class="name"><code>createInfo</code></td>
+                <td class="name"><code>info</code></td>
             
 
             <td class="type">
@@ -300,7 +324,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8115">line 8115</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line902">line 902</a>
     </li></ul></dd>
     
 
@@ -329,10 +353,22 @@
 
         
 <div class="param-desc">
-    The result of this.f(dependencies, params)
+    An object of type TYPE_VECTOR3
 </div>
 
 
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
 
     
 
@@ -346,7 +382,7 @@
     
 
     
-    <h4 class="name" id=".from"><span class="type-signature">(static) </span>from<span class="signature">(dependencies, params, ignoreInvalids)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    <h4 class="name" id=".fromPointPlane"><span class="type-signature">(static) </span>fromPointPlane<span class="signature">(point, plane, normalize<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
     
 
     
@@ -354,7 +390,7 @@
 
 
 <div class="description">
-    Defines the signature of a function
+    Computes the normal at a point for the given planeNote: This normal will be defined for any pointResulting vector has its referenced point at the given point
 </div>
 
 
@@ -378,9 +414,9 @@
         <th>Type</th>
 
         
-
+        <th>Attributes</th>
         
-        <th>Default</th>
+
         
 
         <th class="last">Description</th>
@@ -392,89 +428,104 @@
 
         <tr>
             
-                <td class="name"><code>dependencies</code></td>
+                <td class="name"><code>point</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">Number</span>
 |
 
-<span class="param-type">Array</span>
+<span class="param-type">Object</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
 
-            
-                <td class="default">
+                
+
                 
                 </td>
             
 
-            <td class="description last">Either the indices or values of the objects this function depends on</td>
+            
+
+            <td class="description last">Either the index or value of a TYPE_POINT3. The point</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>params</code></td>
+                <td class="name"><code>plane</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">Number</span>
 |
 
-<span class="param-type">Array</span>
+<span class="param-type">Object</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
 
-            
-                <td class="default">
+                
+
                 
                 </td>
             
 
-            <td class="description last">Additional parameters</td>
+            
+
+            <td class="description last">Either the index or value of a TYPE_PLANE. The plane</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>ignoreInvalids</code></td>
+                <td class="name"><code>normalize</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
 
 
             
             </td>
 
             
-
-            
-                <td class="default">
+                <td class="attributes">
                 
-                    false
+                    &lt;optional><br>
+                
+
+                
+
                 
                 </td>
             
 
-            <td class="description last">If true, this function is called even if any inputs are INVALID</td>
+            
+
+            <td class="description last">Either the index or value of a TYPE_BOOLEAN. Whether the vector should be normalized</td>
         </tr>
 
     
@@ -515,7 +566,249 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8106">line 8106</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line893">line 893</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The creation info
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">CreateInfo</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".fromPointSphere"><span class="type-signature">(static) </span>fromPointSphere<span class="signature">(point, sphere, normalize<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Computes the normal at a point for the given sphereNote: This normal will be defined for any point != 0Resulting vector has its referenced point at the given point
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>point</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_POINT3. The point</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sphere</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_SPHERE. The sphere</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>normalize</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_BOOLEAN. Whether the vector should be normalized</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line880">line 880</a>
     </li></ul></dd>
     
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: DefNormalVector</title>
+    <title>JSDoc: Class: DefCoordSystem</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: DefNormalVector</h1>
+    <h1 class="page-title">Class: DefCoordSystem</h1>
 
     
 
@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>DefNormalVector<span class="signature">(params)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>DefCoordSystem<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Definition of a normal vector  that can be constructed in various ways. A vector consists of x and y coordinates specifying its direction and length and a reference point to which it is attached to.While a mathematical vector is of course not bound to a specific point, this makes working with and displaying vectors easier</div>
+            <div class="class-description">Definition of a coordinate systemCoordinte systems may be placed relative to other coordinate systems. They are specified by two local axes and a local origin.When computing the value, the final coordinates of origin and axes will be in the same coordinate frame as the parent. Thus, in  general, the result will be in world coordinates, as each parent, will itself be specified in its parent's system, until there is a system with no parent (implicit world coordinates)This makes it easy to define vectors and points locally, with DefCoordSystemOps  and still use those resulting  vectors together with arbitrary other ones, without the issue if different coordinate frames</div>
         
     
 </header>
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="DefNormalVector"><span class="type-signature"></span>new DefNormalVector<span class="signature">(params)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="DefCoordSystem"><span class="type-signature"></span>new DefCoordSystem<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -54,7 +54,7 @@
 
 
 <div class="description">
-    Constructor sets default values
+    Default values
 </div>
 
 
@@ -77,6 +77,8 @@
 
         <th>Type</th>
 
+        
+        <th>Attributes</th>
         
 
         
@@ -103,6 +105,16 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -120,6 +132,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -132,7 +146,7 @@
 
         <tr>
             
-                <td class="name"><code>ref</code></td>
+                <td class="name"><code>local</code></td>
             
 
             <td class="type">
@@ -145,33 +159,53 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The point to which this vector is attached to</td>
+            <td class="description last">The local coordinate system</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>normalize</code></td>
+                <td class="name"><code>prent</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type">Object</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">Whether or not this vector should be normalized</td>
+            <td class="description last">The parent coordinate system</td>
         </tr>
 
     
@@ -219,7 +253,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4980">line 4980</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4575">line 4575</a>
     </li></ul></dd>
     
 
@@ -275,7 +309,7 @@
     
 
     
-    <h4 class="name" id="compute"><span class="type-signature"></span>compute<span class="signature">(createInfo)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="compute"><span class="type-signature"></span>compute<span class="signature">(info)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -283,7 +317,7 @@
 
 
 <div class="description">
-    Computes the normal vector value
+    Computes the coordinate system
 </div>
 
 
@@ -319,7 +353,7 @@
 
         <tr>
             
-                <td class="name"><code>createInfo</code></td>
+                <td class="name"><code>info</code></td>
             
 
             <td class="type">
@@ -335,7 +369,7 @@
 
             
 
-            <td class="description last">The create information</td>
+            <td class="description last">The creation info</td>
         </tr>
 
     
@@ -376,7 +410,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5131">line 5131</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4728">line 4728</a>
     </li></ul></dd>
     
 
@@ -405,7 +439,7 @@
 
         
 <div class="param-desc">
-    The normal with type TYPE_VECTOR
+    An object of type TYPE_COORD_SYSTEM
 </div>
 
 
@@ -434,7 +468,7 @@
     
 
     
-    <h4 class="name" id=".circleNormal"><span class="type-signature">(static) </span>circleNormal<span class="signature">(p, center, r)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id=".computeContravariantBasis"><span class="type-signature">(static) </span>computeContravariantBasis<span class="signature">(u, v)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -442,7 +476,7 @@
 
 
 <div class="description">
-    Computes the normal of a point with respect to a circle.Will be scaled according to 2 / r^2 [x,y]
+    Computes the contravariant basis for a given basisAs the basis vectors are not required to be normalized or orthogonal, the contravariant basis can be used to determine the coordinates of a vector in the given basis
 </div>
 
 
@@ -478,7 +512,7 @@
 
         <tr>
             
-                <td class="name"><code>p</code></td>
+                <td class="name"><code>u</code></td>
             
 
             <td class="type">
@@ -494,14 +528,14 @@
 
             
 
-            <td class="description last">The point</td>
+            <td class="description last">The first axis</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>center</code></td>
+                <td class="name"><code>v</code></td>
             
 
             <td class="type">
@@ -517,30 +551,7 @@
 
             
 
-            <td class="description last">The circle center</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>r</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The circle radius</td>
+            <td class="description last">The second axis</td>
         </tr>
 
     
@@ -581,7 +592,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5088">line 5088</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4608">line 4608</a>
     </li></ul></dd>
     
 
@@ -610,7 +621,7 @@
 
         
 <div class="param-desc">
-    The circle normal
+    The contravariant basis vectors
 </div>
 
 
@@ -639,7 +650,7 @@
     
 
     
-    <h4 class="name" id=".ellipseNormal"><span class="type-signature">(static) </span>ellipseNormal<span class="signature">(p, center, rx, ry, rotation)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id=".createSystem"><span class="type-signature">(static) </span>createSystem<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
 
     
@@ -647,7 +658,7 @@
 
 
 <div class="description">
-    Computes the normal of a point with respect to an ellipse.Will be scaled according to  [2x / rx^2 , 2y / ry^2]
+    Creates a coordinate system structure for the given parametersIf origin is not given, it defaults to the usual (0,0)If u is not given, it defaults to the usual x-axis (1,0)If v is not given, it defaults to the normal vector to u.
 </div>
 
 
@@ -671,6 +682,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -683,7 +696,7 @@
 
         <tr>
             
-                <td class="name"><code>p</code></td>
+                <td class="name"><code>params</code></td>
             
 
             <td class="type">
@@ -696,17 +709,48 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The point</td>
-        </tr>
+            <td class="description last">
+                <h6>Properties</h6>
+                
 
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>center</code></td>
+                <td class="name"><code>origin</code></td>
             
 
             <td class="type">
@@ -719,56 +763,727 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The ellipse center</td>
+            <td class="description last">The origin</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>rx</code></td>
+                <td class="name"><code>u</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">Object</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The ellipse x-eccentricity</td>
+            <td class="description last">The first axis</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>ry</code></td>
+                <td class="name"><code>v</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">Object</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The ellipse y-eccentricity</td>
+            <td class="description last">The second axis</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4588">line 4588</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".fromContravariant"><span class="type-signature">(static) </span>fromContravariant<span class="signature">(system, parent<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Creates a coordinate system that consist of the same origin but the contravarint base vectors as the given system
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>system</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_COORD_SYSTEM. The system which this one is based on</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>parent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_COORD_SYSTEM. The parent coordinate system</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4719">line 4719</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The creation info
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">CreateInfo</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".fromTransform"><span class="type-signature">(static) </span>fromTransform<span class="signature">(params<span class="signature-attributes">opt</span>, defaultValues<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Creates a coordinate system by specifying a transformation of the local axes
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>translation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_VECTOR. The translation of the origin</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rotation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_NUMBER. The rotation angle of the first axis</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>scale</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of either type TYPE_VECTOR or TYPE_NUMBER. The scaling factor</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>parent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Either the index or value of a TYPE_COORD_SYSTEM. The parent coordinate system</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>defaultValues</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>translation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Default value for the translation</td>
         </tr>
 
     
@@ -788,171 +1503,9 @@
             </td>
 
             
-
-            
-
-            <td class="description last">The ellipse rotation</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5109">line 5109</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The normal
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromArc"><span class="type-signature">(static) </span>fromArc<span class="signature">(p, arc, normalize<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Creates a normal at a point with respect to the given arc/circle.The point is the reference point as well.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>p</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -963,48 +1516,14 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_POINT. The point</td>
+            <td class="description last">Default value for the rotation angle</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>arc</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_ARC. The circle</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>normalize</code></td>
+                <td class="name"><code>scale</code></td>
             
 
             <td class="type">
@@ -1033,7 +1552,14 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_BOOLEAN. Whether the vector should be normalized</td>
+            <td class="description last">Default value for the scale</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1074,7 +1600,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5065">line 5065</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4705">line 4705</a>
     </li></ul></dd>
     
 
@@ -1132,7 +1658,7 @@
     
 
     
-    <h4 class="name" id=".fromCoordinates"><span class="type-signature">(static) </span>fromCoordinates<span class="signature">(params)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    <h4 class="name" id=".fromValues"><span class="type-signature">(static) </span>fromValues<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
     
 
     
@@ -1140,7 +1666,7 @@
 
 
 <div class="description">
-    Creates a new normal vector from individual vector components
+    Creates a coordinate system by specifying local origin and axesIf the first axis (u) is given, the second default value will be overriden by the given second axis (v) as well, even if that is empty.That means, if u is not given, v will also be set to empty and used the default values, if they are set.If v is empty, it will be computed as the normal to u.When not given any values, the defaults are the usual coordinate axies with origin (0,0) and u = (1,0), v = (0,1)
 </div>
 
 
@@ -1163,6 +1689,8 @@
 
         <th>Type</th>
 
+        
+        <th>Attributes</th>
         
 
         
@@ -1188,6 +1716,16 @@
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -1220,75 +1758,7 @@
 
         <tr>
             
-                <td class="name"><code>x</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_NUMBER. The x coordinate</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>y</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_NUMBER. The y coordinate</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ref</code></td>
+                <td class="name"><code>origin</code></td>
             
 
             <td class="type">
@@ -1317,14 +1787,14 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_POINT. The reference point</td>
+            <td class="description last">Either the index or value of a TYPE_POINT. The local origin</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>normalize</code></td>
+                <td class="name"><code>u</code></td>
             
 
             <td class="type">
@@ -1353,1230 +1823,9 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_BOOLEAN. Whether the vector should be normalized</td>
+            <td class="description last">Either the index or value of a TYPE_VECTOR. The first axis</td>
         </tr>
 
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5039">line 5039</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromEllipse"><span class="type-signature">(static) </span>fromEllipse<span class="signature">(p, ellipse, normalize<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Creates a normal at a point with respect to the given ellipse.The point is the reference point as well.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>p</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The point</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ellipse</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_ELLIPSE. The ellipse</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>normalize</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_BOOLEAN. Whether the vector should be normalized</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5076">line 5076</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromLine"><span class="type-signature">(static) </span>fromLine<span class="signature">(line, normalize<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Creates a new normal vector from a line segmentThe vector will use the first line point as a reference and point to the second point
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>line</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_LINE. The line</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>normalize</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_BOOLEAN. Whether the vector should be normalized</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5014">line 5014</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromPointCoordinates"><span class="type-signature">(static) </span>fromPointCoordinates<span class="signature">(params)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Creates a new normal vector from the position vector of a point.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>p</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The position</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>normalize</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_BOOLEAN. Whether the vector should be normalized</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5003">line 5003</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromPoints"><span class="type-signature">(static) </span>fromPoints<span class="signature">(params)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Creates a new normal vector from two pointsThe vector will use the first point as a reference and point to the second point
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>p0</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The first point</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>p1</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The second point</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ref</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. The reference point</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>normalize</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_BOOLEAN. Whether the vector should be normalized</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5053">line 5053</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromVector"><span class="type-signature">(static) </span>fromVector<span class="signature">(params)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Creates a new normal vector from another vector.If only a vector and no reference is given, the other vector's reference is used
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
@@ -2599,6 +1848,8 @@
             
                 <td class="attributes">
                 
+                    &lt;optional><br>
+                
 
                 
 
@@ -2608,14 +1859,14 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_VECTOR. The vector</td>
+            <td class="description last">Either the index or value of a TYPE_VECTOR. The second axis</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>ref</code></td>
+                <td class="name"><code>parent</code></td>
             
 
             <td class="type">
@@ -2644,43 +1895,7 @@
 
             
 
-            <td class="description last">Either the index or value of a TYPE_POINT. The reference point</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>normalize</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_BOOLEAN. Whether the vector should be normalized</td>
+            <td class="description last">Either the index or value of a TYPE_COORD_SYSTEM. The parent coordinate system</td>
         </tr>
 
     
@@ -2728,7 +1943,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line5026">line 5026</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4687">line 4687</a>
     </li></ul></dd>
     
 
@@ -2769,6 +1984,707 @@
     <dd>
         
 <span class="param-type">CreateInfo</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".isRightHanded"><span class="type-signature">(static) </span>isRightHanded<span class="signature">(u, v)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Computes, whether a coordinate system is right-handed
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>u</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The first axis</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The second axis</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4654">line 4654</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    True, if the coordinate system is right-handed, otherwise false
+</div>
+
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".pointFromCoordSystem"><span class="type-signature">(static) </span>pointFromCoordSystem<span class="signature">(coords, coordSystem)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Computes the world coordinates of a point specified in the local coordinates
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>coords</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The local coordintaes</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>coordSystem</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>origin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The origin</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>u</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The first axis</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The second axis</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4644">line 4644</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The world point
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".vectorFromCoordSystem"><span class="type-signature">(static) </span>vectorFromCoordSystem<span class="signature">(coords, coordSystem)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Computes the world coordinates of a vector specified in the local coordinatesAs a vector has no position, this just depends on the axes
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>coords</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The local coordintaes</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>coordSystem</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>u</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The first axis</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The second axis</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4630">line 4630</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The world vector
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
 
 
     </dd>

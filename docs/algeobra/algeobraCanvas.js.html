@@ -44,6 +44,7 @@ import {
     TYPE_ANGLE,
     TYPE_POINT,
     TYPE_VECTOR,
+    TYPE_COORD_SYSTEM,
     TYPE_LINE,
     TYPE_LINE_STRIP,
     TYPE_POLYGON,
@@ -52,18 +53,14 @@ import {
     TYPE_BEZIER,
     TYPE_BEZIER_SPLINE,
     TYPE_TEXT,
-
     DefPoint,
     GeometryScene,
-
     rad2deg,
-
     intersectLines,
-
     assertType,
-
     Vec2 as v2,
     createFromTemplate,
+    subdivideBezierAdaptive,
 } from "./algeobra.js";
 
 /**
@@ -235,6 +232,79 @@ const styles = {
                 },
             }
 
+        },
+        coordinateSystem: {
+            origin: {
+                r: 2,
+                fillStyle: "rgb(0,0,0)",
+                strokeStyle: "rgb(0,0,0)",
+                outline: {
+                    lineWidth: 1.0,
+                    lineCap: "butt",
+                    lineJoin: "miter",
+                    miterLimit: 10,
+                    lineDash: [],
+                    lineDashOffset: 0.0
+                },
+            },
+            u: {
+                shaft: {
+                    fillStyle: "rgb(255,0,0)",
+                    strokeStyle: "rgb(255,0,0)",
+                    lineStyle: {
+                        lineWidth: 1.0,
+                        lineCap: "butt",
+                        lineJoin: "miter",
+                        miterLimit: 10,
+                        lineDash: [],
+                        lineDashOffset: 0.0
+                    },
+                },
+                arrow: {
+                    length: 0.2,
+                    width: 0.05,
+                    sizeRelative: true,
+                    fillStyle: "rgb(255,0,0)",
+                    strokeStyle: "rgb(255,0,0)",
+                    lineStyle: {
+                        lineWidth: 1.0,
+                        lineCap: "butt",
+                        lineJoin: "miter",
+                        miterLimit: 10,
+                        lineDash: [],
+                        lineDashOffset: 0.0
+                    },
+                }
+            },
+            v: {
+                shaft: {
+                    fillStyle: "rgb(0,0,255)",
+                    strokeStyle: "rgb(0,0,255)",
+                    lineStyle: {
+                        lineWidth: 1.0,
+                        lineCap: "butt",
+                        lineJoin: "miter",
+                        miterLimit: 10,
+                        lineDash: [],
+                        lineDashOffset: 0.0
+                    },
+                },
+                arrow: {
+                    length: 0.2,
+                    width: 0.05,
+                    sizeRelative: true,
+                    fillStyle: "rgb(0,0,255)",
+                    strokeStyle: "rgb(0,0,255)",
+                    lineStyle: {
+                        lineWidth: 1.0,
+                        lineCap: "butt",
+                        lineJoin: "miter",
+                        miterLimit: 10,
+                        lineDash: [],
+                        lineDashOffset: 0.0
+                    },
+                }
+            }
         },
         polygon: {
             strokeStyle: "rgb(0,0,255)",
@@ -919,6 +989,17 @@ class CoordinateMapper {
     }
 
     /**
+  * The scaling factor that scales local lengths to the output surface space.
+  * The viewport is uniformly scaled, so it is just a single value
+  * @returns {Number} The scaling factor
+  */
+    scalingSurfaceToLocal() {
+        // we will make sure to not scale dimensions differently
+        return 1.0 / this.scalingLocalToSurface();
+    }
+
+
+    /**
      * Converts a local angle to output surface angle
      * @param {Number} a The local angle
      * @returns {Number} The transformed angle
@@ -1032,6 +1113,8 @@ class DiagramCanvas {
         this.coordinateMapper = new CoordinateMapper({
             x0, y0, x1, y1, flipY, width: canvas.width, height: canvas.height,
         });
+
+        this.subdivisionThreshold = 4;
     }
 
     /**
@@ -1348,9 +1431,22 @@ class DiagramCanvas {
         this.#applyLineStyle(outline);
         this.#applyFontStyle(textStyle);
 
-        ctx.beginPath();
-        ctx.strokeText(text, x, y);
-        ctx.fillText(text, x, y);
+        // split lines
+        const lines = text.split("\n");
+
+        const metrics = ctx.measureText(text);
+        let lineHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+        if (!this.flipY) {
+            lineHeight *= -1;
+        }
+
+        for (let l of lines) {
+            ctx.beginPath();
+            ctx.strokeText(l, x, y);
+            ctx.fillText(l, x, y);
+            y += lineHeight;
+        }
+
         ctx.restore();
     }
 
@@ -1623,10 +1719,10 @@ class DiagramCanvas {
      * @param {Object} style 
      */
     drawBezier(points, style = {}) {
-
-        if (points.length > 4) {
-            throw new Error(`Drawing bezier curves only supported up to cubics, got ${points.length - 1}`);
+        if (points.length &lt; 2) {
+            throw new Error(`Bezier curve must have degree of at least 1`);
         }
+
         style = createFromTemplate(styles.geo.line, style);
 
         let {
@@ -1647,7 +1743,6 @@ class DiagramCanvas {
         const pointsScreen = points.map(v => cMap.convertLocalToSurface(v.x, v.y));
 
         ctx.beginPath();
-
         if (pointsScreen.length === 2) {
             // just a line
             const [p0, p1] = pointsScreen;
@@ -1665,6 +1760,16 @@ class DiagramCanvas {
             // quadratic curve
             ctx.moveTo(p0.x, p0.y);
             ctx.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+        } else {
+            // create subdivision curve
+            // error metric is adjustable, but can go down to a pixel
+            const eps = Math.max(1, this.subdivisionThreshold);
+            const pointsSub = subdivideBezierAdaptive(pointsScreen, eps);
+            ctx.moveTo(pointsSub[0].x, pointsSub[0].y);
+            for (let i = 1; i &lt; pointsSub.length; i++) {
+                const pi = pointsSub[i];
+                ctx.lineTo(pi.x, pi.y);
+            }
         }
 
         ctx.stroke();
@@ -1680,10 +1785,6 @@ class DiagramCanvas {
     drawBezierSpline(points, degree, style = {}) {
         if (degree &lt; 1) {
             throw new Error(`Drawing bezier curves only supported starting from degree 1, got ${degree}`);
-        }
-
-        if (degree > 3) {
-            throw new Error(`Drawing bezier curves only supported up to cubics, got ${degree}`);
         }
 
         // check for correct number of points
@@ -1728,6 +1829,21 @@ class DiagramCanvas {
                 const [p1, p2, p3] = [pointsScreen[i], pointsScreen[i + 1], pointsScreen[i + 2]];
                 // cubic curve
                 ctx.bezierCurveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+            }
+            else {
+                const subPoints = [];
+                for (let j = 0; j &lt;= degree; j++) {
+                    subPoints.push(pointsScreen[i - 1 + j]);
+                }
+                // create subdivision curve
+                // error metric is adjustable, but can go down to a pixel
+                const eps = Math.max(1, this.subdivisionThreshold);
+                const pointsSub = subdivideBezierAdaptive(subPoints, eps);
+                // move already done by previous segment/first point
+                for (let i = 1; i &lt; pointsSub.length; i++) {
+                    const pi = pointsSub[i];
+                    ctx.lineTo(pi.x, pi.y);
+                }
             }
         }
 
@@ -2030,91 +2146,154 @@ class ScenePainter {
     }
 }
 
-
 /**
- * Draws a scene to DiagramCanvas
- * @param {GeometryScene} scene 
- * @param {DiagramCanvas} canvas 
- * @param {Object} params
- * @param {Object} params.bg The background config. Full config options at BASIC_BACKGROUND_CONFIG
+ * This sorts the objects in the scene, according to their z-value, if present. Default z is 0.
+ * Objects may be excluded from drawing by adding a "invisible" property and setting it to true
+ * @param {GeometryScene} scene The scene
+ * @returns {Array&lt;{value: Object, z : Number, properties: Object}>} Sorted list of objects to be drawn
  */
-function drawSceneToDiagram(scene, canvas, {
-    bg = NO_BACKGROUND_CONFIG
-} = {}) {
-    canvas.clear();
-    canvas.drawBackground(bg);
+function sortDrawables(scene) {
     const drawables = [];
     for (const obj of scene.view({ skipInvalidValues: true })) {
-        const vals = obj.value instanceof Array ? obj.value : [obj.value];
-
-        const { properties = {} } = obj;
+        const { value, properties = {} } = obj;
         if (properties["invisible"]) {
             continue;
         }
-        const { style, z = 0 } = properties;
-        for (let i = 0; i &lt; vals.length; i++) {
+        const { z = 0 } = properties;
 
-            const val = vals[i];
-            drawables.push({
-                val,
-                z,
-                style
-            });
+        drawables.push({
+            value,
+            z,
+            properties
+        });
 
-        }
     }
 
     drawables.sort((a, b) => {
         return b.z - a.z;
     });
 
-    for (let i = 0; i &lt; drawables.length; i++) {
-        const { val, style } = drawables[i];
-        if (val.type === TYPE_POINT) {
-            canvas.drawPoint(val.x, val.y, style);
-        } else if (val.type === TYPE_LINE) {
-            const { p0, p1 } = val;
-            canvas.drawLine(p0.x, p0.y, p1.x, p1.y, val.leftOpen, val.rightOpen, style);
-        } else if (val.type === TYPE_VECTOR) {
-            const { ref, x, y } = val;
-            canvas.drawVector(ref.x, ref.y, ref.x + x, ref.y + y, style);
-        } else if (val.type === TYPE_ARC) {
-            const { center, r, startAngle, endAngle } = val;
-            canvas.drawArc(center.x, center.y, r, startAngle, endAngle, style);
-        } else if (val.type === TYPE_ANGLE) {
-            const { ref, value, start } = val;
-            canvas.drawAngle(ref.x, ref.y, value, start, style);
-        } else if (val.type === TYPE_TEXT) {
-            const { text, ref } = val;
-            canvas.drawText(ref.x, ref.y, text, style);
-        } else if (val.type === TYPE_LINE_STRIP) {
-            const { points } = val;
-            canvas.drawLineStrip(points, style);
-        } else if (val.type === TYPE_POLYGON) {
-            const { points } = val;
-            canvas.drawPolygon(points, style);
-        } else if (val.type === TYPE_BEZIER) {
-            const { points } = val;
-            canvas.drawBezier(points, style);
-        } else if (val.type === TYPE_BEZIER_SPLINE) {
-            const { points, degree } = val;
-            canvas.drawBezierSpline(points, degree, style);
-        } else if (val.type === TYPE_ELLIPSE) {
-            const { center,
-                rx,
-                ry,
-                startAngle,
-                endAngle,
-                rotation, } = val;
-            canvas.drawEllipse(center.x,
-                center.y,
-                rx,
-                ry,
-                startAngle,
-                endAngle,
-                rotation, style);
+    return drawables;
+}
+
+/**
+ * Class to bundle a number of drawing functions for differently typed objects
+ * A default drawing function can be provided to handle all-non provided typed objects
+ * An drawing function for untyped objects allows to draw arbitrary objects
+ */
+class DrawFuncRegistry {
+    /**
+     * A drawing function has the same signature as DrawFuncRegistry.draw
+     * All of the provided fields can be changed later as well
+     * @param {Object} params
+     * @param {Object} [params.typedDrawFuncs] A map of typename -> drawing function pairs
+     * @param {Function} [params.defaultDrawFunc] The function called for non registered types
+     * @param {Function} [params.untypedDrawFunc] The drawing function for general untyped objects
+     */
+    constructor({ typedDrawFuncs = {},
+        defaultDrawFunc = () => { },
+        untypedDrawFunc = () => { },
+    } = {}) {
+        this.typedDrawFuncs = typedDrawFuncs;
+        this.defaultDrawFunc = defaultDrawFunc;
+        this.untypedDrawFunc = untypedDrawFunc;
+    }
+
+    /**
+     * Draw an object to an output
+     * @param {Object} output The output object. Must be compatible with the registered functions
+     * @param {Object} object The object to be drawn
+     * @param {Object} properties Properties corresponding to the object
+     */
+    draw(output, object, properties) {
+        const type = object.type;
+        if (type !== undefined) {
+            const f = this.typedDrawFuncs[type];
+            if (f !== undefined) {
+                f(output, object, properties);
+            } else {
+                this.defaultDrawFunc(output, object, properties);
+            }
+        } else {
+            this.untypedDrawFunc(output, object, properties);
         }
     }
+}
+
+/**
+ * Fills a DrawFuncRegistry with default functions for the predefined algeobra types
+ * @returns {DrawFuncRegistry} Default diagram drawing functions for algeobra types
+ */
+function createDiagramCanvasDrawFuncRegistry() {
+    const tf = {};
+
+    tf[TYPE_POINT] = (diagram, obj, props) => diagram.drawPoint(obj.x, obj.y, props.style);
+    tf[TYPE_LINE] = (diagram, obj, props) => {
+        const { p0, p1, leftOpen, rightOpen } = obj;
+        diagram.drawLine(p0.x, p0.y, p1.x, p1.y, leftOpen, rightOpen, props.style);
+    };
+    tf[TYPE_VECTOR] = (diagram, obj, props) => {
+        const { ref, x, y } = obj;
+        diagram.drawVector(ref.x, ref.y, ref.x + x, ref.y + y, props.style);
+    };
+
+    tf[TYPE_COORD_SYSTEM] = (diagram, obj, props) => {
+        const { origin, u, v } = obj;
+        // get props
+        const { style = {} } = props;
+        const originStyle = createFromTemplate(styles.geo.coordinateSystem.origin, style.origin);
+        const uStyle = createFromTemplate(styles.geo.coordinateSystem.u, style.u);
+        const vStyle = createFromTemplate(styles.geo.coordinateSystem.v, style.v);
+
+        diagram.drawPoint(origin.x, origin.y, originStyle)
+        diagram.drawVector(origin.x, origin.y, origin.x + u.x, origin.y + u.y, uStyle);
+        diagram.drawVector(origin.x, origin.y, origin.x + v.x, origin.y + v.y, vStyle);
+    };
+
+    tf[TYPE_ARC] = (diagram, obj, props) => {
+        const { center, r, startAngle, endAngle } = obj;
+        diagram.drawArc(center.x, center.y, r, startAngle, endAngle, props.style);
+    };
+
+    tf[TYPE_ANGLE] = (diagram, obj, props) => {
+        const { ref, value, start } = obj;
+        diagram.drawAngle(ref.x, ref.y, value, start, props.style);
+    };
+    tf[TYPE_TEXT] = (diagram, obj, props) => {
+        const { text, ref } = obj;
+        diagram.drawText(ref.x, ref.y, text, props.style);
+    };
+    tf[TYPE_LINE_STRIP] = (diagram, obj, props) => {
+        const { points } = obj;
+        diagram.drawLineStrip(points, props.style);
+    };
+    tf[TYPE_POLYGON] = (diagram, obj, props) => {
+        const { points } = obj;
+        diagram.drawPolygon(points, props.style);
+    };
+    tf[TYPE_BEZIER] = (diagram, obj, props) => {
+        const { points } = obj;
+        diagram.drawBezier(points, props.style);
+    };
+    tf[TYPE_BEZIER_SPLINE] = (diagram, obj, props) => {
+        const { points, degree } = obj;
+        diagram.drawBezierSpline(points, degree, props.style);
+    };
+    tf[TYPE_ELLIPSE] = (diagram, obj, props) => {
+        const { center,
+            rx, ry,
+            startAngle, endAngle,
+            rotation, } = obj;
+        diagram.drawEllipse(
+            center.x, center.y,
+            rx, ry,
+            startAngle, endAngle,
+            rotation, props.style);
+    }
+
+    const reg = new DrawFuncRegistry({ typedDrawFuncs: tf });
+
+    return reg;
 }
 
 class DiagramPainter extends ScenePainter {
@@ -2137,16 +2316,31 @@ class DiagramPainter extends ScenePainter {
      * @param {Boolean} [options.autoResize.keepAspect = false] If true, the autoresize will keep the previous aspect ratio, if false not
      */
     constructor(scene, diagram, {
+        drawFuncRegistry = createDiagramCanvasDrawFuncRegistry(diagram),
         bg = NO_BACKGROUND_CONFIG,
         autoResize = null,
     } = {}) {
         super(scene);
         this.bg = bg;
+        this.drawFuncRegistry = drawFuncRegistry;
         this.#diagram = diagram;
 
         this.#currentSize = [diagram.canvas.width, diagram.canvas.height];
 
-        this.setDrawFunc((s) => drawSceneToDiagram(s, this.#diagram, { bg: this.bg }));
+        this.setDrawFunc((s) => {
+            this.#diagram.clear();
+            this.#diagram.drawBackground(this.bg);
+            const drawables = sortDrawables(s);
+
+            for (let i = 0; i &lt; drawables.length; i++) {
+                const { value, properties } = drawables[i];
+                const draw = Array.isArray(value) ? value : [value];
+                for (let j = 0; j &lt; draw.length; j++) {
+                    const obj = draw[j];
+                    this.drawFuncRegistry.draw(this.#diagram, obj, properties);
+                }
+            }
+        });
 
         if (autoResize) {
             const {
@@ -2200,16 +2394,17 @@ class DiagramPainter extends ScenePainter {
 export {
     CoordinateMapper,
     DiagramCanvas,
-    styles,
     PointManipulator,
-    drawSceneToDiagram,
-    clientPositionToLocal as documentPositionToLocal,
-    mouseEventToPosition,
-    NO_BACKGROUND_CONFIG,
-    BASIC_BACKGROUND_CONFIG,
-    makeTicks,
     ScenePainter,
     DiagramPainter,
+    DrawFuncRegistry,
+    createDiagramCanvasDrawFuncRegistry,
+    clientPositionToLocal,
+    mouseEventToPosition,
+    makeTicks,
+    styles,
+    NO_BACKGROUND_CONFIG,
+    BASIC_BACKGROUND_CONFIG,
 }</code></pre>
         </article>
     </section>
@@ -2220,13 +2415,13 @@ export {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-algeobra.html">algeobra</a></li><li><a href="module-algeobraCanvas.html">algeobraCanvas</a></li></ul><h3>Classes</h3><ul><li><a href="module-algeobraCanvas-CoordinateMapper.html">CoordinateMapper</a></li><li><a href="module-algeobraCanvas-DiagramCanvas.html">DiagramCanvas</a></li><li><a href="module-algeobraCanvas-DiagramPainter.html">DiagramPainter</a></li><li><a href="module-algeobraCanvas-PointManipulator.html">PointManipulator</a></li><li><a href="module-algeobraCanvas-ScenePainter.html">ScenePainter</a></li><li><a href="module-algeobra-ClosestPointRegistry.html">ClosestPointRegistry</a></li><li><a href="module-algeobra-Complex.html">Complex</a></li><li><a href="module-algeobra-CreateInfo.html">CreateInfo</a></li><li><a href="module-algeobra-DefAngle.html">DefAngle</a></li><li><a href="module-algeobra-DefArc.html">DefArc</a></li><li><a href="module-algeobra-DefArcLength.html">DefArcLength</a></li><li><a href="module-algeobra-DefArray.html">DefArray</a></li><li><a href="module-algeobra-DefBezier.html">DefBezier</a></li><li><a href="module-algeobra-DefBezierSpline.html">DefBezierSpline</a></li><li><a href="module-algeobra-DefBoolean.html">DefBoolean</a></li><li><a href="module-algeobra-DefChainApply.html">DefChainApply</a></li><li><a href="module-algeobra-DefClosestPoint.html">DefClosestPoint</a></li><li><a href="module-algeobra-DefConditional.html">DefConditional</a></li><li><a href="module-algeobra-DefCurveNormal.html">DefCurveNormal</a></li><li><a href="module-algeobra-DefCurveParam.html">DefCurveParam</a></li><li><a href="module-algeobra-DefCurvePoint.html">DefCurvePoint</a></li><li><a href="module-algeobra-DefCurveTangent.html">DefCurveTangent</a></li><li><a href="module-algeobra-DefEllipse.html">DefEllipse</a></li><li><a href="module-algeobra-DefEllipseFocus.html">DefEllipseFocus</a></li><li><a href="module-algeobra-DefFunc.html">DefFunc</a></li><li><a href="module-algeobra-DefInterpolate.html">DefInterpolate</a></li><li><a href="module-algeobra-DefIntersection.html">DefIntersection</a></li><li><a href="module-algeobra-DefLength.html">DefLength</a></li><li><a href="module-algeobra-DefLengthSquared.html">DefLengthSquared</a></li><li><a href="module-algeobra-DefLine.html">DefLine</a></li><li><a href="module-algeobra-DefLineStrip.html">DefLineStrip</a></li><li><a href="module-algeobra-DefMap.html">DefMap</a></li><li><a href="module-algeobra-DefMidPoint.html">DefMidPoint</a></li><li><a href="module-algeobra-DefNormalVector.html">DefNormalVector</a></li><li><a href="module-algeobra-DefNumber.html">DefNumber</a></li><li><a href="module-algeobra-DefParallelLine.html">DefParallelLine</a></li><li><a href="module-algeobra-DefPerpendicularLine.html">DefPerpendicularLine</a></li><li><a href="module-algeobra-DefPoint.html">DefPoint</a></li><li><a href="module-algeobra-DefPolarCoord.html">DefPolarCoord</a></li><li><a href="module-algeobra-DefPolarVector.html">DefPolarVector</a></li><li><a href="module-algeobra-DefPolygon.html">DefPolygon</a></li><li><a href="module-algeobra-DefReflection.html">DefReflection</a></li><li><a href="module-algeobra-DefRefraction.html">DefRefraction</a></li><li><a href="module-algeobra-DefSelect.html">DefSelect</a></li><li><a href="module-algeobra-DefTangentLines.html">DefTangentLines</a></li><li><a href="module-algeobra-DefTangentPoints.html">DefTangentPoints</a></li><li><a href="module-algeobra-DefText.html">DefText</a></li><li><a href="module-algeobra-DefVector.html">DefVector</a></li><li><a href="module-algeobra-DefinitionRemovedEvent.html">DefinitionRemovedEvent</a></li><li><a href="module-algeobra-DefinitionUpdateEvent.html">DefinitionUpdateEvent</a></li><li><a href="module-algeobra-EventType.html">EventType</a></li><li><a href="module-algeobra-GeometryScene.html">GeometryScene</a></li><li><a href="module-algeobra-IntersectionRegistry.html">IntersectionRegistry</a></li><li><a href="module-algeobra-PropertyUpdateEvent.html">PropertyUpdateEvent</a></li><li><a href="module-algeobra-Vec2.html">Vec2</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-algeobra.html">algeobra</a></li><li><a href="module-algeobra3d.html">algeobra3d</a></li><li><a href="module-algeobraCanvas.html">algeobraCanvas</a></li></ul><h3>Classes</h3><ul><li><a href="module-algeobra3d-AlgeobraThreeScene.html">AlgeobraThreeScene</a></li><li><a href="module-algeobra3d-DefLine3.html">DefLine3</a></li><li><a href="module-algeobra3d-DefMesh.html">DefMesh</a></li><li><a href="module-algeobra3d-DefNormal3.html">DefNormal3</a></li><li><a href="module-algeobra3d-DefPlane.html">DefPlane</a></li><li><a href="module-algeobra3d-DefPoint3.html">DefPoint3</a></li><li><a href="module-algeobra3d-DefReflection3.html">DefReflection3</a></li><li><a href="module-algeobra3d-DefSphere.html">DefSphere</a></li><li><a href="module-algeobra3d-DefSpherical.html">DefSpherical</a></li><li><a href="module-algeobra3d-DefVector3.html">DefVector3</a></li><li><a href="module-algeobraCanvas-CoordinateMapper.html">CoordinateMapper</a></li><li><a href="module-algeobraCanvas-DiagramCanvas.html">DiagramCanvas</a></li><li><a href="module-algeobraCanvas-DiagramPainter.html">DiagramPainter</a></li><li><a href="module-algeobraCanvas-DrawFuncRegistry.html">DrawFuncRegistry</a></li><li><a href="module-algeobraCanvas-PointManipulator.html">PointManipulator</a></li><li><a href="module-algeobraCanvas-ScenePainter.html">ScenePainter</a></li><li><a href="module-algeobra-ClosestPointRegistry.html">ClosestPointRegistry</a></li><li><a href="module-algeobra-Complex.html">Complex</a></li><li><a href="module-algeobra-CreateInfo.html">CreateInfo</a></li><li><a href="module-algeobra-DefAngle.html">DefAngle</a></li><li><a href="module-algeobra-DefArc.html">DefArc</a></li><li><a href="module-algeobra-DefArcLength.html">DefArcLength</a></li><li><a href="module-algeobra-DefArray.html">DefArray</a></li><li><a href="module-algeobra-DefBezier.html">DefBezier</a></li><li><a href="module-algeobra-DefBezierSpline.html">DefBezierSpline</a></li><li><a href="module-algeobra-DefBoolean.html">DefBoolean</a></li><li><a href="module-algeobra-DefChainApply.html">DefChainApply</a></li><li><a href="module-algeobra-DefClosestPoint.html">DefClosestPoint</a></li><li><a href="module-algeobra-DefConditional.html">DefConditional</a></li><li><a href="module-algeobra-DefCoordSystem.html">DefCoordSystem</a></li><li><a href="module-algeobra-DefCoordSystemOps.html">DefCoordSystemOps</a></li><li><a href="module-algeobra-DefCurveNormal.html">DefCurveNormal</a></li><li><a href="module-algeobra-DefCurveParam.html">DefCurveParam</a></li><li><a href="module-algeobra-DefCurvePoint.html">DefCurvePoint</a></li><li><a href="module-algeobra-DefCurveTangent.html">DefCurveTangent</a></li><li><a href="module-algeobra-DefEllipse.html">DefEllipse</a></li><li><a href="module-algeobra-DefEllipseFocus.html">DefEllipseFocus</a></li><li><a href="module-algeobra-DefFunc.html">DefFunc</a></li><li><a href="module-algeobra-DefInterpolate.html">DefInterpolate</a></li><li><a href="module-algeobra-DefIntersection.html">DefIntersection</a></li><li><a href="module-algeobra-DefLength.html">DefLength</a></li><li><a href="module-algeobra-DefLengthSquared.html">DefLengthSquared</a></li><li><a href="module-algeobra-DefLine.html">DefLine</a></li><li><a href="module-algeobra-DefLineStrip.html">DefLineStrip</a></li><li><a href="module-algeobra-DefMap.html">DefMap</a></li><li><a href="module-algeobra-DefMidPoint.html">DefMidPoint</a></li><li><a href="module-algeobra-DefNormalVector.html">DefNormalVector</a></li><li><a href="module-algeobra-DefNumber.html">DefNumber</a></li><li><a href="module-algeobra-DefParallelLine.html">DefParallelLine</a></li><li><a href="module-algeobra-DefPerpendicularLine.html">DefPerpendicularLine</a></li><li><a href="module-algeobra-DefPoint.html">DefPoint</a></li><li><a href="module-algeobra-DefPolarCoord.html">DefPolarCoord</a></li><li><a href="module-algeobra-DefPolarVector.html">DefPolarVector</a></li><li><a href="module-algeobra-DefPolygon.html">DefPolygon</a></li><li><a href="module-algeobra-DefReflection.html">DefReflection</a></li><li><a href="module-algeobra-DefRefraction.html">DefRefraction</a></li><li><a href="module-algeobra-DefSelect.html">DefSelect</a></li><li><a href="module-algeobra-DefTangentLines.html">DefTangentLines</a></li><li><a href="module-algeobra-DefTangentPoints.html">DefTangentPoints</a></li><li><a href="module-algeobra-DefText.html">DefText</a></li><li><a href="module-algeobra-DefVector.html">DefVector</a></li><li><a href="module-algeobra-DefVectorOps.html">DefVectorOps</a></li><li><a href="module-algeobra-DefinitionRemovedEvent.html">DefinitionRemovedEvent</a></li><li><a href="module-algeobra-DefinitionUpdateEvent.html">DefinitionUpdateEvent</a></li><li><a href="module-algeobra-EventType.html">EventType</a></li><li><a href="module-algeobra-GeometryScene.html">GeometryScene</a></li><li><a href="module-algeobra-IntersectionRegistry.html">IntersectionRegistry</a></li><li><a href="module-algeobra-PropertyUpdateEvent.html">PropertyUpdateEvent</a></li><li><a href="module-algeobra-Vec2.html">Vec2</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Apr 07 2023 10:39:27 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 26 2023 13:03:21 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

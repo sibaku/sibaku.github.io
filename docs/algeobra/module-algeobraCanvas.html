@@ -100,6 +100,9 @@
             <dt><a href="module-algeobraCanvas-DiagramPainter.html">DiagramPainter</a></dt>
             <dd></dd>
         
+            <dt><a href="module-algeobraCanvas-DrawFuncRegistry.html">DrawFuncRegistry</a></dt>
+            <dd></dd>
+        
             <dt><a href="module-algeobraCanvas-PointManipulator.html">PointManipulator</a></dt>
             <dd></dd>
         
@@ -163,7 +166,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line265">line 265</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line335">line 335</a>
     </li></ul></dd>
     
 
@@ -225,7 +228,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line252">line 252</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line322">line 322</a>
     </li></ul></dd>
     
 
@@ -287,7 +290,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line44">line 44</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line41">line 41</a>
     </li></ul></dd>
     
 
@@ -462,7 +465,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line233">line 233</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line303">line 303</a>
     </li></ul></dd>
     
 
@@ -759,7 +762,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line721">line 721</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line791">line 791</a>
     </li></ul></dd>
     
 
@@ -817,7 +820,7 @@
     
 
     
-    <h4 class="name" id="~drawSceneToDiagram"><span class="type-signature">(inner) </span>drawSceneToDiagram<span class="signature">(scene, canvas, params)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~createDiagramCanvasDrawFuncRegistry"><span class="type-signature">(inner) </span>createDiagramCanvasDrawFuncRegistry<span class="signature">()</span><span class="type-signature"> &rarr; {DrawFuncRegistry}</span></h4>
     
 
     
@@ -825,7 +828,7 @@
 
 
 <div class="description">
-    Draws a scene to DiagramCanvas
+    Fills a DrawFuncRegistry with default functions for the predefined algeobra types
 </div>
 
 
@@ -834,150 +837,6 @@
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>scene</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">GeometryScene</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>canvas</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">DiagramCanvas</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>bg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The background config. Full config options at BASIC_BACKGROUND_CONFIG</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -1013,7 +872,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line2013">line 2013</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line2199">line 2199</a>
     </li></ul></dd>
     
 
@@ -1038,6 +897,28 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Default diagram drawing functions for algeobra types
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">DrawFuncRegistry</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1261,7 +1142,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line372">line 372</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line442">line 442</a>
     </li></ul></dd>
     
 
@@ -1420,7 +1301,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line244">line 244</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line314">line 314</a>
     </li></ul></dd>
     
 
@@ -1473,6 +1354,165 @@
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id="~sortDrawables"><span class="type-signature">(inner) </span>sortDrawables<span class="signature">(scene)</span><span class="type-signature"> &rarr; {Array.&lt;{value: Object, z: Number, properties: Object}>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    This sorts the objects in the scene, according to their z-value, if present. Default z is 0.Objects may be excluded from drawing by adding a "invisible" property and setting it to true
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>scene</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GeometryScene</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The scene</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line2127">line 2127</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Sorted list of objects to be drawn
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;{value: Object, z: Number, properties: Object}></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
     
 
     
@@ -1488,13 +1528,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-algeobra.html">algeobra</a></li><li><a href="module-algeobraCanvas.html">algeobraCanvas</a></li></ul><h3>Classes</h3><ul><li><a href="module-algeobraCanvas-CoordinateMapper.html">CoordinateMapper</a></li><li><a href="module-algeobraCanvas-DiagramCanvas.html">DiagramCanvas</a></li><li><a href="module-algeobraCanvas-DiagramPainter.html">DiagramPainter</a></li><li><a href="module-algeobraCanvas-PointManipulator.html">PointManipulator</a></li><li><a href="module-algeobraCanvas-ScenePainter.html">ScenePainter</a></li><li><a href="module-algeobra-ClosestPointRegistry.html">ClosestPointRegistry</a></li><li><a href="module-algeobra-Complex.html">Complex</a></li><li><a href="module-algeobra-CreateInfo.html">CreateInfo</a></li><li><a href="module-algeobra-DefAngle.html">DefAngle</a></li><li><a href="module-algeobra-DefArc.html">DefArc</a></li><li><a href="module-algeobra-DefArcLength.html">DefArcLength</a></li><li><a href="module-algeobra-DefArray.html">DefArray</a></li><li><a href="module-algeobra-DefBezier.html">DefBezier</a></li><li><a href="module-algeobra-DefBezierSpline.html">DefBezierSpline</a></li><li><a href="module-algeobra-DefBoolean.html">DefBoolean</a></li><li><a href="module-algeobra-DefChainApply.html">DefChainApply</a></li><li><a href="module-algeobra-DefClosestPoint.html">DefClosestPoint</a></li><li><a href="module-algeobra-DefConditional.html">DefConditional</a></li><li><a href="module-algeobra-DefCurveNormal.html">DefCurveNormal</a></li><li><a href="module-algeobra-DefCurveParam.html">DefCurveParam</a></li><li><a href="module-algeobra-DefCurvePoint.html">DefCurvePoint</a></li><li><a href="module-algeobra-DefCurveTangent.html">DefCurveTangent</a></li><li><a href="module-algeobra-DefEllipse.html">DefEllipse</a></li><li><a href="module-algeobra-DefEllipseFocus.html">DefEllipseFocus</a></li><li><a href="module-algeobra-DefFunc.html">DefFunc</a></li><li><a href="module-algeobra-DefInterpolate.html">DefInterpolate</a></li><li><a href="module-algeobra-DefIntersection.html">DefIntersection</a></li><li><a href="module-algeobra-DefLength.html">DefLength</a></li><li><a href="module-algeobra-DefLengthSquared.html">DefLengthSquared</a></li><li><a href="module-algeobra-DefLine.html">DefLine</a></li><li><a href="module-algeobra-DefLineStrip.html">DefLineStrip</a></li><li><a href="module-algeobra-DefMap.html">DefMap</a></li><li><a href="module-algeobra-DefMidPoint.html">DefMidPoint</a></li><li><a href="module-algeobra-DefNormalVector.html">DefNormalVector</a></li><li><a href="module-algeobra-DefNumber.html">DefNumber</a></li><li><a href="module-algeobra-DefParallelLine.html">DefParallelLine</a></li><li><a href="module-algeobra-DefPerpendicularLine.html">DefPerpendicularLine</a></li><li><a href="module-algeobra-DefPoint.html">DefPoint</a></li><li><a href="module-algeobra-DefPolarCoord.html">DefPolarCoord</a></li><li><a href="module-algeobra-DefPolarVector.html">DefPolarVector</a></li><li><a href="module-algeobra-DefPolygon.html">DefPolygon</a></li><li><a href="module-algeobra-DefReflection.html">DefReflection</a></li><li><a href="module-algeobra-DefRefraction.html">DefRefraction</a></li><li><a href="module-algeobra-DefSelect.html">DefSelect</a></li><li><a href="module-algeobra-DefTangentLines.html">DefTangentLines</a></li><li><a href="module-algeobra-DefTangentPoints.html">DefTangentPoints</a></li><li><a href="module-algeobra-DefText.html">DefText</a></li><li><a href="module-algeobra-DefVector.html">DefVector</a></li><li><a href="module-algeobra-DefinitionRemovedEvent.html">DefinitionRemovedEvent</a></li><li><a href="module-algeobra-DefinitionUpdateEvent.html">DefinitionUpdateEvent</a></li><li><a href="module-algeobra-EventType.html">EventType</a></li><li><a href="module-algeobra-GeometryScene.html">GeometryScene</a></li><li><a href="module-algeobra-IntersectionRegistry.html">IntersectionRegistry</a></li><li><a href="module-algeobra-PropertyUpdateEvent.html">PropertyUpdateEvent</a></li><li><a href="module-algeobra-Vec2.html">Vec2</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-algeobra.html">algeobra</a></li><li><a href="module-algeobra3d.html">algeobra3d</a></li><li><a href="module-algeobraCanvas.html">algeobraCanvas</a></li></ul><h3>Classes</h3><ul><li><a href="module-algeobra3d-AlgeobraThreeScene.html">AlgeobraThreeScene</a></li><li><a href="module-algeobra3d-DefLine3.html">DefLine3</a></li><li><a href="module-algeobra3d-DefMesh.html">DefMesh</a></li><li><a href="module-algeobra3d-DefNormal3.html">DefNormal3</a></li><li><a href="module-algeobra3d-DefPlane.html">DefPlane</a></li><li><a href="module-algeobra3d-DefPoint3.html">DefPoint3</a></li><li><a href="module-algeobra3d-DefReflection3.html">DefReflection3</a></li><li><a href="module-algeobra3d-DefSphere.html">DefSphere</a></li><li><a href="module-algeobra3d-DefSpherical.html">DefSpherical</a></li><li><a href="module-algeobra3d-DefVector3.html">DefVector3</a></li><li><a href="module-algeobraCanvas-CoordinateMapper.html">CoordinateMapper</a></li><li><a href="module-algeobraCanvas-DiagramCanvas.html">DiagramCanvas</a></li><li><a href="module-algeobraCanvas-DiagramPainter.html">DiagramPainter</a></li><li><a href="module-algeobraCanvas-DrawFuncRegistry.html">DrawFuncRegistry</a></li><li><a href="module-algeobraCanvas-PointManipulator.html">PointManipulator</a></li><li><a href="module-algeobraCanvas-ScenePainter.html">ScenePainter</a></li><li><a href="module-algeobra-ClosestPointRegistry.html">ClosestPointRegistry</a></li><li><a href="module-algeobra-Complex.html">Complex</a></li><li><a href="module-algeobra-CreateInfo.html">CreateInfo</a></li><li><a href="module-algeobra-DefAngle.html">DefAngle</a></li><li><a href="module-algeobra-DefArc.html">DefArc</a></li><li><a href="module-algeobra-DefArcLength.html">DefArcLength</a></li><li><a href="module-algeobra-DefArray.html">DefArray</a></li><li><a href="module-algeobra-DefBezier.html">DefBezier</a></li><li><a href="module-algeobra-DefBezierSpline.html">DefBezierSpline</a></li><li><a href="module-algeobra-DefBoolean.html">DefBoolean</a></li><li><a href="module-algeobra-DefChainApply.html">DefChainApply</a></li><li><a href="module-algeobra-DefClosestPoint.html">DefClosestPoint</a></li><li><a href="module-algeobra-DefConditional.html">DefConditional</a></li><li><a href="module-algeobra-DefCoordSystem.html">DefCoordSystem</a></li><li><a href="module-algeobra-DefCoordSystemOps.html">DefCoordSystemOps</a></li><li><a href="module-algeobra-DefCurveNormal.html">DefCurveNormal</a></li><li><a href="module-algeobra-DefCurveParam.html">DefCurveParam</a></li><li><a href="module-algeobra-DefCurvePoint.html">DefCurvePoint</a></li><li><a href="module-algeobra-DefCurveTangent.html">DefCurveTangent</a></li><li><a href="module-algeobra-DefEllipse.html">DefEllipse</a></li><li><a href="module-algeobra-DefEllipseFocus.html">DefEllipseFocus</a></li><li><a href="module-algeobra-DefFunc.html">DefFunc</a></li><li><a href="module-algeobra-DefInterpolate.html">DefInterpolate</a></li><li><a href="module-algeobra-DefIntersection.html">DefIntersection</a></li><li><a href="module-algeobra-DefLength.html">DefLength</a></li><li><a href="module-algeobra-DefLengthSquared.html">DefLengthSquared</a></li><li><a href="module-algeobra-DefLine.html">DefLine</a></li><li><a href="module-algeobra-DefLineStrip.html">DefLineStrip</a></li><li><a href="module-algeobra-DefMap.html">DefMap</a></li><li><a href="module-algeobra-DefMidPoint.html">DefMidPoint</a></li><li><a href="module-algeobra-DefNormalVector.html">DefNormalVector</a></li><li><a href="module-algeobra-DefNumber.html">DefNumber</a></li><li><a href="module-algeobra-DefParallelLine.html">DefParallelLine</a></li><li><a href="module-algeobra-DefPerpendicularLine.html">DefPerpendicularLine</a></li><li><a href="module-algeobra-DefPoint.html">DefPoint</a></li><li><a href="module-algeobra-DefPolarCoord.html">DefPolarCoord</a></li><li><a href="module-algeobra-DefPolarVector.html">DefPolarVector</a></li><li><a href="module-algeobra-DefPolygon.html">DefPolygon</a></li><li><a href="module-algeobra-DefReflection.html">DefReflection</a></li><li><a href="module-algeobra-DefRefraction.html">DefRefraction</a></li><li><a href="module-algeobra-DefSelect.html">DefSelect</a></li><li><a href="module-algeobra-DefTangentLines.html">DefTangentLines</a></li><li><a href="module-algeobra-DefTangentPoints.html">DefTangentPoints</a></li><li><a href="module-algeobra-DefText.html">DefText</a></li><li><a href="module-algeobra-DefVector.html">DefVector</a></li><li><a href="module-algeobra-DefVectorOps.html">DefVectorOps</a></li><li><a href="module-algeobra-DefinitionRemovedEvent.html">DefinitionRemovedEvent</a></li><li><a href="module-algeobra-DefinitionUpdateEvent.html">DefinitionUpdateEvent</a></li><li><a href="module-algeobra-EventType.html">EventType</a></li><li><a href="module-algeobra-GeometryScene.html">GeometryScene</a></li><li><a href="module-algeobra-IntersectionRegistry.html">IntersectionRegistry</a></li><li><a href="module-algeobra-PropertyUpdateEvent.html">PropertyUpdateEvent</a></li><li><a href="module-algeobra-Vec2.html">Vec2</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Apr 07 2023 10:39:28 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 26 2023 13:03:21 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

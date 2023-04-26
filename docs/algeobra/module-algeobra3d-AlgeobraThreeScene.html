@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: DefinitionUpdateEvent</title>
+    <title>JSDoc: Class: AlgeobraThreeScene</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: DefinitionUpdateEvent</h1>
+    <h1 class="page-title">Class: AlgeobraThreeScene</h1>
 
     
 
@@ -29,9 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>DefinitionUpdateEvent<span class="signature">(scene, index)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-algeobra3d.html">algeobra3d</a>~</span>AlgeobraThreeScene<span class="signature">(algeobraScene, threeScene, geometryHandlers)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Event that is fired when a definition is updated in a @see{GeometryScene}.This happens every time its value is computed</div>
+            <div class="class-description">A class to keep track and synchronize an algeobra scene with a three.js scene</div>
         
     
 </header>
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="DefinitionUpdateEvent"><span class="type-signature"></span>new DefinitionUpdateEvent<span class="signature">(scene, index)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="AlgeobraThreeScene"><span class="type-signature"></span>new AlgeobraThreeScene<span class="signature">(algeobraScene, threeScene, geometryHandlers)</span><span class="type-signature"></span></h4>
     
 
     
@@ -86,7 +86,7 @@
 
         <tr>
             
-                <td class="name"><code>scene</code></td>
+                <td class="name"><code>algeobraScene</code></td>
             
 
             <td class="type">
@@ -102,20 +102,20 @@
 
             
 
-            <td class="description last">The scene from which this event originated</td>
+            <td class="description last">The algeobra scene</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>index</code></td>
+                <td class="name"><code>threeScene</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">THREE.Scene</span>
 
 
             
@@ -125,7 +125,30 @@
 
             
 
-            <td class="description last">The index of the changed object</td>
+            <td class="description last">The three scene</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>geometryHandlers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Handlers to create and update the geometry and materials for objects</td>
         </tr>
 
     
@@ -166,7 +189,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line9789">line 9789</a>
+        <a href="algeobra3d.js.html">algeobra3d.js</a>, <a href="algeobra3d.js.html#line1644">line 1644</a>
     </li></ul></dd>
     
 
