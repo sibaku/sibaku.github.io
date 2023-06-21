@@ -298,7 +298,7 @@ $$
 \begin{align*}
 \mathbf{p}_t &= \mathbf{R}_t^s \mathbf{p}_s + \mathbf{t}_t^s \\
 \mathbf{p}_t - \mathbf{t}_t^s &= \mathbf{R}_t^s \mathbf{p}_s  \\
-(\mathbf{R}_t^s)^T\mathbf{p}_t - \mathbf{t}_t^s &= (\mathbf{R}_t^s)^T\mathbf{R}_t^s \mathbf{p}_s  \\
+(\mathbf{R}_t^s)^T(\mathbf{p}_t - \mathbf{t}_t^s) &= (\mathbf{R}_t^s)^T\mathbf{R}_t^s \mathbf{p}_s  \\
 \underbrace{(\mathbf{R}_t^s)^T}_{\mathbf{R}_s^t}\mathbf{p}_t \underbrace{- (\mathbf{R}_t^s)^T\mathbf{t}_t^s}_{\mathbf{t}_s^t} &= \mathbf{p}_s  \\
 \mathbf{R}_s^t \mathbf{p}_t + \mathbf{t}_s^t&= \mathbf{p}_s  
 \end{align*}
