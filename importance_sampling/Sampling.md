@@ -5,7 +5,9 @@ language: en
 
 version:  1.0.0
 
-script: lib/plotly-2.12.1.min.js
+script:     https://sibaku.github.io/importance_sampling/three.min.js
+            https://sibaku.github.io/importance_sampling/OrbitControls.js
+            https://sibaku.github.io/importance_sampling/util.js
 
 @onload
 // onload scope doesn't seem to put stuff in the global scope...
@@ -187,7 +189,7 @@ scene.add(
     new THREE.Points(
         geometry,
         new THREE.PointsMaterial({
-            size: 0.05,
+            size: 0.5,
             color: 0x00afaf,
             map: sprite,
             transparent : true,
