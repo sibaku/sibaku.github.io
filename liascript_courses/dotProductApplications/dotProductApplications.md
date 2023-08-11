@@ -9,7 +9,7 @@ attribute: [Sibaku github.io](https://sibaku.github.io/)
     by sibaku (he/him) ([twitter](https://twitter.com/sibaku1), [mastodon](https://mas.to/@sibaku), [cohost](https://cohost.org/sibaku))
     is licensed under [MIT](https://opensource.org/licenses/MIT)
 
-script: ./demoDotProduct.js
+script: https://cdn.jsdelivr.net/gh/sibaku/sibaku.github.io/liascript_courses/dotProductApplications/demoDotProduct.js
 
 @mutate.remover
 <script>
