@@ -102,6 +102,8 @@ if(container){
 
 # Applications of the dot product
 
+Here you can see the full diagram of the dot product! In the following, we will explore, how these parts can be used for various operations.
+
 @algeobra.demo(@uid,demoDot)
 
 
@@ -109,11 +111,17 @@ if(container){
 
 I have seen a few people without a background in math or computer science struggling with writing code for game scripts. While having comprehensive understanding of math isn't needed, I feel that grasping the basic concepts can spare you a lot of problems. 
 
-This small course aims to show you some basic operations of the dot product that might be usable in a game development context. Each section  will contain some explanations, interactive diagrams and formulas to give you all you need get started. Additionally, I will try to list problems, that can be solved with the given operation.
+This small course aims to show you some basic operations of the dot product that might be usable in a game development context. Each section  will contain some explanations, interactive diagrams and formulas to give you all you need get started. Additionally, I will try to list problems, that can be solved with the given operation. Semi formal proofs are also given, so if you want a slightly deeper understanding about how something works, you can check those out.
 
 Generally, all the diagrams can be manipulated in some way by dragging the marked points to show you visually and with calculations what is happening.
 
-The two basic geometric properties associated with the dot product are **distances** and **angles**, which makes it usable in many contexts.
+The two basic geometric properties associated with the dot product are **distances** and **angles**, which makes it usable in many contexts. Basically, every time you have a problem involving any of these two properties, there is a good chance, the dot product is involved in one way or another.
+
+I will always suggest drawing the geometry you are interested in! For example, your character will send out an energy wave in an arc with some extent. Now, when you draw this on a page, you might quickly see, that it looks very similar to the diagram in the section about [cones](#6)! Then you already have a quick recipe to get a base implementation.
+
+If you just only find some more insight into what the dot product means, then I am already happy with the results!
+
+With that, let's get going!
 
 ## Basics
 
@@ -121,16 +129,33 @@ Before we start with the actual applications, let's just recap the basics.
 
 We will write vectors in bold face like $\mathbf{a},\mathbf{b}, \mathbf{u},\mathbf{v}$. We will use only 2D vectors here, but all the formulas work in any dimension (3,4, ...), as aside from computing the value of the dot product itself, we won't need any coordinates. We will write coordinates of a vector in a normal font with the coordinate as a subscript to the vector name. For example, the x-coordinate of $\mathbf{a}$ is written as $a_x$.
 
+This will not be a full introduction into vectors, but as a quick recap:
 
-In the following, we only have to deal with one angle, the angle between two vectors. We will write it, if needed, as $\alpha$ (alpha). The angle between two vectors is the smallest angle between them, which is $0 [rad] = 0^\circ$ when they coincide and $2\pi [rad] = 360^\circ$ when they point in opposite directions. You can see this below.
+- A vector can be represented as an arrow with a length and direction
+
+  - A vector has no position, so you can draw it anywhere
+  - You can draw it, by starting at a point and then moving along the coordinate axes with the distance for each given by the vector coordinates
+
+- You can add ($\mathbf{a}+\mathbf{b}$) and subtract ($\mathbf{a}-\mathbf{b}$) two vectors, by adding and subtracting each component
+
+  - Adding a vector $\mathbf{b}$ to another vector $\mathbf{a}$ geometrically corresponds to attaching $\mathbf{b}$ to the tip of $\mathbf{a}$. The result is then the vector from the start of $\mathbf{a}$ to the tip of $\mathbf{b}$
+  - Subtracting is like addition, just that you attach $\mathbf{b}$ in the opposite direction
+
+- You can scale a vector by a number (a so called scalar) $s$:  $s\mathbf{u}$ 
+
+  - Geometrically, this corresponds to stretching the length of the vector by $s$, leaving its direction unchanged. Though if $s$ is negative, the vector will point in the opposite direction
+
+- Points are often treated just like vectors, but generally you should think about them like a vector attached to the origin
+
+    - To get a vector from a point $\mathbf{P}$ to a point $\mathbf{Q}$, you calculate $\mathbf{Q} - \mathbf{P}$
+
+In the following, we only have to deal with one angle, the angle between two vectors. We will write it, if needed, as $\alpha$ (alpha). The angle between two vectors is the smallest angle between them, which is $0 [rad] = 0^\circ$ when they coincide and $\pi [rad] = 180^\circ$ when they point in opposite directions. You can see this below.
 
 @algeobra.demo(@uid,angleBasic)
 
-When writing out angles, we will generally use degrees here, as many may not be that familiar with radians, but I highly advise you to get comfortable with radians, as it is the unit that math functions work with.
+When writing out angles, we will generally use degrees here, as many may not be that familiar with radians, but I highly advise you to get comfortable with radians, as it is the unit that math functions work with. If you mix the two units, you might run into very hard to track bugs.
 
-
-
-The *dot product* will be written with a dot between two vectors. So the dot product of $\mathbf{a}$ and $\mathbf{b}$ is $\mathbf{a}\cdot \mathbf{b}$
+The **dot product** will be written with a dot between two vectors. So the dot product of $\mathbf{a}$ and $\mathbf{b}$ is $\mathbf{a}\cdot \mathbf{b}$
 
 There are two equivalent definitions of the dot product:
 
@@ -151,9 +176,9 @@ $$
 
 You can think about the two definitions as follows:
 
-$a_x b_x + a_y b_y$ is used to "mechanically" compute the value of the dot product, as we only need to know vector coordinates. It is more of a helper function.
+$a_x b_x + a_y b_y$ is used to "mechanically" compute the value of the dot product, as we only need to know vector coordinates. It is more of a helper function. In pretty much all game engines and programming languages/libraries that support vectors, you will also have a function, that does this for you, usually just called 'dot' (or 'Dot', as can be seen in Unity).
 
-$|\mathbf{a}| |\mathbf{b}| \cos\alpha$ is used when we want to think about the **geometric meaning** of the dot product.
+$|\mathbf{a}| |\mathbf{b}| \cos\alpha$ is used when we want to think about the **geometric meaning** of the dot product, as it contains both **distances** (the lengths) and the **angle**.
 
 From this, we can already gather a few computation rules already.
 
@@ -175,6 +200,7 @@ We will quickly verify this with a 1D vector (only x-coordinates), but you can t
 
 $ \mathbf{a}\cdot (s\mathbf{b} + \mathbf{c})  = a_x (s b_x + c_x) = s a_x b_x + a_x c_x = s(\mathbf{a}\cdot\mathbf{b}) + \mathbf{a}\cdot \mathbf{c} $
 
+This is called bilinearity, which is just a fancy way of saying that you can do scalar multiplication outside the dot product or inside and that addition can get split into two dot products (just like with normal numbers).
 
 As a quick reminder, here is a visualization of one way to define the cosine (and sine) of an angle:
 
@@ -198,7 +224,13 @@ If you are curious, the full geometry of the dot product can be seen in the foll
 **Applications**
 
 - Checking, how close one viewing direction is to another one
+
+  - Calculate the angle or cosine and test, whether the value is smaller/larger than some threshold
+
 - Compute $\cos$ terms in lighting calculations, such as Phong shading
+
+  - The cosine often appears in lighting, as it represents the portion of light arriving at a surface with a normal from some direction
+
 - As this is a very basic property, it is used in many of the following operations as well
 </div>
 
@@ -210,9 +242,13 @@ If you are curious, the full geometry of the dot product can be seen in the foll
 2. Compute the dot product: $\mathbf{a}\cdot \mathbf{b}$
 3. The cosine of the angle is: $\cos{\alpha} = \frac{\mathbf{a}\cdot \mathbf{b}}{|\mathbf{a}| |\mathbf{b}|}$
 4. (**OPTIONAL**) The angle is: $\alpha = \operatorname{acos}(\cos{\alpha})$
+
+  * Depending on the language and use case, it might be a good idea to clamp the values of the cosine to the range $[-1,1]$ (`clamp(a.dot(b)/(a.length()*b.length()),-1.0,1.0)`). Mathematically, the result will never exceed that range, but due to the way numbers work in a computer, sometimes, the values might be very very slightly smaller or larger, which the `acos` function does not like
 </div>
 
-Our goal is to find the shortest angle between two vectors. Though, in many cases, we don't actually need the angle itself, as the cosine is enough. For example, we want to check, whether the angle is smaller than some maximum angle $\alpha_{\text{max}}$. We can instead just use $\cos{\alpha_{\text{max}}}$ for comparisons. The cosine starts at its highest value at $0^\circ$ and decreases until the highest angle $180^\circ$. So if we want to express $\alpha < \alpha_{\text{max}}$, we can instead use $\cos{\alpha} > \cos{\alpha_{\text{max}}}$. The diagram will make the shape of the cosine with respect to the angle a bit clearer.
+In many cases, it is useful to have some idea about angles between vectors. For example, let's say you want an interface, where you can specify the direction in which to throw a paper plane. For calculations or information UI, you might want to find the angle to the ground or the optimal throwing direction.
+
+So our goal is to find the shortest angle between two vectors. Though, in many cases, we don't actually need the angle itself, as the cosine is enough. For example, we want to check, whether the angle is smaller than some maximum angle $\alpha_{\text{max}}$. We can instead just use $\cos{\alpha_{\text{max}}}$ for comparisons. The cosine starts at its highest value at $0^\circ$ and decreases until the highest angle $180^\circ$ (*Note:* The actual cosine function does extend past this range, but we will only get these angles). So if we want to express $\alpha < \alpha_{\text{max}}$, we can instead use $\cos{\alpha} > \cos{\alpha_{\text{max}}}$. The diagram will make the shape of the cosine with respect to the angle a bit clearer.
 
 As this operation is very general, it is part of many others. Thus the most direct applications listed above are comparing directions and just computing cosine terms directly, as they come up a lot in shading calculations.
 
@@ -250,7 +286,9 @@ $$
 3. (**OPTIONAL**) The length is: $|\mathbf{a}| = \sqrt{|\mathbf{a}|^2} = \sqrt{\mathbf{a}\cdot \mathbf{a}}$
 </div>
 
-We already know, how to compute the length of a vector, but when multiplying a vector by itself, we get the squared length, which is in many cases all we need. For example, if you want to check, whether a vector's length is smaller than some value $r \geq 0$. You can express this as $|\mathbf{a}| < r$ ($\leq$ is also possible) As both sides of this inequality are greater than zero, we are allowed to apply a square operation on both sides. Thus we have:
+Distance is something that comes up all the time. Is an object in range? How strong is the influence of a power up at a far away point? What is the closest enemy?
+
+We already know, how to compute the length of a vector, but when multiplying a vector by itself using the dot product, we actually get the squared length, which is in many cases all we need. For example, if you want to check, whether a vector's length is smaller than some value $r \geq 0$. You can express this as $|\mathbf{a}| < r$ ($\leq$ is also possible) As both sides of this inequality are greater than zero, we are allowed to apply a square operation on both sides. Thus we have:
 
 $$
 \begin{align*}
@@ -259,6 +297,8 @@ $$
 \mathbf{a}\cdot\mathbf{a} < r^2
 \end{align*}
 $$
+
+Of course, you can do the same with a greater sign.
 
 This allows you to skip a whole square root operation, which today isn't much, but if you do it a lot it might still cost some computation power.
 
@@ -298,13 +338,14 @@ Actually, in some math contexts, the length is just defined via the dot product!
 
 - Checking, whether a player is in the vision cone of an enemy
 - Checking, if a spotlight shines in a specified direction
+- Check, if your arc shaped attack hits an enemy
 </div>
 
 <!-- style="background-color: #ffef96;"-->
 <div>
 **Procedure** - Check, whether a vector $\mathbf{a}$ lies in a cone with direction $\mathbf{v}$, maximum opening angle $\alpha_{\text{max}}$ and radius $r$.
 
-If your cone does not have a maximum radius, you can skip step 1).
+If your cone does not have a maximum radius, you can skip step 1). You could also add a minimum radius $r_{\text{min}} by adding a second distance check with a $<$ or $\leq$ check instead
 
 1. Compute the squared distance of $\mathbf{a}$: $|\mathbf{a}|^2= \mathbf{a}\cdot \mathbf{a}$
 
@@ -451,7 +492,6 @@ Additionally, this means, the projection of a vector onto a normalized vector is
 We can see this in action in the following diagram.
 
 @algeobra.demo(@uid,projectUnitLength)
-
 
 
 ## Decomposing a vector with respect to another
