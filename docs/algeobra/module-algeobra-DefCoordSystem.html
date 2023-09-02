@@ -31,7 +31,14 @@
         <h2><span class="attribs"><span class="type-signature"></span></span>
             <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>DefCoordSystem<span class="signature">(params<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Definition of a coordinate systemCoordinte systems may be placed relative to other coordinate systems. They are specified by two local axes and a local origin.When computing the value, the final coordinates of origin and axes will be in the same coordinate frame as the parent. Thus, in  general, the result will be in world coordinates, as each parent, will itself be specified in its parent's system, until there is a system with no parent (implicit world coordinates)This makes it easy to define vectors and points locally, with DefCoordSystemOps  and still use those resulting  vectors together with arbitrary other ones, without the issue if different coordinate frames</div>
+            <div class="class-description">Definition of a coordinate system
+
+Coordinte systems may be placed relative to other coordinate systems. They are specified by two local axes and a local origin.
+
+When computing the value, the final coordinates of origin and axes will be in the same coordinate frame as the parent. 
+Thus, in  general, the result will be in world coordinates, as each parent, will itself be specified in its parent's system, until there is a system with no parent (implicit world coordinates)
+
+This makes it easy to define vectors and points locally, with DefCoordSystemOps  and still use those resulting  vectors together with arbitrary other ones, without the issue if different coordinate frames</div>
         
     
 </header>
@@ -253,7 +260,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4591">line 4591</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4720">line 4720</a>
     </li></ul></dd>
     
 
@@ -410,7 +417,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4744">line 4744</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4873">line 4873</a>
     </li></ul></dd>
     
 
@@ -476,7 +483,9 @@
 
 
 <div class="description">
-    Computes the contravariant basis for a given basisAs the basis vectors are not required to be normalized or orthogonal, the contravariant basis can be used to determine the coordinates of a vector in the given basis
+    Computes the contravariant basis for a given basis
+
+As the basis vectors are not required to be normalized or orthogonal, the contravariant basis can be used to determine the coordinates of a vector in the given basis
 </div>
 
 
@@ -592,7 +601,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4624">line 4624</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4753">line 4753</a>
     </li></ul></dd>
     
 
@@ -658,7 +667,10 @@
 
 
 <div class="description">
-    Creates a coordinate system structure for the given parametersIf origin is not given, it defaults to the usual (0,0)If u is not given, it defaults to the usual x-axis (1,0)If v is not given, it defaults to the normal vector to u.
+    Creates a coordinate system structure for the given parameters
+If origin is not given, it defaults to the usual (0,0)
+If u is not given, it defaults to the usual x-axis (1,0)
+If v is not given, it defaults to the normal vector to u.
 </div>
 
 
@@ -890,7 +902,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4604">line 4604</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4733">line 4733</a>
     </li></ul></dd>
     
 
@@ -1094,7 +1106,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4735">line 4735</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4864">line 4864</a>
     </li></ul></dd>
     
 
@@ -1600,7 +1612,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4721">line 4721</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4850">line 4850</a>
     </li></ul></dd>
     
 
@@ -1666,7 +1678,13 @@
 
 
 <div class="description">
-    Creates a coordinate system by specifying local origin and axesIf the first axis (u) is given, the second default value will be overriden by the given second axis (v) as well, even if that is empty.That means, if u is not given, v will also be set to empty and used the default values, if they are set.If v is empty, it will be computed as the normal to u.When not given any values, the defaults are the usual coordinate axies with origin (0,0) and u = (1,0), v = (0,1)
+    Creates a coordinate system by specifying local origin and axes
+
+If the first axis (u) is given, the second default value will be overriden by the given second axis (v) as well, even if that is empty.
+That means, if u is not given, v will also be set to empty and used the default values, if they are set.
+If v is empty, it will be computed as the normal to u.
+
+When not given any values, the defaults are the usual coordinate axies with origin (0,0) and u = (1,0), v = (0,1)
 </div>
 
 
@@ -1943,7 +1961,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4703">line 4703</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4832">line 4832</a>
     </li></ul></dd>
     
 
@@ -2125,7 +2143,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4670">line 4670</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4799">line 4799</a>
     </li></ul></dd>
     
 
@@ -2390,7 +2408,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4660">line 4660</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4789">line 4789</a>
     </li></ul></dd>
     
 
@@ -2456,7 +2474,9 @@
 
 
 <div class="description">
-    Computes the world coordinates of a vector specified in the local coordinatesAs a vector has no position, this just depends on the axes
+    Computes the world coordinates of a vector specified in the local coordinates
+
+As a vector has no position, this just depends on the axes
 </div>
 
 
@@ -2644,7 +2664,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4646">line 4646</a>
+        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line4775">line 4775</a>
     </li></ul></dd>
     
 
@@ -2718,7 +2738,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue May 09 2023 20:40:52 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat Sep 02 2023 12:18:59 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
