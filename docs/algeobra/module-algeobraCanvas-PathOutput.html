@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: DefPolygon</title>
+    <title>JSDoc: Class: PathOutput</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: DefPolygon</h1>
+    <h1 class="page-title">Class: PathOutput</h1>
 
     
 
@@ -29,10 +29,9 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="module-algeobra.html">algeobra</a>~</span>DefPolygon<span class="signature">(points)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="module-algeobraCanvas.html">algeobraCanvas</a>~</span>PathOutput<span class="signature">()</span><span class="type-signature"></span></h2>
         
-            <div class="class-description">Definition of a polyon.
-A polygon is specified by its vertices and differs from a line strip in that it is closed</div>
+            <div class="class-description">Generic output for drawing paths</div>
         
     
 </header>
@@ -47,72 +46,19 @@ A polygon is specified by its vertices and differs from a line strip in that it 
     
 
     
-    <h4 class="name" id="DefPolygon"><span class="type-signature"></span>new DefPolygon<span class="signature">(points)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="PathOutput"><span class="type-signature"></span>new PathOutput<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
 
 
 
-<div class="description">
-    Default value
-</div>
 
 
 
 
 
 
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>points</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;{x:Number, y:Number}></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">An array of points</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -148,7 +94,7 @@ A polygon is specified by its vertices and differs from a line strip in that it 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8474">line 8474</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line928">line 928</a>
     </li></ul></dd>
     
 
@@ -194,6 +140,134 @@ A polygon is specified by its vertices and differs from a line strip in that it 
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="height"><span class="type-signature"></span>height<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Height of the output surface
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line950">line 950</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="width"><span class="type-signature"></span>width<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Width of the output surface
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line943">line 943</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -204,7 +278,7 @@ A polygon is specified by its vertices and differs from a line strip in that it 
     
 
     
-    <h4 class="name" id="compute"><span class="type-signature"></span>compute<span class="signature">(createInfo)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+    <h4 class="name" id="begin"><span class="type-signature"></span>begin<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -212,7 +286,7 @@ A polygon is specified by its vertices and differs from a line strip in that it 
 
 
 <div class="description">
-    Computes the polygon
+    Begin the current output frame
 </div>
 
 
@@ -221,55 +295,6 @@ A polygon is specified by its vertices and differs from a line strip in that it 
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>createInfo</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">CreateInfo</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The creation info</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -305,7 +330,7 @@ A polygon is specified by its vertices and differs from a line strip in that it 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8547">line 8547</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line933">line 933</a>
     </li></ul></dd>
     
 
@@ -330,28 +355,6 @@ A polygon is specified by its vertices and differs from a line strip in that it 
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    A polygon of type TYPE_POLYGON
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -363,7 +366,7 @@ A polygon is specified by its vertices and differs from a line strip in that it 
     
 
     
-    <h4 class="name" id=".fromClipLine"><span class="type-signature">(static) </span>fromClipLine<span class="signature">(poly, line)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    <h4 class="name" id="beginGroup"><span class="type-signature"></span>beginGroup<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -371,7 +374,7 @@ A polygon is specified by its vertices and differs from a line strip in that it 
 
 
 <div class="description">
-    Computes a polygon by clipping another polygon at a line
+    Start a group
 </div>
 
 
@@ -380,84 +383,6 @@ A polygon is specified by its vertices and differs from a line strip in that it 
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>poly</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POLYGON. The polygon to be clipped</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>line</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_LINE. The line to be clipped at</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -493,7 +418,7 @@ A polygon is specified by its vertices and differs from a line strip in that it 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8516">line 8516</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line1019">line 1019</a>
     </li></ul></dd>
     
 
@@ -518,28 +443,6 @@ A polygon is specified by its vertices and differs from a line strip in that it 
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -551,7 +454,7 @@ A polygon is specified by its vertices and differs from a line strip in that it 
     
 
     
-    <h4 class="name" id=".fromClipPointNormal"><span class="type-signature">(static) </span>fromClipPointNormal<span class="signature">(poly, params)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    <h4 class="name" id="drawLine"><span class="type-signature"></span>drawLine<span class="signature">(x0, y0, x1, y1, params)</span><span class="type-signature"></span></h4>
     
 
     
@@ -559,8 +462,7 @@ A polygon is specified by its vertices and differs from a line strip in that it 
 
 
 <div class="description">
-    Computes a polygon by clipping another polygon at a line given by a point and normal
-If the point is not given, the vectors reference point is used
+    Draw a line
 </div>
 
 
@@ -596,16 +498,13 @@ If the point is not given, the vectors reference point is used
 
         <tr>
             
-                <td class="name"><code>poly</code></td>
+                <td class="name"><code>x0</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
 
 
             
@@ -615,7 +514,76 @@ If the point is not given, the vectors reference point is used
 
             
 
-            <td class="description last">Either the index or value of a TYPE_POLYGON. The polygon to be clipped</td>
+            <td class="description last">The start x coordinate</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y0</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The start y coordinate</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>x1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The end x coordinate</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The end y coordinate</td>
         </tr>
 
     
@@ -638,7 +606,7 @@ If the point is not given, the vectors reference point is used
 
             
 
-            <td class="description last">
+            <td class="description last">The style
                 <h6>Properties</h6>
                 
 
@@ -652,8 +620,6 @@ If the point is not given, the vectors reference point is used
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -666,434 +632,7 @@ If the point is not given, the vectors reference point is used
 
         <tr>
             
-                <td class="name"><code>p</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POINT. A point on the clipping line</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>n</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_VECTOR. The clipping line normal</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8528">line 8528</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromClipPoly"><span class="type-signature">(static) </span>fromClipPoly<span class="signature">(poly, clipPoly)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Computes a polygon by clipping another polygon at a convex clip polygon
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>poly</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POLYGON. The polygon to be clipped</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>clipPoly</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_POLYGON. The polygon to be clipped at. Must be convex</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8538">line 8538</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromLineStrip"><span class="type-signature">(static) </span>fromLineStrip<span class="signature">(poly, attach)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Computes a polygon from the points of a line strip
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>poly</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Either the index or value of a TYPE_LINE_STRIP. The line strip</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attach</code></td>
+                <td class="name"><code>fill</code></td>
             
 
             <td class="type">
@@ -1109,160 +648,42 @@ If the point is not given, the vectors reference point is used
 
             
 
-            <td class="description last">Whether the points should be attached to the points already specified for this polygon</td>
+            <td class="description last">Whether to fill or not</td>
         </tr>
 
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8506">line 8506</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".fromPointArray"><span class="type-signature">(static) </span>fromPointArray<span class="signature">(pointArray, attach)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Computes a polygon from an array of points stored as a value
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>pointArray</code></td>
+                <td class="name"><code>stroke</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
-|
+<span class="param-type">Boolean</span>
 
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether to stroke or not</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>style</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Object</span>
 
 
@@ -1272,41 +693,15 @@ If the point is not given, the vectors reference point is used
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">Either the index or value of an array of points of type TYPE_POINT. The point array</td>
+            <td class="description last">The style</td>
         </tr>
 
     
+    </tbody>
+</table>
 
-        <tr>
-            
-                <td class="name"><code>attach</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
             </td>
-
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Whether the points should be attached to the points already specified for this polygon</td>
         </tr>
 
     
@@ -1347,7 +742,7 @@ If the point is not given, the vectors reference point is used
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8497">line 8497</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line997">line 997</a>
     </li></ul></dd>
     
 
@@ -1372,28 +767,6 @@ If the point is not given, the vectors reference point is used
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The creation info
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CreateInfo</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -1405,7 +778,7 @@ If the point is not given, the vectors reference point is used
     
 
     
-    <h4 class="name" id=".fromPoints"><span class="type-signature">(static) </span>fromPoints<span class="signature">(points, attach)</span><span class="type-signature"> &rarr; {CreateInfo}</span></h4>
+    <h4 class="name" id="drawPath"><span class="type-signature"></span>drawPath<span class="signature">(path, params)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1413,7 +786,7 @@ If the point is not given, the vectors reference point is used
 
 
 <div class="description">
-    Computes a polygon from an array of points
+    Draw a given path
 </div>
 
 
@@ -1439,7 +812,70 @@ If the point is not given, the vectors reference point is used
         
 
         
-        <th>Default</th>
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">DrawPath</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The path to be drawn</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The style
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
         
 
         <th class="last">Description</th>
@@ -1451,34 +887,7 @@ If the point is not given, the vectors reference point is used
 
         <tr>
             
-                <td class="name"><code>points</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;(Number|Object)></span>
-
-
-            
-            </td>
-
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Either the indices or values of TYPE_POINT. The points from which to make the polygon of</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attach</code></td>
+                <td class="name"><code>fill</code></td>
             
 
             <td class="type">
@@ -1493,14 +902,61 @@ If the point is not given, the vectors reference point is used
             
 
             
-                <td class="default">
-                
-                    false
-                
-                </td>
+
+            <td class="description last">Whether to fill or not</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stroke</code></td>
             
 
-            <td class="description last">Whether the points should be attached to the points already specified for this polygon</td>
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether to stroke or not</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>style</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The style</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1541,7 +997,7 @@ If the point is not given, the vectors reference point is used
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="algeobra.js.html">algeobra.js</a>, <a href="algeobra.js.html#line8488">line 8488</a>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line962">line 962</a>
     </li></ul></dd>
     
 
@@ -1566,28 +1022,761 @@ If the point is not given, the vectors reference point is used
 
 
 
-<h5>Returns:</h5>
+
+
+
+
 
         
-<div class="param-desc">
-    The creation info
+            
+
+    
+
+    
+    <h4 class="name" id="drawRect"><span class="type-signature"></span>drawRect<span class="signature">(x, y, width, height, params)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draw a rectangle
 </div>
 
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
         
-<span class="param-type">CreateInfo</span>
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
 
 
-    </dd>
-</dl>
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lower x coordinate</td>
+        </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lower y coordinate</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The width</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The height</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The style
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fill</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether to fill or not</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stroke</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether to stroke or not</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>style</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The style</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line975">line 975</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="drawText"><span class="type-signature"></span>drawText<span class="signature">(text, params)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draw text
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">DrawPath</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The text to be drawn</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The style
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fill</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether to fill or not</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stroke</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether to stroke or not</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>style</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The style</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line1014">line 1014</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="end"><span class="type-signature"></span>end<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Finish the current output frame
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line938">line 938</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="endGroup"><span class="type-signature"></span>endGroup<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    End a group
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="algeobraCanvas.js.html">algeobraCanvas.js</a>, <a href="algeobraCanvas.js.html#line1023">line 1023</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1615,7 +1804,7 @@ If the point is not given, the vectors reference point is used
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Sep 05 2023 12:03:03 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Sep 05 2023 12:03:02 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
