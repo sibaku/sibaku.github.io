@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Evenly matched opponents</title>
+    <meta name="description" content="A relaxing game of give and take">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <div>
+        <canvas id="canvas">Sadly, your browser does not support a canvas</canvas>
+    </div>
+    <script type="module" src="./main.js"></script>
+    <div class="slidecontainer">
+        <span>Speed: </span>
+        <input type="range" min="0" max="100" value="50" class="slider" id="speedRange">
+        <span id="speedText"></span>
+    </div>
+
+    <div>
+        <div><b>Restart:</b></div>
+        <div>
+            <label for="numPlayers">Number of players (between 2 and 30):</label>
+            <input type="number" id="numPlayers" name="numPlayers" min="2" max="30">
+        </div>
+        <div>
+            <label for="fieldWidth">Field width (between 5 and 50):</label>
+            <input type="number" id="fieldWidth" name="fieldWidth" min="5" max="50">
+        </div>
+        <div>
+            <label for="fieldHeight">Field height (between 5 and 50):</label>
+            <input type="number" id="fieldHeight" name="fieldHeight" min="5" max="50">
+        </div>
+
+        <button id="restartButton">Restart</button>
+    </div>
+
+    <div>
+        <div><b>Scoreboard:</b></div>
+        <div id="scoreboard"></div>
+    </div>
+
+</body>
+
+</html>
