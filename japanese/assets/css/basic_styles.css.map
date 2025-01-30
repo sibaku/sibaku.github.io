@@ -1,0 +1,1 @@
+{"version":3,"sourceRoot":"","sources":["basic_styles.scss"],"names":[],"mappings":"AAAA;EACI;;;AAEJ;EACI","sourcesContent":[".dict_entry:nth-child(2n){\n    background-color: #FFB3BA;\n}\n.dict_entry:nth-child(2n+1){\n    background-color: #BAFFC9;\n}"],"file":"basic_styles.css"}

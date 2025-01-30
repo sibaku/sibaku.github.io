@@ -1,0 +1,9 @@
+.dict_entry:nth-child(2n) {
+  background-color: #FFB3BA;
+}
+
+.dict_entry:nth-child(2n+1) {
+  background-color: #BAFFC9;
+}
+
+/*# sourceMappingURL=basic_styles.css.map */
