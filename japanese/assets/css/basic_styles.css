@@ -1,9 +1,9 @@
 .dict_entry:nth-child(2n) {
-  background-color: #FFB3BA;
+  background-color: rgb(255, 211, 154);
 }
 
 .dict_entry:nth-child(2n+1) {
-  background-color: #BAFFC9;
+  background-color: rgb(148, 190, 186);
 }
 
 /*# sourceMappingURL=basic_styles.css.map */
