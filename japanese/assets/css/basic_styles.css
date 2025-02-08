@@ -6,4 +6,11 @@
   background-color: rgb(148, 190, 186);
 }
 
+table,
+th,
+td {
+  border: 1px solid;
+  border-collapse: collapse;
+}
+
 /*# sourceMappingURL=basic_styles.css.map */
