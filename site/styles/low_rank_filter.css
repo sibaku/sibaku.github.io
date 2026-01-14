@@ -1,0 +1,23 @@
+.filterLowRankContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.filterLowRankContainer .filterLowRankHeader {
+    font-weight: bold;
+    height: 2em;
+}
+
+.filterLowRankDemo .filterLowRankEntry {
+    width: 30%;
+}
+
+.filterLowRankDemo canvas {
+    max-width: 90%;
+}
+
+.figure {
+    width: 80%;
+    margin: 0 auto;
+}

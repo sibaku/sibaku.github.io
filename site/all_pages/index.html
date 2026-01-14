@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sibaku&#39;s collection</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "0";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/post.css">
+
+    
+
+    
+</head>
+
+<body>
+
+    <div id="header">
+    </div>
+
+    <div id="navigation">
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+            <div class="navigationBaseEntry"><a href="/site/all_pages/">All pages</a></div>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <h2>Tags</h2>
+<!--This next part shows links to all the tags you have on your posts, ordered by frequency-->
+<p class="center">
+</p><p><a href="../tags/math.html">math</a> (14)</p>
+<p><a href="../tags/computer-graphics.html">computer graphics</a> (1)</p>
+<p><a href="../tags/quaternions.html">quaternions</a> (1)</p>
+<p><a href="../tags/image-processing.html">image processing</a> (1)</p>
+<p><a href="../tags/sampling.html">sampling</a> (12)</p>
+<p></p>
+<hr>
+
+
+        <div id="footer">
+
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>

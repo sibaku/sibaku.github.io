@@ -1,0 +1,154 @@
+body {
+    background-color: #cbd8df;
+    color: #141e26;
+    line-height: 1.4;
+}
+
+#navigation {
+  height: 100%;
+  width: 30%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #141e26;
+  overflow-x: hidden;
+  transition: 0.5s;
+  /* padding-left: 20px; */
+  padding-top: 60px;
+  
+  /* margin: 10px; */
+}
+
+#content {
+    margin-left: 30%;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    max-width: 600px;
+}
+
+#navigation > ul{
+  margin-left: 20px;
+  padding: 5px;
+
+}
+
+#navigation ::marker{
+    color: #cbd8df;
+    content: "▶";
+
+}
+
+#navigation li > ul {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+#navigation ul {
+  /* user-agent styles */
+  /* display: block; */
+  list-style-type: disc;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  padding-inline-start: 8px;
+  /* padding: 5px; */
+   /* padding-inline-start: 16px; */
+  /* list-style-position: inside; */
+}
+
+#navigation a {
+  /* padding: 8px 8px 8px 32px; */
+  text-decoration: none;
+  /* font-size: 25px; */
+  color: #cbd8df;
+  display: block;
+  transition: 0.3s;
+}
+
+#navigation li {
+    padding-top: 5px;
+}
+
+#navigation a:hover {
+  color: #f1f1f1;
+}
+
+#navigation .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #141e26;
+  color: #cbd8df;
+  padding: 10px 15px;
+  border: none;
+}
+.demo *{
+    margin: 0 auto;
+}
+.openbtn:hover {
+  background-color: #1e5067;
+}
+
+#content {
+  transition: margin-left .5s;
+  padding: 16px;
+}
+
+#footer {
+  border-top: solid black 1px;
+}
+
+#footer a {
+    padding: 5px;
+}
+
+.navigationBase {
+    display: flex;
+    margin: 0 auto;
+    align-items: center;
+     justify-content: center;
+}
+
+.navigationBase .navigationBaseEntry {
+    display: inline-block;
+    padding: 5px;
+    border: solid 2px  #141e26;
+}
+
+#footer .previous {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+
+#footer .next {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+#scrollUpButton {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background-color: #141e26;
+  color: #cbd8df;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+#scrollUpButton:hover {
+  background-color: #1e5067;
+}

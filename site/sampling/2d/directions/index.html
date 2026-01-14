@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sampling</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <ul><li><a href="/site/sampling/">Introduction</a></li>
+<li><a href="/site/sampling/2d/">2D</a><ul><li><a href="/site/sampling/2d/uniform_disk/">Uniform disk</a></li>
+<li><a href="/site/sampling/2d/directions/">Directions</a><ul><li><a href="/site/sampling/2d/directions/uniform_unit_hemisphere/">Uniform Unit Hemisphere</a></li>
+<li><a href="/site/sampling/2d/directions/power_cos_weighted_hemisphere_sector/">Power Cosine Weighted Unit Hemisphere Sector</a></li>
+<li><a href="/site/sampling/2d/directions/power_cos_weighted_hemisphere_cap/">Power Cosine Weighted Unit Hemisphere Cap</a></li>
+<li><a href="/site/sampling/2d/directions/cosine_weighed_hemisphere/">Cosine Weighted Unit Hemisphere</a></li></ul></li>
+<li><a href="/site/sampling/2d/normals/">Normals</a><ul><li><a href="/site/sampling/2d/normals/beckmann/">Beckmann Distribution</a></li>
+<li><a href="/site/sampling/2d/normals/phong/">Phong Distribution</a></li>
+<li><a href="/site/sampling/2d/normals/ggx/">GGX Distribution</a></li></ul></li></ul></li></ul>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h1>Sampling directions</h1>
+<p>A special case of 2D sampling is sampling 3D directions, which can be thought of as generating points on the surface of a sphere. In many cases, you will probably only sample in a hemisphere instead of the whole sphere, as light is either reflected or transmitted at a surface. Other cases, such as sampling in a volumetric medium exist too, of course, but we will cover some surface cases here. The following sections cover different related methods to sample (weighted) hemisphere regions.</p>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/sampling/2d/uniform_disk/" class="previous"> &lt; &lt; Previous: Uniform disk</a>
+            
+            
+            <a href="/site/sampling/2d/directions/uniform_unit_hemisphere/" class="next"> Next: Uniform Unit Hemisphere &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>
