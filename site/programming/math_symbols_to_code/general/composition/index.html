@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function composition</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+
+    
+    
+    <link rel="stylesheet" href="/site/styles/editor.css">
+    
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <ul><li><a href="/site/programming/math_symbols_to_code/">Introduction</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/">Iteration</a><ul><li><a href="/site/programming/math_symbols_to_code/iteration/summation/">Summation</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/product/">Product</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/set_notation/">Set Notation</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/nested_iterations/">Nested Iteration</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/conditions_on_indices/">Conditions on indices</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/union_intersection/">Union and Intersection</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/general_iteration/">General Iteration</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/general/">General Symbols</a><ul><li><a href="/site/programming/math_symbols_to_code/general/cases/">Cases</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/composition/">Function Composition</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/set_containment/">Set Containment</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/kronecker/">Kronecker</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/operations/">Operations</a><ul><li><a href="/site/programming/math_symbols_to_code/operations/factorial/">Factorial</a></li>
+<li><a href="/site/programming/math_symbols_to_code/operations/binomial/">Binomial</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/">Differentiation</a><ul><li><a href="/site/programming/math_symbols_to_code/differentiation/derivative/">Derivative</a></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/partial_derivative/">Partial Derivative</a></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/gradient/">Gradient</a></li></ul></li></ul>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h3>Function composition <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∘</mo></mrow><annotation encoding="application/x-tex">\circ</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4445em;"></span><span class="mord">∘</span></span></span></span></h3>
+<p>If you have two functions <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">f</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\operatorname{f}(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.07778em;">f</span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">g</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\operatorname{g}(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">g</span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span>, then you can define a third function:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mi mathvariant="normal">h</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mo stretchy="false">(</mo><mi mathvariant="normal">g</mi><mo>⁡</mo><mo>∘</mo><mi mathvariant="normal">f</mi><mo>⁡</mo><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi>g</mi><mo stretchy="false">(</mo><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align*}
+   \operatorname{h}(x) &amp;= (\operatorname{g} \circ \operatorname{f}) (x)  \\
+   &amp;= g(f(x))
+\end{align*}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mord mathrm">h</span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.75em;"><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">∘</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.07778em;">f</span></span><span class="mclose">)</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">))</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>It basically means: First apply the function on the right. Then use that result and apply the left function. Of course, you can use more than two and repeat that process.</p>
+<p>In code, you can either explicitly call the first function and then the second or you can create a new function using something like lambda expressions.</p>
+<p><strong>Code</strong>:</p>
+<p>This version applies the argument directly.
+In languages, that don't support passing functions as parameters, you might need to explicitly write functions for all combinations or use some other mechanism</p>
+<div id="codeEditorExampleCompose"></div>
+<script> 
+    import("/site/scripts/mathSymbolsToCode/mathSymbolsToCodeMain.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/programming/math_symbols_to_code/general/composition"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeExampleCompose("codeEditorExampleCompose",appContext);
+        });
+    } else {
+        Module.makeExampleCompose("codeEditorExampleCompose",appContext);
+    }
+        })
+</script>
+<p>Here we create a new function <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">h</mi><mo>⁡</mo><mo>=</mo><mo stretchy="false">(</mo><mi mathvariant="normal">g</mi><mo>⁡</mo><mo>∘</mo><mi mathvariant="normal">f</mi><mo>⁡</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\operatorname{h} = (\operatorname{g} \circ \operatorname{f})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mop"><span class="mord mathrm">h</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mop"><span class="mord mathrm" style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">∘</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.07778em;">f</span></span><span class="mclose">)</span></span></span></span> that is the composition of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">f</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\operatorname{f}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.07778em;">f</span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">f</mi><mo>⁡</mo></mrow><annotation encoding="application/x-tex">\operatorname{f}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.07778em;">f</span></span></span></span></span> and can be called as <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">h</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\operatorname{h}(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm">h</span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span>.</p>
+<div id="codeEditorExampleComposeNewFunc"></div>
+<script> 
+    import("/site/scripts/mathSymbolsToCode/mathSymbolsToCodeMain.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/programming/math_symbols_to_code/general/composition"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeExampleComposeNewFunc("codeEditorExampleComposeNewFunc",appContext);
+        });
+    } else {
+        Module.makeExampleComposeNewFunc("codeEditorExampleComposeNewFunc",appContext);
+    }
+        })
+</script>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/programming/math_symbols_to_code/general/cases/" class="previous"> &lt; &lt; Previous: Cases</a>
+            
+            
+            <a href="/site/programming/math_symbols_to_code/general/set_containment/" class="next"> Next: Set Containment &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sampling Uniform Unit Hemisphere</title>
     <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
     <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
 
     
@@ -72,18 +72,19 @@ As with the disk, just randomly choosing two angles won’t give the desired res
 
     <span class="token keyword">return</span> <span class="token punctuation">[</span>theta<span class="token punctuation">,</span>phi<span class="token punctuation">]</span>
 <span class="token punctuation">}</span></code></pre>
-<div id="example_angular_uniform" class="demo"></div>
-            <script> 
-             import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.createAngulardHemisphere("example_angular_uniform");
-                });
-            } else {
-                Module.createAngulardHemisphere("example_angular_uniform")
-            }
-             })
-            </script>
+<div id="example_angular_uniform"></div>
+<script> 
+    import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/sampling/2d/directions/uniform_unit_hemisphere"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.createAngulardHemisphere("example_angular_uniform",appContext);
+        });
+    } else {
+        Module.createAngulardHemisphere("example_angular_uniform",appContext);
+    }
+        })
+</script>
 <p>Now the result with a uniform area sampling of the upper hemisphere</p>
 <!-- data-readOnly="true" data-showGutter="false" -->
 <pre class="language-js"><code class="language-js"><span class="token keyword">function</span> <span class="token function">uniform_hemisphere</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
@@ -97,18 +98,19 @@ As with the disk, just randomly choosing two angles won’t give the desired res
 
     <span class="token keyword">return</span> <span class="token punctuation">[</span>theta<span class="token punctuation">,</span>phi<span class="token punctuation">]</span>
 <span class="token punctuation">}</span></code></pre>
-<div id="example_uniform" class="demo"></div>
-            <script> 
-             import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.createUniformdHemisphere("example_uniform");
-                });
-            } else {
-                Module.createUniformdHemisphere("example_uniform")
-            }
-             })
-            </script>
+<div id="example_uniform"></div>
+<script> 
+    import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/sampling/2d/directions/uniform_unit_hemisphere"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.createUniformdHemisphere("example_uniform",appContext);
+        });
+    } else {
+        Module.createUniformdHemisphere("example_uniform",appContext);
+    }
+        })
+</script>
 <h2>Algorithm</h2>
 <p>Generate uniform points on the hemisphere</p>
 <ol>

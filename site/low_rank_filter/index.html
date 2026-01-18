@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Low-rank filter</title>
     <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
     <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
     
     
@@ -35,6 +35,13 @@
     <script src="/site/scripts/extern/plotly-3.3.0.min.js"></script>
     
     
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
 </head>
 
 <body>
@@ -51,15 +58,7 @@
 
     <div id="content">
 
-        <script>
-    const App = {
-        resourcePath : "/site/images/low_rank_filter"
-    };
-
-
-
-</script>
-<h1>Introduction</h1>
+        <h1>Introduction</h1>
 <p>This document is a basic overview of how to (approximately) decompose a 2D convolution filter into multiple 1D filters.
 This is by no means exhaustive and it is recommended to look at dedicated resources for more precise and detailed information.</p>
 <h2>The definition of convolution</h2>
@@ -420,18 +419,19 @@ The only additional step is that it is checked, whether the elements with the ma
 If both of these elements are negative, both vectors are negated.
 Multiplying by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo><mo>∗</mo><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(-1)*(-1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">−</span><span class="mord">1</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">−</span><span class="mord">1</span><span class="mclose">)</span></span></span></span> does of course not change the formula above, so nothing is changed.
 This is just to display the values better.</p>
-<div id="gaussianSVD" class="demo"></div>
-            <script> 
-             import("/site/scripts/low_rank_filter/main.js").then((Module) => {
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.gaussianSVDExplore("gaussianSVD");
-                });
-            } else {
-                Module.gaussianSVDExplore("gaussianSVD")
-            }
-             })
-            </script>
+<div id="gaussianSVD"></div>
+<script> 
+    import("/site/scripts/low_rank_filter/main.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/low_rank_filter/low_rank_filter"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.gaussianSVDExplore("gaussianSVD",appContext);
+        });
+    } else {
+        Module.gaussianSVDExplore("gaussianSVD",appContext);
+    }
+        })
+</script>
 <p>If you clicked on the button to show the approximation, you have probably noticed, that nothing changed. This is because the 2D Gaussian has rank <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> and can be exactly reconstructed with just the first singular value and vectors.
 The other interesting part is, that, the two 1D filters look like Gaussians themselves. This is of course expected, as the 2D Gaussian is constructed by the convolution of 1D Gaussians.</p>
 <p>This is not all, though! Even if the 2D filter has a rank greater than <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span>, we can approximate it using the sum of outer products! We can just choose a certain maximum number of terms for our approximation. When we choose all non-zero singular values, we will exactly get our filter back (minus numerical inaccuracies).</p>
@@ -450,18 +450,19 @@ The other interesting part is, that, the two 1D filters look like Gaussians them
 You can adjust the maximum rank that is used for the reconstruction and see both the reconstruction and the error.
 The singular values are plotted as well, so you can compare the change in the approximation with regard to the singular values.
 You can see that the separable filters will have only one zero singular value. <strong>Note:</strong> The singular values are plotted as a line, which isn't correct, as they are discrete values, but I still chose this plot, as it makes it easier to see trend line. Be aware, that a bar plot would be more accurate.</p>
-<div id="lowRankApprox" class="demo"></div>
-            <script> 
-             import("/site/scripts/low_rank_filter/main.js").then((Module) => {
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.makeUserInterfaceApprox("lowRankApprox");
-                });
-            } else {
-                Module.makeUserInterfaceApprox("lowRankApprox")
-            }
-             })
-            </script>
+<div id="lowRankApprox"></div>
+<script> 
+    import("/site/scripts/low_rank_filter/main.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/low_rank_filter/low_rank_filter"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeUserInterfaceApprox("lowRankApprox",appContext);
+        });
+    } else {
+        Module.makeUserInterfaceApprox("lowRankApprox",appContext);
+    }
+        })
+</script>
 <h2>Filtering with the approximation</h2>
 <p>Below you can see the actual application of the low-rank application as an actual image filter.
 You can change the approximation rank and also change the image.
@@ -469,12 +470,13 @@ In most cases, you probably won't be able to tell a difference when only using o
 <div id="filterLowRank" class="filterLowRankDemo"></div>
 <script> 
             import("/site/scripts/low_rank_filter/main.js").then((Module) => {
+            const appContext = {"basePath":"/site/","filePathStem":"/low_rank_filter/low_rank_filter"};
             if (document.readyState === "loading") {
                 document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.makeUserInterfaceFilter("filterLowRank");
+                    Module.makeUserInterfaceFilter("filterLowRank", appContext);
                 });
             } else {
-                Module.makeUserInterfaceFilter("filterLowRank")
+                Module.makeUserInterfaceFilter("filterLowRank", appContext);
             }
              })
             </script>

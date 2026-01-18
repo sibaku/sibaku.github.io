@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set containment</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+
+    
+    
+    <link rel="stylesheet" href="/site/styles/editor.css">
+    
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <ul><li><a href="/site/programming/math_symbols_to_code/">Introduction</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/">Iteration</a><ul><li><a href="/site/programming/math_symbols_to_code/iteration/summation/">Summation</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/product/">Product</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/set_notation/">Set Notation</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/nested_iterations/">Nested Iteration</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/conditions_on_indices/">Conditions on indices</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/union_intersection/">Union and Intersection</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/general_iteration/">General Iteration</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/general/">General Symbols</a><ul><li><a href="/site/programming/math_symbols_to_code/general/cases/">Cases</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/composition/">Function Composition</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/set_containment/">Set Containment</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/kronecker/">Kronecker</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/operations/">Operations</a><ul><li><a href="/site/programming/math_symbols_to_code/operations/factorial/">Factorial</a></li>
+<li><a href="/site/programming/math_symbols_to_code/operations/binomial/">Binomial</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/">Differentiation</a><ul><li><a href="/site/programming/math_symbols_to_code/differentiation/derivative/">Derivative</a></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/partial_derivative/">Partial Derivative</a></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/gradient/">Gradient</a></li></ul></li></ul>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h3>Set containment:  <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∈</mo></mrow><annotation encoding="application/x-tex">\in</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∈</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∋</mo></mrow><annotation encoding="application/x-tex">\ni</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∋</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∉</mo></mrow><annotation encoding="application/x-tex">\not\in</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span></span><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∈</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∌</mo></mrow><annotation encoding="application/x-tex">\not\ni</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span></span><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∋</span></span></span></span></h3>
+<p>The set element containment symbol <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∈</mo></mrow><annotation encoding="application/x-tex">\in</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∈</span></span></span></span> signals, that something is part of a set. It looks like an <strong>e</strong> for <strong>e</strong>lement.</p>
+<p>In a statement like <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi><mo>∈</mo><mi>I</mi></mrow><annotation encoding="application/x-tex">i \in I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6986em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">i</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span>, the left side <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> is the element that is contained in the set on the right side <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi></mrow><annotation encoding="application/x-tex">I</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span></span></span></span>.</p>
+<p>Sometimes it is written flipped (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∋</mo></mrow><annotation encoding="application/x-tex">\ni</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∋</span></span></span></span>). In that case, the order of &quot;element&quot; and &quot;set&quot; is also switched.</p>
+<p>If you want to specify that something is <strong>not</strong> in a set, you strike it out, resulting in <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∉</mo></mrow><annotation encoding="application/x-tex">\not\in</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span></span><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∈</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∌</mo></mrow><annotation encoding="application/x-tex">\not\ni</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span></span><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∋</span></span></span></span>.</p>
+<p>There are multiple uses for this. One example is seen in the section for iteration symbols with set notation. In that case the meaning is &quot;for each element of ...&quot; or &quot;for each element not of ...&quot;.</p>
+<p>It can also be used as a condition. For example, &quot;If <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> is an element of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, do ... &quot; is &quot;if <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">x \in S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span></span></span></span>, do ...&quot;.</p>
+<p><strong>Code</strong>:</p>
+<p>Depending on your data structure and language, the code might differ. Generally, you will likely find a function corresponding to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∈</mo></mrow><annotation encoding="application/x-tex">\in</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∈</span></span></span></span> as one of the following:</p>
+<ul>
+<li>contains</li>
+<li>find</li>
+<li>indexOf</li>
+<li>[]</li>
+</ul>
+<p>Sometimes, there are others or even operators called in. <strong>Attention:</strong> In JavaScript for example, the <em>in</em> operator checks, whether an object has a specific key, which is sometimes used to model a set, by just using keys. This might lead to unexpected behaviour when you are working with arrays or actual sets, in which the object values are the set elements, not the keys.</p>
+<div id="codeEditorExampleIn"></div>
+<script> 
+    import("/site/scripts/mathSymbolsToCode/mathSymbolsToCodeMain.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/programming/math_symbols_to_code/general/set_containment"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeExampleIn("codeEditorExampleIn",appContext);
+        });
+    } else {
+        Module.makeExampleIn("codeEditorExampleIn",appContext);
+    }
+        })
+</script>
+<p>The implementation of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∉</mo></mrow><annotation encoding="application/x-tex">\not\in</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span></span><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∈</span></span></span></span> is just a negation of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∈</mo></mrow><annotation encoding="application/x-tex">\in</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">∈</span></span></span></span>, so for example the array case above becomes</p>
+<pre class="language-js"><code class="language-js"><span class="token comment">// Implementation of the not in operator for sets made up of object keys.</span>
+<span class="token comment">// The other variants work the same way</span>
+<span class="token keyword">function</span> <span class="token function">notIObject</span><span class="token punctuation">(</span><span class="token parameter">element<span class="token punctuation">,</span> objSet</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token operator">!</span><span class="token function">inObject</span><span class="token punctuation">(</span>element<span class="token punctuation">,</span>objSet<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/programming/math_symbols_to_code/general/composition/" class="previous"> &lt; &lt; Previous: Function Composition</a>
+            
+            
+            <a href="/site/programming/math_symbols_to_code/general/kronecker/" class="next"> Next: Kronecker &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

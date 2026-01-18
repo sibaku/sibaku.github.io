@@ -1,0 +1,41 @@
+#runScript {
+    display: flex;
+}
+
+.scriptOutputContainer {
+    flex-grow: 1;
+    padding: 10px;
+    border: solid 2px black;
+    position: relative;
+
+}
+
+.scriptOutputContainer h3 {
+    border-bottom: solid 2px #141e26;
+
+
+}
+
+.scriptContentContainer {
+
+    flex-grow: 1;
+    overflow: auto;
+    padding: 10px;
+    border: solid 2px black;
+}
+
+
+.scriptOutputErrorEntry,
+.scriptOutputEntry {
+    padding: 5px;
+    border-bottom: dashed 1px #141e26;
+}
+
+.scriptOutputErrorEntry {
+    background-color: #e30022;
+
+}
+
+.scriptTwoColumn {
+    max-width: 50%;
+}

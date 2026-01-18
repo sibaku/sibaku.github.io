@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cases</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+
+    
+    
+    <link rel="stylesheet" href="/site/styles/editor.css">
+    
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <ul><li><a href="/site/programming/math_symbols_to_code/">Introduction</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/">Iteration</a><ul><li><a href="/site/programming/math_symbols_to_code/iteration/summation/">Summation</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/product/">Product</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/set_notation/">Set Notation</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/nested_iterations/">Nested Iteration</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/conditions_on_indices/">Conditions on indices</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/union_intersection/">Union and Intersection</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/general_iteration/">General Iteration</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/general/">General Symbols</a><ul><li><a href="/site/programming/math_symbols_to_code/general/cases/">Cases</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/composition/">Function Composition</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/set_containment/">Set Containment</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/kronecker/">Kronecker</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/operations/">Operations</a><ul><li><a href="/site/programming/math_symbols_to_code/operations/factorial/">Factorial</a></li>
+<li><a href="/site/programming/math_symbols_to_code/operations/binomial/">Binomial</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/">Differentiation</a><ul><li><a href="/site/programming/math_symbols_to_code/differentiation/derivative/">Derivative</a></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/partial_derivative/">Partial Derivative</a></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/gradient/">Gradient</a></li></ul></li></ul>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h3>Cases: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">{</mo></mrow><annotation encoding="application/x-tex">\{</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">{</span></span></span></span></h3>
+<p>This is a pretty straightforward analog to if/else if/else constructs. The results of these curly brackets is the value that is listed with the fitting condition. The basic form looks something like this:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="normal">f</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mrow><mo fence="true">{</mo><mtable rowspacing="0.36em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>0</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>if </mtext><mi>x</mi><mo>≤</mo><mn>0</mn></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mi>x</mi></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>if </mtext><mi>x</mi><mo>&lt;</mo><mn>1</mn></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mtext>else</mtext></mstyle></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">\operatorname{f}(x) = \begin{cases}
+    0 &amp;  \text{if } x \leq 0\\
+    x &amp; \text{if } x &lt; 1 \\
+    1 &amp; \text{else}
+\end{cases}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop"><span class="mord mathrm" style="margin-right:0.07778em;">f</span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:4.32em;vertical-align:-1.91em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.35em;"><span style="top:-2.2em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎩</span></span></span><span style="top:-2.192em;"><span class="pstrut" style="height:3.15em;"></span><span style="height:0.316em;width:0.8889em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.8889em" height="0.316em" style="width:0.8889em" viewBox="0 0 888.89 316" preserveAspectRatio="xMinYMin"><path d="M384 0 H504 V316 H384z M384 0 H504 V316 H384z"></path></svg></span></span><span style="top:-3.15em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎨</span></span></span><span style="top:-4.292em;"><span class="pstrut" style="height:3.15em;"></span><span style="height:0.316em;width:0.8889em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.8889em" height="0.316em" style="width:0.8889em" viewBox="0 0 888.89 316" preserveAspectRatio="xMinYMin"><path d="M384 0 H504 V316 H384z M384 0 H504 V316 H384z"></path></svg></span></span><span style="top:-4.6em;"><span class="pstrut" style="height:3.15em;"></span><span class="delimsizinginner delim-size4"><span>⎧</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.85em;"><span></span></span></span></span></span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.41em;"><span style="top:-4.41em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord">0</span></span></span><span style="top:-2.97em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathnormal">x</span></span></span><span style="top:-1.53em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.91em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:1em;"></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.41em;"><span style="top:-4.41em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">if </span></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord">0</span></span></span><span style="top:-2.97em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">if </span></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord">1</span></span></span><span style="top:-1.53em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">else</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.91em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>While this is a specific example, others will look the same way, just with more or less cases.</p>
+<p><strong>Code</strong></p>
+<div id="codeEditorExampleCases"></div>
+<script> 
+    import("/site/scripts/mathSymbolsToCode/mathSymbolsToCodeMain.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/programming/math_symbols_to_code/general/cases"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeExampleCases("codeEditorExampleCases",appContext);
+        });
+    } else {
+        Module.makeExampleCases("codeEditorExampleCases",appContext);
+    }
+        })
+</script>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/programming/math_symbols_to_code/general/" class="previous"> &lt; &lt; Previous: General Symbols</a>
+            
+            
+            <a href="/site/programming/math_symbols_to_code/general/composition/" class="next"> Next: Function Composition &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

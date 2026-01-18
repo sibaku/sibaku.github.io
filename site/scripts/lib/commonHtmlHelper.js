@@ -106,4 +106,5 @@ const makeUpdateSlider = (cb, min = 0, max = 1, value = min, steps = 100, initia
 
 export {
     makeContainer, makeElement, makeCanvas, makeCheckbox, makeSpan, makeTextField, makeSlider, makeUpdateSlider, mapFrom, mapTo,
+    genId,
 };

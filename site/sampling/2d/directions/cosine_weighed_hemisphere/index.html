@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sampling Cosine Weighted Unit Hemisphere</title>
     <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
     <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
 
     
@@ -72,18 +72,19 @@
 
     <span class="token keyword">return</span> <span class="token punctuation">[</span>theta<span class="token punctuation">,</span>phi<span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>
-<div id="example_cos_hemisphere" class="demo"></div>
-            <script> 
-             import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.createCosineWeightedHemisphere("example_cos_hemisphere");
-                });
-            } else {
-                Module.createCosineWeightedHemisphere("example_cos_hemisphere")
-            }
-             })
-            </script>
+<div id="example_cos_hemisphere"></div>
+<script> 
+    import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/sampling/2d/directions/cosine_weighed_hemisphere"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.createCosineWeightedHemisphere("example_cos_hemisphere",appContext);
+        });
+    } else {
+        Module.createCosineWeightedHemisphere("example_cos_hemisphere",appContext);
+    }
+        })
+</script>
 <h2>Algorithm</h2>
 <p>Generate points weighted by the cosine hemisphere.</p>
 <ol>

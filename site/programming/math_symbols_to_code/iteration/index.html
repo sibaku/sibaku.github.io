@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iteration</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+
+    
+    
+    <link rel="stylesheet" href="/site/styles/editor.css">
+    
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <ul><li><a href="/site/programming/math_symbols_to_code/">Introduction</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/">Iteration</a><ul><li><a href="/site/programming/math_symbols_to_code/iteration/summation/">Summation</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/product/">Product</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/set_notation/">Set Notation</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/nested_iterations/">Nested Iteration</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/conditions_on_indices/">Conditions on indices</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/union_intersection/">Union and Intersection</a></li>
+<li><a href="/site/programming/math_symbols_to_code/iteration/general_iteration/">General Iteration</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/general/">General Symbols</a><ul><li><a href="/site/programming/math_symbols_to_code/general/cases/">Cases</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/composition/">Function Composition</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/set_containment/">Set Containment</a></li>
+<li><a href="/site/programming/math_symbols_to_code/general/kronecker/">Kronecker</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/operations/">Operations</a><ul><li><a href="/site/programming/math_symbols_to_code/operations/factorial/">Factorial</a></li>
+<li><a href="/site/programming/math_symbols_to_code/operations/binomial/">Binomial</a></li></ul></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/">Differentiation</a><ul><li><a href="/site/programming/math_symbols_to_code/differentiation/derivative/">Derivative</a></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/partial_derivative/">Partial Derivative</a></li>
+<li><a href="/site/programming/math_symbols_to_code/differentiation/gradient/">Gradient</a></li></ul></li></ul>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h2>Summation and product symbols: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∑</mo></mrow><annotation encoding="application/x-tex">\sum</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∏</mo></mrow><annotation encoding="application/x-tex">\prod</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">∏</span></span></span></span> (and friends <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⋃</mo></mrow><annotation encoding="application/x-tex">\bigcup</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">⋃</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⋂</mo></mrow><annotation encoding="application/x-tex">\bigcap</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">⋂</span></span></span></span>!)</h2>
+<p>The symbols <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∑</mo></mrow><annotation encoding="application/x-tex">\sum</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∏</mo></mrow><annotation encoding="application/x-tex">\prod</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">∏</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⋃</mo></mrow><annotation encoding="application/x-tex">\bigcup</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">⋃</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⋂</mo></mrow><annotation encoding="application/x-tex">\bigcap</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">⋂</span></span></span></span> all behave in an extremely similar way. They define some kind of series of operations using indices that get combined. First, we will go through the basic case for <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∑</mo></mrow><annotation encoding="application/x-tex">\sum</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∏</mo></mrow><annotation encoding="application/x-tex">\prod</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">∏</span></span></span></span>, as they use basic math operations. Afterwards we will only look at different ways people put indices on these symbols, which works the same for all of them and then finish with the specifics regarding <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⋃</mo></mrow><annotation encoding="application/x-tex">\bigcup</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">⋃</span></span></span></span>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>⋂</mo></mrow><annotation encoding="application/x-tex">\bigcap</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">⋂</span></span></span></span>.</p>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/programming/math_symbols_to_code/" class="previous"> &lt; &lt; Previous: Introduction</a>
+            
+            
+            <a href="/site/programming/math_symbols_to_code/iteration/summation/" class="next"> Next: Summation &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

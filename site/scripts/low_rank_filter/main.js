@@ -663,7 +663,7 @@ function generateFilterState(img, filter) {
     return state;
 }
 
-function makeUserInterfaceFilter(containerId) {
+function makeUserInterfaceFilter(containerId, appContext) {
     const container = document.getElementById(containerId);
     container.innerHTML = "";
 
@@ -880,11 +880,11 @@ function makeUserInterfaceFilter(containerId) {
     const optionsImg = [];
     optionsImg.push({
         text: "Cat",
-        src: App.resourcePath + "/cat_small.jpg"
+        src: appContext.basePath + "images/low_rank_filter/cat_small.jpg"
     });
     optionsImg.push({
         text: "Pumpkin",
-        src: App.resourcePath + "/pumpkins.jpg"
+        src: appContext.basePath + "images/low_rank_filter/pumpkins.jpg"
 
     });
 

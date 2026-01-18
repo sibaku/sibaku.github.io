@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quaternion rotation</title>
     <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
     <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
     
 
@@ -33,6 +33,13 @@
     <script src="/site/scripts/extern/two.min.js"></script>
     
     
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
 </head>
 
 <body>
@@ -355,15 +362,19 @@ function demoSinCos(id){
 };
 
 </script>
-<script> 
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    demoSinCos("container_0");
-                });
+<script>
+(() => {
+    const appContext = {"basePath":"/site/","filePathStem":"/quaternion/quaternion"};
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            demoSinCos("container_0", appContext);
+            });
             } else {
-            demoSinCos("container_0")
-            }
-            </script>
+                demoSinCos("container_0", appContext)
+    }
+})();
+</script>
 <p>But for this to be a circle, we need to have two conditions:</p>
 <ol>
 <li>The axes have to be perpendicular, otherwise the circle is skewed.</li>
@@ -523,15 +534,19 @@ two.bind('update', update);
 };
 
 </script>
-<script> 
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    demoProjection("container_1");
-                });
+<script>
+(() => {
+    const appContext = {"basePath":"/site/","filePathStem":"/quaternion/quaternion"};
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            demoProjection("container_1", appContext);
+            });
             } else {
-            demoProjection("container_1")
-            }
-            </script>
+                demoProjection("container_1", appContext)
+    }
+})();
+</script>
 <p>The  vector <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">v</mi><mo>−</mo><mi mathvariant="bold">r</mi></mrow><annotation encoding="application/x-tex">\mathbf{v} - \mathbf{r}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">v</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">r</span></span></span></span> is the vector pointing from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">r</mi></mrow><annotation encoding="application/x-tex">\mathbf{r}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">r</span></span></span></span> to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">v</mi></mrow><annotation encoding="application/x-tex">\mathbf{v}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">v</span></span></span></span>. Since <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">r</mi></mrow><annotation encoding="application/x-tex">\mathbf{r}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">r</span></span></span></span> is the projection of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">v</mi></mrow><annotation encoding="application/x-tex">\mathbf{v}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">v</span></span></span></span> onto <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">n</mi></mrow><annotation encoding="application/x-tex">\mathbf{n}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">n</span></span></span></span>, we have that <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">v</mi><mo>−</mo><mi mathvariant="bold">r</mi></mrow><annotation encoding="application/x-tex">\mathbf{v} - \mathbf{r}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">v</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">r</span></span></span></span> is perpendicular to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">n</mi></mrow><annotation encoding="application/x-tex">\mathbf{n}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em;"></span><span class="mord mathbf">n</span></span></span></span>!</p>
 <p>We can also check if that is true, by computing the dot product. If they are perpendicular, the dot product is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>.</p>
 <p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mi mathvariant="bold">n</mi><mo>⋅</mo><mo stretchy="false">(</mo><mi mathvariant="bold">v</mi><mo>−</mo><mi mathvariant="bold">r</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi mathvariant="bold">n</mi><mo>⋅</mo><mi mathvariant="bold">v</mi><mo>−</mo><mi mathvariant="bold">n</mi><mo>⋅</mo><mi mathvariant="bold">r</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi mathvariant="bold">n</mi><mo>⋅</mo><mi mathvariant="bold">v</mi><mo>−</mo><mi mathvariant="bold">n</mi><mo>⋅</mo><mo stretchy="false">(</mo><mi mathvariant="bold">v</mi><mo>⋅</mo><mi mathvariant="bold">n</mi><mo stretchy="false">)</mo><mi mathvariant="bold">n</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi mathvariant="bold">n</mi><mo>⋅</mo><mi mathvariant="bold">v</mi><mo>−</mo><mo stretchy="false">(</mo><mi mathvariant="bold">v</mi><mo>⋅</mo><mi mathvariant="bold">n</mi><mo stretchy="false">)</mo><mi mathvariant="bold">n</mi><mo>⋅</mo><mi mathvariant="bold">n</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mi mathvariant="bold">n</mi><mo>⋅</mo><mi mathvariant="bold">v</mi><mo>−</mo><mo stretchy="false">(</mo><mi mathvariant="bold">v</mi><mo>⋅</mo><mi mathvariant="bold">n</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mn>0</mn></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">    \begin{align*}
@@ -738,15 +753,19 @@ function demoAxisAngle(id){
 };
    
 </script>
-<script> 
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    demoAxisAngle("container_2");
-                });
+<script>
+(() => {
+    const appContext = {"basePath":"/site/","filePathStem":"/quaternion/quaternion"};
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            demoAxisAngle("container_2", appContext);
+            });
             } else {
-            demoAxisAngle("container_2")
-            }
-            </script>
+                demoAxisAngle("container_2", appContext)
+    }
+})();
+</script>
 <p>While there are details, such as the quaternion values being computed with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mi>θ</mi><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">\frac{\theta}{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2251em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8801em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> instead of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>, we are just concerned with the quaternion doing some action to a given point according to the rotation formula <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">q</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mi mathvariant="bold">v</mi><mo stretchy="false">)</mo><mover accent="true"><mi mathvariant="bold">q</mi><mo stretchy="true">‾</mo></mover></mrow><annotation encoding="application/x-tex">\mathbf{q}(0,\mathbf{v})\overline{\mathbf{q}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathbf">q</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">v</span><span class="mclose">)</span><span class="mord overline"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathbf">q</span></span></span><span style="top:-3.5644em;"><span class="pstrut" style="height:3em;"></span><span class="overline-line" style="border-bottom-width:0.04em;"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span></span></span></span>. This action is the important part and is what we arrived at from the formulas.</p>
 <p>Now you may ask, how one comes up with such a formula in the first place? As stated in the beginning, we aren't really concerned with the whys in this document. We rather go the pragmatic way of taking what's there and seeing what it does. We can just think about this as some neat calculation trick. Like, we could start from the endpoint and go back from there to the beginning. In the same way, as we can think about 3D translation matrices being <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mo>×</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">4\times 4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">4</span></span></span></span>, since that falls out if we just write down <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">v</mi><mo>+</mo><mi mathvariant="bold">t</mi></mrow><annotation encoding="application/x-tex">\mathbf{v} + \mathbf{t}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathbf" style="margin-right:0.01597em;">v</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6349em;"></span><span class="mord mathbf">t</span></span></span></span> and write down the coefficients into a matrix. We could start from some higher point of view about affine spaces, but from the purely practical point of view, there might not be a difference.</p>
 <p>In the next section we will briefly check out the main reason that quaternions are useful: Interpolating rotations.</p>
@@ -973,15 +992,19 @@ function demoInterpolation(id){
 };
     
 </script>
-<script> 
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    demoInterpolation("container_3");
-                });
+<script>
+(() => {
+    const appContext = {"basePath":"/site/","filePathStem":"/quaternion/quaternion"};
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            demoInterpolation("container_3", appContext);
+            });
             } else {
-            demoInterpolation("container_3")
-            }
-            </script>
+                demoInterpolation("container_3", appContext)
+    }
+})();
+</script>
 
 
         <div id="footer">

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sibaku&#39;s collection</title>
     <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
     <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
     
 
@@ -27,6 +27,13 @@
     
 
     
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
 </head>
 
 <body>
@@ -44,7 +51,7 @@
     <div id="content">
 
         <h1>Welcome</h1>
-<p>Welcome to my page! This is a collection of various little experiments, tutorials and explainers that I made. Mostly, these are made for fun for myself. I am happy though if any of the explainers could be helpful to someone! I like to write down math that I frequently use or am interested in, because, in my opinion, many source do not provide derivations or have only parts of it listed. So this is helpful to myself when I just want a refresher and writing something down also helps in understanding things! It is also fun to see how to include interactive elements into these.</p>
+<p>Welcome to my page! You can find me at <a href="https://bsky.app/profile/sibaku1.bsky.social">Bluesky</a> or <a href="https://mas.to/@sibaku">Mastodon</a>. This is a collection of various little experiments, tutorials and explainers that I made. Mostly, these are made for fun for myself. I am happy though if any of the explainers could be helpful to someone! I like to write down math that I frequently use or am interested in, because, in my opinion, many source do not provide derivations or have only parts of it listed. So this is helpful to myself when I just want a refresher and writing something down also helps in understanding things! It is also fun to see how to include interactive elements into these.</p>
 <p>Porting old pages to this new system is still a work in progress!</p>
 <h1>Resources</h1>
 <h2>Sampling</h2>
@@ -65,7 +72,13 @@
 <p>Image filters are used in basically every application working with images. There are of course many different types of filters, but the basic ones apply a small weighted window function to pixels and their surroundings. One of the early things one learns about these, is that some filters can be separated from 2D to 1D, improving their complexity. This article explores finding 1D filters that approximate the original 2D filter, even if it's not separable.</p>
 <p><a href="/site/low_rank_filter/">Go to the page</a></p>
 </div>
-
+<h2>Translating math symbols to code</h2>
+<div class="subPageEntry">
+<p><img src="images/previews/preview_math_to_code.png" alt="An image showing the symbols currently covered on the page"></p>
+<p>Many non (computer) science people are intimidated by math notation, which can come up when you are searching for some algorithms, for example when creating a game.
+This article provides a few examples of how to read some common math symbols and how that translates into code.</p>
+<p><a href="/site/programming/math_symbols_to_code/">Go to the page</a></p>
+</div>
 
         <div id="footer">
 

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sampling Power Cosine Weighted Unit Hemisphere Cap</title>
     <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
     <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
 
     
@@ -74,18 +74,19 @@
 
     <span class="token keyword">return</span> <span class="token punctuation">[</span>theta<span class="token punctuation">,</span>phi<span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>
-<div id="example_pow_cos_hemisphere_cap" class="demo"></div>
-            <script> 
-             import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.createPowCosHemisphereCap("example_pow_cos_hemisphere_cap");
-                });
-            } else {
-                Module.createPowCosHemisphereCap("example_pow_cos_hemisphere_cap")
-            }
-             })
-            </script>
+<div id="example_pow_cos_hemisphere_cap"></div>
+<script> 
+    import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/sampling/2d/directions/power_cos_weighted_hemisphere_cap"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.createPowCosHemisphereCap("example_pow_cos_hemisphere_cap",appContext);
+        });
+    } else {
+        Module.createPowCosHemisphereCap("example_pow_cos_hemisphere_cap",appContext);
+    }
+        })
+</script>
 <h2>Algorithm</h2>
 <p>Generate points weighted by a power cosine with power <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span> on the sphere cap defined by the maximum elevation angle <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>θ</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\theta_{max}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">ma</span><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></p>
 <ol>

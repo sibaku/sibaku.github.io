@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sampling</title>
     <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
     <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
 
     
@@ -75,18 +75,19 @@
 
     <span class="token keyword">return</span> <span class="token punctuation">[</span>r<span class="token punctuation">,</span>alpha<span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>
-<div id="example_angular_circle" class="demo"></div>
-            <script> 
-             import("/site/scripts/sampling/sampling_main.js").then((Module) => {
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.createEqualAngularDisk("example_angular_circle");
-                });
-            } else {
-                Module.createEqualAngularDisk("example_angular_circle")
-            }
-             })
-            </script>
+<div id="example_angular_circle"></div>
+<script> 
+    import("/site/scripts/sampling/sampling_main.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/sampling/2d/uniform_disk"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.createEqualAngularDisk("example_angular_circle",appContext);
+        });
+    } else {
+        Module.createEqualAngularDisk("example_angular_circle",appContext);
+    }
+        })
+</script>
 <p>The points are focused in the center!
 With uniform area sampling it looks like the following:</p>
 <pre class="language-js"><code class="language-js"><span class="token keyword">function</span> <span class="token function">uniform_circle</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
@@ -99,18 +100,19 @@ With uniform area sampling it looks like the following:</p>
 
     <span class="token keyword">return</span> <span class="token punctuation">[</span>r<span class="token punctuation">,</span>alpha<span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>
-<div id="example_uniform_circle" class="demo"></div>
-            <script> 
-             import("/site/scripts/sampling/sampling_main.js").then((Module) => {
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.createUniformDisk("example_uniform_circle");
-                });
-            } else {
-                Module.createUniformDisk("example_uniform_circle")
-            }
-             })
-            </script>
+<div id="example_uniform_circle"></div>
+<script> 
+    import("/site/scripts/sampling/sampling_main.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/sampling/2d/uniform_disk"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.createUniformDisk("example_uniform_circle",appContext);
+        });
+    } else {
+        Module.createUniformDisk("example_uniform_circle",appContext);
+    }
+        })
+</script>
 <h3>Algorithm:</h3>
 <p>Generate points uniformly distributed over the area of a disk with radius <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span></p>
 <ol>

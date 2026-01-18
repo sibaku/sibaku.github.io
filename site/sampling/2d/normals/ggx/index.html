@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sampling the Trowbridge–Reitz/GGX Distribution</title>
     <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/site/styles/extern/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
     <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
 
     
@@ -76,18 +76,19 @@
 
     <span class="token keyword">return</span> <span class="token punctuation">[</span>theta<span class="token punctuation">,</span>phi<span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>
-<div id="example_angular_uniform" class="demo"></div>
-            <script> 
-             import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", ()=> {
-                    Module.createGGXNormal("example_angular_uniform");
-                });
-            } else {
-                Module.createGGXNormal("example_angular_uniform")
-            }
-             })
-            </script>
+<div id="example_angular_uniform"></div>
+<script> 
+    import("/site/scripts/sampling/sampling_dir_main.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/sampling/2d/normals/ggx"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.createGGXNormal("example_angular_uniform",appContext);
+        });
+    } else {
+        Module.createGGXNormal("example_angular_uniform",appContext);
+    }
+        })
+</script>
 <h2>Algorithm</h2>
 <p>Sample microfacet normal according to the Trowbridge–Reitz / GGX distribution:</p>
 <ol>

@@ -1,0 +1,98 @@
+
+.editor {
+    min-height: 100px;
+    max-height: 600px;
+
+    overflow: auto;
+}
+
+.scriptRunContainer {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.scriptRunContainer iframe {
+    width: 100%;
+    min-height: 100px;
+    max-height: 600px;
+}
+
+.editorThemeSelector {
+    border-style: solid;
+    border: solid 1px #141e26;
+    padding: 5px;
+}
+
+.editorLookAndFeelContainer {
+    display: flex;
+}
+
+.editorLookAndFeelContainer > * {
+    margin: 5px;
+}
+
+
+.editorThemeSelector option {
+    font-size: large;
+
+}
+
+.editorFilesContainer {
+    display: flex;
+}
+
+.editorFileEntry>* {
+    margin: 5px;
+}
+
+.editorFileEntry {
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    border: solid 1px #141e26;
+    background-color: #b1c4cf;
+}
+
+.editorFileEntry.editorSelected {
+    border: solid 4px #141e26;
+
+}
+
+.editorControlsContainer {
+    font-size: large;
+}
+
+.editorControlsContainer > * {
+    margin-bottom: 5px;
+}
+
+.editorFileEntry.editorSelected .editorFilename {
+    font-weight: bold;
+}
+
+.editorControlsContainer button {
+    display: inline-block;
+    background-color: #b1c4cf;
+    color: #141e26;
+    padding: 5px;
+    border: solid 2px #141e26;
+    font-size: large;
+}
+
+.editor button:hover {
+    background-color: #99b2c0;
+    color: #121b22;
+}
+
+.editorActionContainer {
+    display: flex;
+}
+
+.editorActionContainer>* {
+    margin: 5px;
+}
+
+.editorHidden {
+    display: none;
+}
