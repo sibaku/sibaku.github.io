@@ -21,10 +21,31 @@ body {
 
 }
 
-.subPageEntry img {
-    width: 80%;
-    max-width: 400px;
-    height: auto;
+.subpages {
+  display: flex;
+  flex-wrap: wrap;
+}
+.subPageEntry:nth-child(even) {
+  background-color: #b1c4cf;
+
+}
+
+.subpages .subPageEntry {
+  border: solid 1px #141e26;
+  padding: 10px;
+  flex-grow: 1;
+  max-width: 30%;
+}
+
+.pageEntryPreviewImageContainer {
+  height: 100px;
+}
+
+.pageEntryPreviewImageContainer img {
+  
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .navigationBase {
@@ -58,4 +79,9 @@ body {
 
 #scrollUpButton:hover {
   background-color: #1e5067;
+}
+
+.figure {
+    width: 80%;
+    margin: 0 auto;
 }

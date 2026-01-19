@@ -568,7 +568,7 @@ async function makeJsEditor(containerId, appContext, {
 
         const scriptAutoRenderKatex = document.createElement("script");
         scriptAutoRenderKatex.setAttribute("defer", "");
-        scriptAutoRenderKatex.src = `${appContext.basePath}scripts/extern/katex/auto-render.min.js`;
+        scriptAutoRenderKatex.src = `${appContext.basePath}scripts/extern/katex/contrib/auto-render.min.js`;
 
 
         const scriptOutputCss = document.createElement("link");

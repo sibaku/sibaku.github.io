@@ -71,6 +71,15 @@ function makeCheckbox(labelText, checked) {
 
 }
 
+
+const makeCheckboxNoLabel = (checked) => {
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.checked = checked;
+    return box;
+};
+
+
 const mapFrom = (v, min, max) => (v - min) / (max - min);
 const mapTo = (v, min, max) => v * (max - min) + min;
 
@@ -104,7 +113,40 @@ const makeUpdateSlider = (cb, min = 0, max = 1, value = min, steps = 100, initia
     return slider;
 }
 
+
+const makeOptions = (options, selected = 0) => {
+    const s = document.createElement("select");
+
+    for (let i = 0; i < options.length; i++) {
+        const option = document.createElement("option");
+        option.setAttribute("value", i);
+        const t = document.createTextNode(options[i]);
+        option.appendChild(t);
+        s.appendChild(option);
+    }
+
+
+    return s
+}
+
+const makeHeadline = (text, level = 1) => {
+    const h = document.createElement(`h${level}`);
+    h.textContent = text;
+    return h;
+}
+
+
 export {
-    makeContainer, makeElement, makeCanvas, makeCheckbox, makeSpan, makeTextField, makeSlider, makeUpdateSlider, mapFrom, mapTo,
+    makeContainer,
+    makeElement,
+    makeCanvas,
+    makeCheckbox,
+    makeCheckboxNoLabel,
+    makeSpan,
+    makeTextField,
+    makeSlider,
+    makeUpdateSlider, mapFrom, mapTo,
+    makeOptions,
+    makeHeadline,
     genId,
 };

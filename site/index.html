@@ -54,30 +54,56 @@
 <p>Welcome to my page! You can find me at <a href="https://bsky.app/profile/sibaku1.bsky.social">Bluesky</a> or <a href="https://mas.to/@sibaku">Mastodon</a>. This is a collection of various little experiments, tutorials and explainers that I made. Mostly, these are made for fun for myself. I am happy though if any of the explainers could be helpful to someone! I like to write down math that I frequently use or am interested in, because, in my opinion, many source do not provide derivations or have only parts of it listed. So this is helpful to myself when I just want a refresher and writing something down also helps in understanding things! It is also fun to see how to include interactive elements into these.</p>
 <p>Porting old pages to this new system is still a work in progress!</p>
 <h1>Resources</h1>
-<h2>Sampling</h2>
+<div class="subpages">
 <div class="subPageEntry">
-<p><img src="images/previews/sample_hemi_cos.png" alt="Screenshot of the result of hemisphere sampling with a cosine weight"></p>
+<h2><a href="/site/sampling/">Sampling</a></h2>
+<div class="pageEntryPreviewImageContainer">
+<img src="images/previews/sample_hemi_cos.png" alt="Screenshot of the result of hemisphere sampling with a cosine weight">
+</div>
 <p>A collection of some common sampling algorithms and derivations used in computer graphics, specifically path tracing.</p>
 <p><a href="/site/sampling/">Go to the page</a></p>
 </div>
-<h2>Quaternions</h2>
 <div class="subPageEntry">
-<p><img src="images/previews/axisAngle.png" alt="Screenshot of an axis angle representation in 3D"></p>
+<h2><a href="/site/quaternion/">Quaternions</a></h2>
+<div class="pageEntryPreviewImageContainer">
+<img src="images/previews/axisAngle.png" alt="Screenshot of an axis angle representation in 3D">
+</div>
 <p>Quaternions in the context of computer graphics and rotations are often said to be incomprehensible. This article tries to show how to get geometric meaning from the rotation formula using vector math.</p>
 <p><a href="/site/quaternion/">Go to the page</a></p>
 </div>
-<h2>Low-rank filter</h2>
 <div class="subPageEntry">
-<p><img src="images/previews/low_rank_filter.png" alt="Exploration of a low-rank approximation of a filter"></p>
-<p>Image filters are used in basically every application working with images. There are of course many different types of filters, but the basic ones apply a small weighted window function to pixels and their surroundings. One of the early things one learns about these, is that some filters can be separated from 2D to 1D, improving their complexity. This article explores finding 1D filters that approximate the original 2D filter, even if it's not separable.</p>
+<h2><a href="/site/low_rank_filter/">Low-rank filter</a></h2>
+<div class="pageEntryPreviewImageContainer">
+<img src="images/previews/low_rank_filter.png" alt="Exploration of a low-rank approximation of a filter">
+</div>
+<p>Image filters are used in basically every application working with images. This article explores the idea of approximating 2D filters with a number of 1D filters for potential speed gains.</p>
 <p><a href="/site/low_rank_filter/">Go to the page</a></p>
 </div>
-<h2>Translating math symbols to code</h2>
 <div class="subPageEntry">
-<p><img src="images/previews/preview_math_to_code.png" alt="An image showing the symbols currently covered on the page"></p>
+<h2><a href="/site/programming/math_symbols_to_code/">Translating math symbols to code</a></h2>
+<div class="pageEntryPreviewImageContainer">
+<img src="images/previews/preview_math_to_code.png" alt="An image showing the symbols currently covered on the page">
+</div>
 <p>Many non (computer) science people are intimidated by math notation, which can come up when you are searching for some algorithms, for example when creating a game.
 This article provides a few examples of how to read some common math symbols and how that translates into code.</p>
 <p><a href="/site/programming/math_symbols_to_code/">Go to the page</a></p>
+</div>
+<div class="subPageEntry">
+<h2><a href="/site/dot_product_applications/">Applications of the dot product</a></h2>
+<div class="pageEntryPreviewImageContainer">
+<img src="images/previews/preview_dot_product.png" alt="An image showing a visualization of the dot product">
+</div>
+<p>The dot product is probably one of the most powerful tools in math (your mileage may vary). This article explores the dot product itself and some applications of its properties.</p>
+<p><a href="/site/dot_product_applications/">Go to the page</a></p>
+</div>
+<div class="subPageEntry">
+<h2><a href="/site/coordinate_transform/">Coordinate transforms</a></h2>
+<div class="pageEntryPreviewImageContainer">
+<img src="images/previews/preview_coordinates.png" alt="An image showing a visualization of two coordinate systems and a point being expressed in both">
+</div>
+<p>Coordinate transforms are in every application that deals with objects in space (2D,3D,...). This article details the math of how to handle the common orthogonal frames encountered in robotics or computer graphics.</p>
+<p><a href="/site/coordinate_transform/">Go to the page</a></p>
+</div>
 </div>
 
         <div id="footer">
