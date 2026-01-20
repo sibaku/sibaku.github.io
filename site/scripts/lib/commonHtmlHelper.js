@@ -134,7 +134,40 @@ const makeHeadline = (text, level = 1) => {
     h.textContent = text;
     return h;
 }
+function makeTextArea(initialText, placeholder) {
+    const textarea = document.createElement('textarea');
 
+    if (placeholder) {
+        textarea.placeholder = placeholder;
+    }
+
+    if (initialText) {
+        textarea.value = initialText;
+    }
+    return textarea;
+}
+
+function makeTextInput(initialText, placeholder) {
+    const textInput = document.createElement('input');
+
+    textInput.type = "text";
+    if (placeholder) {
+        textInput.placeholder = placeholder;
+    }
+
+    if (initialText) {
+        textInput.value = initialText;
+    }
+    return textInput;
+}
+
+function applyProps(element, props = {}){
+    for(const k of Object.keys(props)){
+        element[k] = props[k];
+    }
+
+    return element;
+}
 
 export {
     makeContainer,
@@ -148,5 +181,8 @@ export {
     makeUpdateSlider, mapFrom, mapTo,
     makeOptions,
     makeHeadline,
+    makeTextArea,
+    makeTextInput,
+    applyProps,
     genId,
 };
