@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>06.1 - Interpolate triangles</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    <link rel="stylesheet" href="/site/styles/editor.css">
+
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <script>
+function onClickHideableContent(b){
+    let parent = b.parentElement;
+    while(parent && !parent.classList.contains("hideableConainer")){
+        parent = parent.parentElement;
+    }
+    if(!parent){
+        return;
+    }
+    const content = parent.querySelector(".hideableContent");
+    if(!content){
+        return;
+    }
+
+    const preview = parent.querySelector(".hideablePreview");
+    console.log(preview);
+
+    const bText = b.textContent || b.innerText;
+    if(bText === "Show content"){
+        b.textContent = "Hide content";
+        content.classList.remove("hideableHidden");
+        if(preview){
+            preview.classList.add("hideableHidden");
+        }
+    }else {
+        b.textContent = "Show content";    
+        content.classList.add("hideableHidden");
+        if(preview){
+            preview.classList.remove("hideableHidden");
+        }
+    }
+}   
+</script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <div class="navigationTree">
+        <ul><li><a href="/site/rasterization_course/">Introduction</a></li>
+<li><a href="/site/rasterization_course/prerequisites/">Prerequisites</a><ul><li><a href="/site/rasterization_course/prerequisites/math/">Math</a><ul><li><a href="/site/rasterization_course/prerequisites/math/trigonometry/">Trigonometry</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/vectors/">Vectors</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/matrices/">Matrices</a></li></ul></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/">Programming</a><ul><li><a href="/site/rasterization_course/prerequisites/programming/project/">Project</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/jsmatrix/">JSMatrix</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/image/">PixelImage</a></li></ul></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/">Rasterizer</a><ul><li><a href="/site/rasterization_course/rasterizer/00/">00 - Drawing points</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/introduction/">01 - Drawing lines</a><ul><li><a href="/site/rasterization_course/rasterizer/01/drawing_some_lines/">01.0 - Drawing some lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/drawing_all_lines/">01.1 - Drawing all lines</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/02/">02 - Clipping lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/introduction/">03 - Draw a triangle</a><ul><li><a href="/site/rasterization_course/rasterizer/03/point_part_of_triangle/">03.0 - Is this point part of a triangle?</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/putting_the_triangle_together/">03.1 - Putting the triangle together</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/04/introduction/">04 - Clip polygons</a><ul><li><a href="/site/rasterization_course/rasterizer/04/sutherland_hodgman/">04.0 - Sutherland-Hodgman</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/integrating_clipping/">04.1 - Integrating the clipping</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/what_about_lines/">04.2 - What about lines?</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/05/">05 - Shaders</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/introduction/">06 - Interpolate attributes</a><ul><li><a href="/site/rasterization_course/rasterizer/06/interpolate_line/">06.0 - Interpolate lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/interpolate_triangle/">06.1 - Interpolate triangles</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/07/introduction/">07 - Perspective and depth</a><ul><li><a href="/site/rasterization_course/rasterizer/07/camera_position/">07.0 - Defining the camera position</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/camera_lens/">07.1 - Defining the camera lens</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/viewport/">07.2 - The viewport</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/display_3d/">07.3 - Displaying 3D data</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/add_depth/">07.4 - Adding depth</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/08/">08 - Perspective-corrected interpolation</a></li>
+<li><a href="/site/rasterization_course/rasterizer/09/">09 - Application - Turn on the light</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/introduction/">10 - Blending</a><ul><li><a href="/site/rasterization_course/rasterizer/10/blending_operations/">10.0 - Blending operations</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/drawing_transparent/">10.1 - Drawing transparent objects</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/11/">11 - Culling</a></li>
+<li><a href="/site/rasterization_course/rasterizer/closing_remarks_and_playground/">Closing remarks and playground</a></li></ul></li></ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h1>Interpolate values on a triangle</h1>
+<p>Now that we can pass attribtues to shaders for lines, we will extend this to triangles.</p>
+<p>We start again with the clipping (<code>clip_polygon</code>) and processing (<code>process_triangle</code>).
+These are basically exact equivalents to the line versions.</p>
+<p>In <code>clip_polygon</code>, we add a block for the clipped attributes in addition to the positions.
+As the clipping only involves the intersection with the polygon edges, this is exactly the same as with the lines.
+In the code, the only difference is that we are in a loop over the edges and don't only have two points.</p>
+<p>In <code>process_triangle</code> we incorporate the attributes and pass them to the rasterization along with the points when triangulating the clipped polygon.</p>
+<p>As there isn't much new happening, you can look at the code below, but for brevity, it is folded in.</p>
+<div class="hideableConainer">
+<div class="hideableButtonContainer">
+<button class="hideableButton" onclick="onClickHideableContent(this)">Show content</button>
+</div>
+<div class="hideablePreview">Show code</div>
+<div class="hideableContent hideableHidden">
+<pre class="language-js"><code class="language-js"><span class="token comment">/**
+ * Clips a polygon against the given clip-planes
+ * @param {Array&lt;AbstractMat>} points The input points
+ * @param {Array&lt;Object>} attribs The
+ *  attributes per point
+ * @param {Array&lt;AbstractMat>} planes The
+ *  clipping planes
+ * @returns {[Array&lt;AbstractMat>,Array&lt;Object>]} The
+ *  clipped points and interpolated attributes
+ */</span>
+<span class="token function">clip_polygon</span><span class="token punctuation">(</span><span class="token parameter">points<span class="token punctuation">,</span> planes<span class="token punctuation">,</span> attribs</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// Implementation of the</span>
+  <span class="token comment">//  Sutherland-Hodgman algorithm</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> pi <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> pi <span class="token operator">&lt;</span> planes<span class="token punctuation">.</span>length<span class="token punctuation">;</span> pi<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> pl <span class="token operator">=</span> planes<span class="token punctuation">[</span>pi<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> output <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> output_block <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> size <span class="token operator">=</span> points<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> size<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> cur <span class="token operator">=</span> points<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> ip <span class="token operator">=</span> <span class="token punctuation">(</span>i <span class="token operator">-</span> <span class="token number">1</span> <span class="token operator">+</span> points<span class="token punctuation">.</span>length<span class="token punctuation">)</span> <span class="token operator">%</span> points<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+      <span class="token keyword">const</span> prev <span class="token operator">=</span> points<span class="token punctuation">[</span>ip<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+      <span class="token comment">// compute distance</span>
+      <span class="token keyword">const</span> dc <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>pl<span class="token punctuation">,</span> cur<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> dp <span class="token operator">=</span> <span class="token function">dot</span><span class="token punctuation">(</span>pl<span class="token punctuation">,</span> prev<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token comment">// cur inside</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>dc <span class="token operator">>=</span> <span class="token number">0.0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// prev outside</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>dp <span class="token operator">&lt;</span> <span class="token number">0.0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token comment">// intersect prev -> cur</span>
+
+          <span class="token keyword">const</span> t <span class="token operator">=</span> dp <span class="token operator">/</span> <span class="token punctuation">(</span>dp <span class="token operator">-</span> dc<span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token keyword">const</span> p <span class="token operator">=</span> <span class="token function">add</span><span class="token punctuation">(</span>prev<span class="token punctuation">,</span> <span class="token function">scale</span><span class="token punctuation">(</span><span class="token function">sub</span><span class="token punctuation">(</span>cur<span class="token punctuation">,</span> prev<span class="token punctuation">)</span><span class="token punctuation">,</span> t<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+          <span class="token comment">// interpolate attributes</span>
+          <span class="token keyword">const</span> p_attribs <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+          <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> k <span class="token keyword">in</span> attribs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            p_attribs<span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">=</span>
+              <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">interpolate_line</span><span class="token punctuation">(</span>
+                attribs<span class="token punctuation">[</span>ip<span class="token punctuation">]</span><span class="token punctuation">[</span>k<span class="token punctuation">]</span><span class="token punctuation">,</span> attribs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>k<span class="token punctuation">]</span><span class="token punctuation">,</span> t
+              <span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span>
+          output<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">;</span>
+          output_block<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>p_attribs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        output<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>cur<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        output_block<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>attribs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>dp <span class="token operator">>=</span> <span class="token number">0.0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// cur outside, prev inside</span>
+        <span class="token comment">// intersect prev->cur</span>
+        <span class="token comment">// intersect in homogeneous space</span>
+
+        <span class="token keyword">const</span> t <span class="token operator">=</span> dp <span class="token operator">/</span> <span class="token punctuation">(</span>dp <span class="token operator">-</span> dc<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">const</span> p <span class="token operator">=</span> <span class="token function">add</span><span class="token punctuation">(</span>prev<span class="token punctuation">,</span> <span class="token function">scale</span><span class="token punctuation">(</span><span class="token function">sub</span><span class="token punctuation">(</span>cur<span class="token punctuation">,</span> prev<span class="token punctuation">)</span><span class="token punctuation">,</span> t<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// interpolate attributes</span>
+        <span class="token keyword">const</span> p_attribs <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> k <span class="token keyword">in</span> attribs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          p_attribs<span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">=</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">interpolate_line</span><span class="token punctuation">(</span>
+              attribs<span class="token punctuation">[</span>ip<span class="token punctuation">]</span><span class="token punctuation">[</span>k<span class="token punctuation">]</span><span class="token punctuation">,</span> attribs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>k<span class="token punctuation">]</span><span class="token punctuation">,</span> t
+            <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        output<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        output_block<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>p_attribs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    points <span class="token operator">=</span> output<span class="token punctuation">;</span>
+    attribs <span class="token operator">=</span> output_block<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> <span class="token punctuation">[</span>points<span class="token punctuation">,</span> attribs<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<pre class="language-js"><code class="language-js"><span class="token comment">/**
+ * Processes a single triangle
+ * @param {Pipeline} pipeline The pipeline to use
+ * @param {AbstractMat} v0 The first vertex
+ * @param {AbstractMat} v1 The second vertex
+ * @param {AbstractMat} v2 The third vertex
+ * @param {Object&lt;Number|AbstractMat>} attribs_v0 The
+ *  attributes of the first vertex
+ * @param {Object&lt;Number|AbstractMat>} attribs_v1 The
+ *  attributes of the second vertex
+ * @param {Object&lt;Number|AbstractMat>} attribs_v2 The
+ *  attributes of the third vertex
+ */</span>
+<span class="token function">process_triangle</span><span class="token punctuation">(</span><span class="token parameter">pipeline<span class="token punctuation">,</span> v0<span class="token punctuation">,</span> v1<span class="token punctuation">,</span> v2<span class="token punctuation">,</span>
+    attribs_v0 <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> attribs_v1 <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> attribs_v2 <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// prepare points and data for clipping</span>
+  <span class="token keyword">let</span> points <span class="token operator">=</span> <span class="token punctuation">[</span>v0<span class="token punctuation">,</span> v1<span class="token punctuation">,</span> v2<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">let</span> attribs <span class="token operator">=</span> <span class="token punctuation">[</span>attribs_v0<span class="token punctuation">,</span> attribs_v1<span class="token punctuation">,</span> attribs_v2<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token comment">// clip polygon</span>
+  <span class="token punctuation">[</span>points<span class="token punctuation">,</span> attribs<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">clip_polygon</span><span class="token punctuation">(</span>
+    points<span class="token punctuation">,</span> pipeline<span class="token punctuation">.</span>clip_planes<span class="token punctuation">,</span> attribs
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// triangulate polygon (clipping the triangle may</span>
+  <span class="token comment">//  result in non triangles polygons) and rasterize</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">+</span> <span class="token number">2</span> <span class="token operator">&lt;</span> points<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">rasterize_triangle</span><span class="token punctuation">(</span>
+      pipeline<span class="token punctuation">,</span> points<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> points<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> points<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+      attribs<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> attribs<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> attribs<span class="token punctuation">[</span>i <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">]</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+</div>
+</div>
+<p>For the line rasterization, we had to calculate the interpolation parameter.
+Now for triangles, we have three points, so the singular parameter doesn't cut it.</p>
+<p>But we already have a very similar mechanism: Barycentric coordinates.
+They do basically the same thing, being the weights of each vertex.
+On an edge of the triangle, they are actually equivalent to the linear interpolation (one weight is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>)!</p>
+<p>So it makes sense, that we basically do the same thing with the barycentric coordinates as we did with the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> parameter.
+So instead of interpolating attributes as <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mrow><mi mathvariant="bold">P</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msub><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>t</mi><mo stretchy="false">)</mo><msub><mi>d</mi><mi mathvariant="bold">A</mi></msub><mo>+</mo><mi>t</mi><msub><mi>d</mi><mi mathvariant="bold">B</mi></msub></mrow><annotation encoding="application/x-tex">d_{\mathbf{P}(t)} = (1-t)d_{\mathbf{A}} + t d_{\mathbf{B}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0496em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">P</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">t</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">t</span><span class="mclose">)</span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3303em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">A</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord mathnormal">t</span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3303em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">B</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>, we do the barycentric interpolation:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>d</mi><mrow><mi mathvariant="bold">P</mi><mo stretchy="false">(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo separator="true">,</mo><mi>w</mi><mo stretchy="false">)</mo></mrow></msub><mo>=</mo><mi>u</mi><msub><mi>d</mi><mi mathvariant="bold">A</mi></msub><mo>+</mo><mi>v</mi><msub><mi>d</mi><mi mathvariant="bold">B</mi></msub><mo>+</mo><mi>w</mi><msub><mi>d</mi><mi mathvariant="bold">C</mi></msub></mrow><annotation encoding="application/x-tex">     d_{\mathbf{P}(u,v,w)} = u d_{\mathbf{A}} + v d_{\mathbf{B}} + w d_{\mathbf{C}}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0496em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">P</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">u</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mpunct mtight">,</span><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord mathnormal">u</span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3303em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">A</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3303em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">B</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3303em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbf mtight">C</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>And we already computed the barycentric coordinates to check if a point is part of the triangle.
+So we will only implement a method <code>interpolate_triangle</code> that handles the interpolation, again for numbers and matrices seperately.</p>
+<p>This will be called in the <code>rasterize_triangle</code> function, which looks basically the same as in the triangle rasterizer.
+Before calling the fragment shader, an object is filled with interpolations of vertex shader output attributes using the already computed barycentric coordinates.
+You can have a look at the changes here. Again, folded in, as there isn't too much new and to keep the page a bit leaner.</p>
+<div class="hideableConainer">
+<div class="hideableButtonContainer">
+<button class="hideableButton" onclick="onClickHideableContent(this)">Show content</button>
+</div>
+<div class="hideablePreview">Show code</div>
+<div class="hideableContent hideableHidden">
+<pre class="language-js"><code class="language-js"><span class="token comment">/**
+ * 
+ * @param {Pipeline} pipeline The pipeline to use
+ * @param {AbstractMat} v0 The first vertex
+ * @param {AbstractMat} v1 The second vertex
+ * @param {AbstractMat} v2 The third vertex
+ * @param {Object&lt;Number|AbstractMat>} data_v0 The
+ *  attributes for the first vertex
+ * @param {Object&lt;Number|AbstractMat>} data_v1 The
+ *  attributes for the second vertex
+ * @param {Object&lt;Number|AbstractMat>} data_v2 The
+ *  attributes for the third vertex
+ * @returns 
+ */</span>
+<span class="token function">rasterize_triangle</span><span class="token punctuation">(</span><span class="token parameter">pipeline<span class="token punctuation">,</span> v0<span class="token punctuation">,</span> v1<span class="token punctuation">,</span> v2<span class="token punctuation">,</span>
+    data_v0 <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> data_v1 <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> data_v2 <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// compute triangle screen bounds</span>
+  <span class="token keyword">let</span> points <span class="token operator">=</span> <span class="token punctuation">[</span>v0<span class="token punctuation">,</span> v1<span class="token punctuation">,</span> v2<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">let</span> <span class="token punctuation">[</span>bmin<span class="token punctuation">,</span> bmax<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">compute_screen_bounds</span><span class="token punctuation">(</span>points<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// pixel coordinates of bounds</span>
+  <span class="token keyword">let</span> ibmin <span class="token operator">=</span> <span class="token function">floor</span><span class="token punctuation">(</span>bmin<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">let</span> ibmax <span class="token operator">=</span> <span class="token function">ceil</span><span class="token punctuation">(</span>bmax<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">const</span> viewport <span class="token operator">=</span> pipeline<span class="token punctuation">.</span>viewport<span class="token punctuation">;</span>
+
+  <span class="token keyword">const</span> viewport_max <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span>
+    viewport<span class="token punctuation">.</span>x <span class="token operator">+</span> viewport<span class="token punctuation">.</span>w <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span>
+    viewport<span class="token punctuation">.</span>y <span class="token operator">+</span> viewport<span class="token punctuation">.</span>h <span class="token operator">-</span> <span class="token number">1</span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">const</span> viewport_min <span class="token operator">=</span> <span class="token function">vec2</span><span class="token punctuation">(</span>viewport<span class="token punctuation">.</span>x<span class="token punctuation">,</span> viewport<span class="token punctuation">.</span>y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token comment">// clamp bounds so they lie inside the image region</span>
+  <span class="token function">cwiseMax</span><span class="token punctuation">(</span>ibmin<span class="token punctuation">,</span> viewport_min<span class="token punctuation">,</span> ibmin<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">cwiseMin</span><span class="token punctuation">(</span>ibmax<span class="token punctuation">,</span> viewport_max<span class="token punctuation">,</span> ibmax<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// handle case where its fully outside</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isAny</span><span class="token punctuation">(</span>ibmin<span class="token punctuation">,</span> viewport_max<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">a<span class="token punctuation">,</span> b</span><span class="token punctuation">)</span> <span class="token operator">=></span> a <span class="token operator">></span> b<span class="token punctuation">)</span> <span class="token operator">||</span>
+      <span class="token function">isAny</span><span class="token punctuation">(</span>ibmax<span class="token punctuation">,</span> viewport_min<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">a<span class="token punctuation">,</span> b</span><span class="token punctuation">)</span> <span class="token operator">=></span> a <span class="token operator">&lt;</span> b<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// interpolated data buffer</span>
+  <span class="token keyword">const</span> data <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// gather attributes</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token keyword">in</span> data_v0<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>data_v1<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">||</span> <span class="token operator">!</span>data_v2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">continue</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    data<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">const</span> program <span class="token operator">=</span> pipeline<span class="token punctuation">.</span>program<span class="token punctuation">;</span>
+
+  <span class="token comment">// compute the double triangle area only once</span>
+  <span class="token keyword">const</span> area_tri <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">signed_tri_area_doubled</span><span class="token punctuation">(</span>v0<span class="token punctuation">,</span> v1<span class="token punctuation">,</span> v2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// check if any the triangle has zero area</span>
+  <span class="token comment">//  with some epsilon, if so, don't rasterize</span>
+  <span class="token keyword">const</span> epsilon <span class="token operator">=</span> <span class="token number">1E-8</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>Math<span class="token punctuation">.</span><span class="token function">abs</span><span class="token punctuation">(</span>area_tri<span class="token punctuation">)</span> <span class="token operator">&lt;</span> epsilon<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// check all pixels in screen bounding box</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> y <span class="token operator">=</span> ibmin<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span> y <span class="token operator">&lt;=</span> ibmax<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span> y<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> x <span class="token operator">=</span> ibmin<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span> x <span class="token operator">&lt;=</span> ibmax<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span> x<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// sample point in center of pixel</span>
+      <span class="token keyword">const</span> p <span class="token operator">=</span> <span class="token function">add</span><span class="token punctuation">(</span><span class="token function">vec2</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span> y<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">vec2</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">let</span> v <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">signed_tri_area_doubled</span><span class="token punctuation">(</span>v2<span class="token punctuation">,</span> v0<span class="token punctuation">,</span> p<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      v <span class="token operator">/=</span> area_tri<span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>v <span class="token operator">+</span> epsilon <span class="token operator">&lt;</span> <span class="token number">0.0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">continue</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">let</span> w <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">signed_tri_area_doubled</span><span class="token punctuation">(</span>v0<span class="token punctuation">,</span> v1<span class="token punctuation">,</span> p<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      w <span class="token operator">/=</span> area_tri<span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>w <span class="token operator">+</span> epsilon <span class="token operator">&lt;</span> <span class="token number">0.0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">continue</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">let</span> u <span class="token operator">=</span> <span class="token number">1.0</span> <span class="token operator">-</span> v <span class="token operator">-</span> w<span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>u <span class="token operator">+</span> epsilon <span class="token operator">&lt;</span> <span class="token number">0.0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">continue</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token comment">// barycentric coordinate</span>
+      <span class="token keyword">const</span> b <span class="token operator">=</span> v32<span class="token punctuation">.</span><span class="token function">from</span><span class="token punctuation">(</span><span class="token punctuation">[</span>u<span class="token punctuation">,</span> v<span class="token punctuation">,</span> w<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token comment">// interpolate values</span>
+      <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token keyword">in</span> data<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        data<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">interpolate_triangle</span><span class="token punctuation">(</span>
+          data_v0<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> data_v1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span>data_v2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> b
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token comment">// run  fragment shader with data</span>
+      <span class="token keyword">const</span> frag_coord <span class="token operator">=</span> <span class="token function">vec4</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token comment">// run  fragment shader with data</span>
+      <span class="token keyword">const</span> output_colors <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">const</span> do_write_fragment <span class="token operator">=</span>
+          program<span class="token punctuation">.</span><span class="token function">fragment_shader</span><span class="token punctuation">(</span>
+            frag_coord<span class="token punctuation">,</span> data<span class="token punctuation">,</span>
+            pipeline<span class="token punctuation">.</span>uniform_data<span class="token punctuation">,</span>
+            output_colors
+          <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>do_write_fragment<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">write_fragment</span><span class="token punctuation">(</span>
+          pipeline<span class="token punctuation">,</span> frag_coord<span class="token punctuation">,</span> output_colors
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+</div>
+</div>
+<p>Before we get to implementing the function, a few words about what you will see.</p>
+<p>One of the most important use cases for the attribute interpolation on triangles are texture  coordinates.
+Basically, you have an image, the texture, that you want to draw on top of a triangle.
+To do that, you define for each vertex where that it would be on the image.
+These coordinates are then interpolated and you can use them to look up the color in the image.</p>
+<p>Generally, these image/texture coordinates are normalized in <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><msup><mo stretchy="false">]</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">[0,1]^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose"><span class="mclose">]</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>, so they don't depend on resolution and we call them <strong>uv</strong> coordinates. The naming just comes from the fact, that surfaces are often parametrized by two variables, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">u</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>. Sometimes, there are other names, for example GLSL provides the .st accessor.</p>
+<p>We have included a function to sample an image with these coordinates.</p>
+<pre class="language-js"><code class="language-js"><span class="token comment">/**
+ * Samples an image at a given coordinate
+ * @param {PixelImage} img The
+ *  image to be sampled
+ * @param {Abstractmat} uv The
+ *  uv coordinate in [0,1]^2
+ * @param {Object} param Additional
+ *  parameters
+ * @returns {AbstractMat} The color
+ *  at the requested position
+ */</span>
+<span class="token keyword">function</span> <span class="token function">sample</span><span class="token punctuation">(</span><span class="token parameter">img<span class="token punctuation">,</span> uv<span class="token punctuation">,</span> 
+<span class="token punctuation">{</span> 
+  interpolation_mode <span class="token operator">=</span> Interpolation<span class="token punctuation">.</span><span class="token constant">NEAREST</span><span class="token punctuation">,</span>
+  wrap_s <span class="token operator">=</span> Wrapping<span class="token punctuation">.</span><span class="token constant">CLAMP_TO_EDGE</span><span class="token punctuation">,</span>
+  wrap_t <span class="token operator">=</span> Wrapping<span class="token punctuation">.</span><span class="token constant">CLAMP_TO_EDGE</span> 
+<span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token operator">...</span><span class="token punctuation">}</span></code></pre>
+<p>There are some additional parameters after the uv to change how colors are interpolated and how edges are handled, but they don't matter too much for now.</p>
+<p>We want to use that to put an image on our triangles!</p>
+<p>For that we provide a field <code>tex</code> in the material of the objects and an attribute <code>uv</code> for the vertices.</p>
+<p>For the attribute, we extend our define to:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> Attribute <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token constant">VERTEX</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token constant">UV</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre>
+<p>We want our shaders to do the following:</p>
+<ol>
+<li>
+<p>Vertex shader</p>
+<ol>
+<li>Write the <code>uv</code> attribute into the output block</li>
+<li>Return the <code>Attribute.VERTEX</code> transformed by the <code>uniforms.M</code> matrix</li>
+</ol>
+</li>
+<li>
+<p>Fragment shader</p>
+<ol>
+<li>Get the interpolated <code>uv</code> value from the <code>data</code> parameter</li>
+<li>If the material has a <code>tex</code> field, sample that texture with the <code>uv</code> coordinate and put that color into the output. Otherweise use the materials <code>color</code> field</li>
+</ol>
+</li>
+</ol>
+<p>We can now implement our first texture-mapped triangles!</p>
+<p>As usual, the solution to cross-check is below.</p>
+<p><strong>Exercise:</strong></p>
+<ul>
+<li>
+<p>Implement the barycentric interpolation in <code>interpolate_triangle</code> in rasterizer.js</p>
+</li>
+<li>
+<p>Go to the <code>vertex_shader</code> in shaders.js</p>
+<ul>
+<li>Store the <code>attributes[Attribute.UV]</code> with the name ´&quot;uv&quot;` in the outputs</li>
+</ul>
+</li>
+<li>
+<p>Go to the <code>fragment_shader</code> in shaders.js</p>
+<ul>
+<li>Get the interpolated uv coordinate from <code>data</code></li>
+<li>If the material has a texture (<code>uniforms.material.tex</code>), multiply the color with the sampled texture</li>
+</ul>
+</li>
+</ul>
+<div id="demo062"></div>
+<script> 
+    import("/site/scripts/rasterizer/06_attrib_interp/06_demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/rasterization_course/rasterizer/06/interpolate_triangle"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeDemo062("demo062",appContext);
+        });
+    } else {
+        Module.makeDemo062("demo062",appContext);
+    }
+        })
+</script>
+<p><strong>Solution:</strong></p>
+<div class="hideableConainer">
+<div class="hideableButtonContainer">
+<button class="hideableButton" onclick="onClickHideableContent(this)">Show content</button>
+</div>
+<div class="hideablePreview">See the solution</div>
+<div class="hideableContent hideableHidden">
+<div id="demo062Solution"></div>
+<script> 
+    import("/site/scripts/rasterizer/06_attrib_interp/06_demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/rasterization_course/rasterizer/06/interpolate_triangle"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeDemo062Solution("demo062Solution",appContext);
+        });
+    } else {
+        Module.makeDemo062Solution("demo062Solution",appContext);
+    }
+        })
+</script>
+</div>
+</div>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/rasterization_course/rasterizer/06/interpolate_line/" class="previous"> &lt; &lt; Previous: 06.0 - Interpolate lines</a>
+            
+            
+            <a href="/site/rasterization_course/rasterizer/07/introduction/" class="next"> Next: 07 - Perspective and depth &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

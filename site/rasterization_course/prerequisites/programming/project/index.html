@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    <link rel="stylesheet" href="/site/styles/editor.css">
+
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <script>
+function onClickHideableContent(b){
+    let parent = b.parentElement;
+    while(parent && !parent.classList.contains("hideableConainer")){
+        parent = parent.parentElement;
+    }
+    if(!parent){
+        return;
+    }
+    const content = parent.querySelector(".hideableContent");
+    if(!content){
+        return;
+    }
+
+    const preview = parent.querySelector(".hideablePreview");
+    console.log(preview);
+
+    const bText = b.textContent || b.innerText;
+    if(bText === "Show content"){
+        b.textContent = "Hide content";
+        content.classList.remove("hideableHidden");
+        if(preview){
+            preview.classList.add("hideableHidden");
+        }
+    }else {
+        b.textContent = "Show content";    
+        content.classList.add("hideableHidden");
+        if(preview){
+            preview.classList.remove("hideableHidden");
+        }
+    }
+}   
+</script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <div class="navigationTree">
+        <ul><li><a href="/site/rasterization_course/">Introduction</a></li>
+<li><a href="/site/rasterization_course/prerequisites/">Prerequisites</a><ul><li><a href="/site/rasterization_course/prerequisites/math/">Math</a><ul><li><a href="/site/rasterization_course/prerequisites/math/trigonometry/">Trigonometry</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/vectors/">Vectors</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/matrices/">Matrices</a></li></ul></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/">Programming</a><ul><li><a href="/site/rasterization_course/prerequisites/programming/project/">Project</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/jsmatrix/">JSMatrix</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/image/">PixelImage</a></li></ul></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/">Rasterizer</a><ul><li><a href="/site/rasterization_course/rasterizer/00/">00 - Drawing points</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/introduction/">01 - Drawing lines</a><ul><li><a href="/site/rasterization_course/rasterizer/01/drawing_some_lines/">01.0 - Drawing some lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/drawing_all_lines/">01.1 - Drawing all lines</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/02/">02 - Clipping lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/introduction/">03 - Draw a triangle</a><ul><li><a href="/site/rasterization_course/rasterizer/03/point_part_of_triangle/">03.0 - Is this point part of a triangle?</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/putting_the_triangle_together/">03.1 - Putting the triangle together</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/04/introduction/">04 - Clip polygons</a><ul><li><a href="/site/rasterization_course/rasterizer/04/sutherland_hodgman/">04.0 - Sutherland-Hodgman</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/integrating_clipping/">04.1 - Integrating the clipping</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/what_about_lines/">04.2 - What about lines?</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/05/">05 - Shaders</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/introduction/">06 - Interpolate attributes</a><ul><li><a href="/site/rasterization_course/rasterizer/06/interpolate_line/">06.0 - Interpolate lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/interpolate_triangle/">06.1 - Interpolate triangles</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/07/introduction/">07 - Perspective and depth</a><ul><li><a href="/site/rasterization_course/rasterizer/07/camera_position/">07.0 - Defining the camera position</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/camera_lens/">07.1 - Defining the camera lens</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/viewport/">07.2 - The viewport</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/display_3d/">07.3 - Displaying 3D data</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/add_depth/">07.4 - Adding depth</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/08/">08 - Perspective-corrected interpolation</a></li>
+<li><a href="/site/rasterization_course/rasterizer/09/">09 - Application - Turn on the light</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/introduction/">10 - Blending</a><ul><li><a href="/site/rasterization_course/rasterizer/10/blending_operations/">10.0 - Blending operations</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/drawing_transparent/">10.1 - Drawing transparent objects</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/11/">11 - Culling</a></li>
+<li><a href="/site/rasterization_course/rasterizer/closing_remarks_and_playground/">Closing remarks and playground</a></li></ul></li></ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h1>The project itself</h1>
+<p>Each of the following sections will contain some explanations and some code blocks contained in basic editors that you will be able to edit and run. The code will contain <strong>TODO</strong> sections with possibly additional instructions as comments.</p>
+<p>In these code blocks you will implement some small exercises which put the theory into practice.</p>
+<p>That way you can also immediately see the results.
+One solution is shown either in following subsections that expand upon these implemented parts or in the full solution to the section.
+The full code for each section is also accessible and will be linked at the beginning of each section, so you can pick and choose what you are interested in to do yourself.</p>
+<p>Some helper functions can be seen here, the naming and sorting might need some work:</p>
+<ul>
+<li><a href="/site/scripts/rasterizer/common/geometry_utils.js">geometry utilities</a>: Utilities related to geometry</li>
+<li><a href="/site/scripts/rasterizer/common/common.js">common</a>: Common functions and classes for the project</li>
+<li><a href="/site/scripts/rasterizer/common/defines.js">defines</a>: Special definitions and functions that will be used in the project</li>
+</ul>
+<p>Some of the linked files have a few part from later parts. Don't worry about those, the main results can be found in he sections themselves.</p>
+<p>The JSMatrix library (described in the next section) follows the usual JavaScript convention of camel case (&quot;camelCase&quot;). The rasterizer code uses snake case. &quot;snake_case&quot;) as it aids readability better (and mostly because the code was originally written in C++ where that convention was used and it was a a bit annoying to convert it, sorry...).
+As no one else will see your code if you don't want to, feel free to use whatever you like.</p>
+<p>The algorithms and code are not meant to be high performance. Instead, this course aims to be decently short, readable and easy to use.
+These metrics are of course subjective, but an effort was made...</p>
+<p>Also, while the course uses JavaScript, nothing depends on the language and you can just implement everything in your favorite language! For example, as mentioned above, the implementation was originally in C++ (and ran a lot faster due to that...).</p>
+<p>Now a few words about the editor!</p>
+<p>Each editor has a number of virtual &quot;files&quot;. You can open them with the &quot;Open&quot; button. Some files are read-only. These are marked with a <strong>(RO)</strong> in the title. You can open them, but you can't change the contents. When you press &quot;Run&quot;, they will be executed from left to right.</p>
+<p>Unless you clear your cache/local storage, either in the browser itself or via the special &quot;Reset Cache&quot; button in each editor, code that you have written will stay in your browser's memory, even if you close it. You have to manually save though using the &quot;Save&quot; button, which will save all your current files. Each editor is independently saved.</p>
+<p>You can change the theme of an editor, which is saved globally and is applied when you reload a page. Additionally, you can enable tab indentation. This is not enabled by default as not to trap users navigating via keyboard.</p>
+<p>Editors have basic autocompletion for general JavaScript and also the custom objects you can use in all scripts. Snippets for things like for loops also exist. Also Undo/Redo (Ctrl+z/Ctrl+y) works.</p>
+<p>&quot;Reset File&quot; will reset a file to its initial state, but will not overwrite the save and you can Undo this reset operation.</p>
+<p>Below, you can see how this will look.</p>
+<div id="initialProgramming"></div>
+<script> 
+    import("/site/scripts/rasterizer/programming/programming_demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/rasterization_course/prerequisites/programming/project"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeInitialProgramming("initialProgramming",appContext);
+        });
+    } else {
+        Module.makeInitialProgramming("initialProgramming",appContext);
+    }
+        })
+</script>
+<p>The next section will cover a library that is used throughout the project to work with vectors and matrices!</p>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/rasterization_course/prerequisites/programming/" class="previous"> &lt; &lt; Previous: Programming</a>
+            
+            
+            <a href="/site/rasterization_course/prerequisites/programming/jsmatrix/" class="next"> Next: JSMatrix &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

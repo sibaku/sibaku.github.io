@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>07.4 - Adding depth</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    <link rel="stylesheet" href="/site/styles/editor.css">
+
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <script>
+function onClickHideableContent(b){
+    let parent = b.parentElement;
+    while(parent && !parent.classList.contains("hideableConainer")){
+        parent = parent.parentElement;
+    }
+    if(!parent){
+        return;
+    }
+    const content = parent.querySelector(".hideableContent");
+    if(!content){
+        return;
+    }
+
+    const preview = parent.querySelector(".hideablePreview");
+    console.log(preview);
+
+    const bText = b.textContent || b.innerText;
+    if(bText === "Show content"){
+        b.textContent = "Hide content";
+        content.classList.remove("hideableHidden");
+        if(preview){
+            preview.classList.add("hideableHidden");
+        }
+    }else {
+        b.textContent = "Show content";    
+        content.classList.add("hideableHidden");
+        if(preview){
+            preview.classList.remove("hideableHidden");
+        }
+    }
+}   
+</script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <div class="navigationTree">
+        <ul><li><a href="/site/rasterization_course/">Introduction</a></li>
+<li><a href="/site/rasterization_course/prerequisites/">Prerequisites</a><ul><li><a href="/site/rasterization_course/prerequisites/math/">Math</a><ul><li><a href="/site/rasterization_course/prerequisites/math/trigonometry/">Trigonometry</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/vectors/">Vectors</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/matrices/">Matrices</a></li></ul></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/">Programming</a><ul><li><a href="/site/rasterization_course/prerequisites/programming/project/">Project</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/jsmatrix/">JSMatrix</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/image/">PixelImage</a></li></ul></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/">Rasterizer</a><ul><li><a href="/site/rasterization_course/rasterizer/00/">00 - Drawing points</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/introduction/">01 - Drawing lines</a><ul><li><a href="/site/rasterization_course/rasterizer/01/drawing_some_lines/">01.0 - Drawing some lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/drawing_all_lines/">01.1 - Drawing all lines</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/02/">02 - Clipping lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/introduction/">03 - Draw a triangle</a><ul><li><a href="/site/rasterization_course/rasterizer/03/point_part_of_triangle/">03.0 - Is this point part of a triangle?</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/putting_the_triangle_together/">03.1 - Putting the triangle together</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/04/introduction/">04 - Clip polygons</a><ul><li><a href="/site/rasterization_course/rasterizer/04/sutherland_hodgman/">04.0 - Sutherland-Hodgman</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/integrating_clipping/">04.1 - Integrating the clipping</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/what_about_lines/">04.2 - What about lines?</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/05/">05 - Shaders</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/introduction/">06 - Interpolate attributes</a><ul><li><a href="/site/rasterization_course/rasterizer/06/interpolate_line/">06.0 - Interpolate lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/interpolate_triangle/">06.1 - Interpolate triangles</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/07/introduction/">07 - Perspective and depth</a><ul><li><a href="/site/rasterization_course/rasterizer/07/camera_position/">07.0 - Defining the camera position</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/camera_lens/">07.1 - Defining the camera lens</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/viewport/">07.2 - The viewport</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/display_3d/">07.3 - Displaying 3D data</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/add_depth/">07.4 - Adding depth</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/08/">08 - Perspective-corrected interpolation</a></li>
+<li><a href="/site/rasterization_course/rasterizer/09/">09 - Application - Turn on the light</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/introduction/">10 - Blending</a><ul><li><a href="/site/rasterization_course/rasterizer/10/blending_operations/">10.0 - Blending operations</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/drawing_transparent/">10.1 - Drawing transparent objects</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/11/">11 - Culling</a></li>
+<li><a href="/site/rasterization_course/rasterizer/closing_remarks_and_playground/">Closing remarks and playground</a></li></ul></li></ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h1>Adding depth</h1>
+<p>As seen in the last section, there is currently an issue with some parts of objects showing up despite being behind other objects. This problem of eliminating parts of objects hidden by others (<em>Hidden Surface Removal</em>) can be tackled in a variety of ways.</p>
+<p>Object space methods will try to order the objects in a way, such that when drawing them in order, the correct ones are shown. This is basically what you will do when painting, drawing the backgrounds first and then going to the foreground, which is why this is called the painter's algorithm. We will come back to this for transparency. There are some issues with it, mainly that such an order does not always exist. Some advanced techniques try to solve this issue, but they are pretty complex.</p>
+<p>In pixel-based rasterizers, a much simpler approach is taken. The screen has a fixed resolution and we are producing our primitives inside of that constraint. So it doesn't bring us an advantage to have a (mathematically) perfect drawing order, if we can't see it anyways. The only point of an opaque object that we see is the closest one to the camera.</p>
+<p>As we are looking in the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> direction, we can measure the closeness by just that <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> coordinate. In window coordinates, they are in the range <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0,1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span> (of course, without far plane clipping, the upper limit is actually infinite, but that is just a technicality).</p>
+<p>The idea is now: Use an additional buffer next to the ones for colors with the same size as your screen. Initialize it with the maximum distance to the camera. When we want to put a fragment into a pixel, we check, if the fragment's depth (the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> coordinate) is less than the one stored in the buffer at that pixel. If not, we have already put something there, that is closer to the camera and so the fragment won't be drawn. Otherwise, we can overwrite the current pixel and put the fragment's depth into the buffer. We call this buffer the <strong>Depth buffer</strong> or <strong>Z-Buffer</strong>.</p>
+<p>Our framebuffer, that stores the currently used writing output will now contain an additional field: The depth buffer.</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">Framebuffer</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>color_buffers <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>depth_buffer <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">static</span> <span class="token keyword">new</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">Framebuffer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>The depth buffer is initialized as <code>null</code>, since we will make it optional. Sometimes you don't need it.</p>
+<p>Additionally, we add some options to our pipeline object in addition to the previously mentioned default clipping plane.</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">function</span> <span class="token function">create_depth_options</span><span class="token punctuation">(</span><span class="token parameter"><span class="token punctuation">{</span>
+      enable_depth_test <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+      enable_depth_write <span class="token operator">=</span> <span class="token boolean">true</span>
+    <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      enable_depth_test<span class="token punctuation">,</span>
+      enable_depth_write
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">class</span> <span class="token class-name">Pipeline</span> <span class="token punctuation">{</span>
+  <span class="token operator">...</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    depth_options <span class="token operator">=</span> <span class="token function">create_depth_options</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    clip_planes <span class="token operator">=</span> <span class="token punctuation">[</span>
+      <span class="token comment">// Near plane -> required to avoid</span>
+      <span class="token comment">//  zero-divisions and reflections.</span>
+      <span class="token comment">// Other clip planes are optional</span>
+      <span class="token function">vec4</span><span class="token punctuation">(</span><span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token comment">// Far plane</span>
+      <span class="token comment">// vec4(0.0, 0.0, - 1.0, 1.0),</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token operator">...</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>depth_options <span class="token operator">=</span> depth_options<span class="token punctuation">;</span>
+    <span class="token operator">...</span>
+  <span class="token punctuation">}</span>
+  <span class="token operator">...</span>
+<span class="token punctuation">}</span></code></pre>
+<p>These options are <code>enable_depth_test</code> and <code>enable_depth_write</code> and allow us a great range of flexibility. We only do the depth test, if <code>enable_depth_test</code> is <code>true</code>. And we only allow writing into the depth buffer, if <code>enable_depth_write</code> is <code>true</code>.</p>
+<p>That setup allows us for example to use already computed depth values for further tests but not update those values. You will see the application in the section for transparency.</p>
+<p>When setting up our pipeline, we will create an additional image with one component which we attach as the depth buffer. Our buffer uses float values, but it is common to use integers (24bit integers even!).</p>
+<p>When clearing the image at the beginning, we also fill the depth buffer with the highest value that we allow.</p>
+<p>There might be a question on your mind regarding the depth value and pixels. Where does it come from, we have only computed it for the vertices (it is just the z coordinate of the vertex after the perspective divide)?</p>
+<p>The answer is, we have to calculate it. Luckily, we already created the mechanism for this beforehand: Interpolation. We will just interpolate the z-values of our points. In the next section, we will have a closer look at this operation, as there is actually a lot going on with it mathematically! We will also do the same with the last coordinate of the input points, which contain <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mi>w</mi></mfrac></mrow><annotation encoding="application/x-tex">\frac{1}{w}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span> after the <code>viewport_transform</code> method, where we intentionally stored this value. This will also become clear in the next section. This is very simple code, so we will just show it here. This is also done in shader languages such as GLSL, where <code>gl_FragCoord.w</code> actually contains <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mi>w</mi></mfrac></mrow><annotation encoding="application/x-tex">\frac{1}{w}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02691em;">w</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>.</p>
+<p>Previously we computed the <code>frag_coord</code> like this:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> frag_coord <span class="token operator">=</span> <span class="token function">vec4</span><span class="token punctuation">(</span>px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">0.0</span><span class="token punctuation">,</span> <span class="token number">1.0</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>We replace this in the two rasterization methods (with just the important pars):</p>
+<pre class="language-js"><code class="language-js"><span class="token function">rasterize_line</span><span class="token punctuation">(</span><span class="token parameter">pipeline<span class="token punctuation">,</span> a<span class="token punctuation">,</span> b<span class="token punctuation">,</span> <span class="token operator">...</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token operator">...</span>
+
+  <span class="token comment">// depth values (after perspective division!)</span>
+  <span class="token comment">//  can be linearly interpolated</span>
+  <span class="token keyword">const</span> frag_z <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">interpolate_line</span><span class="token punctuation">(</span>
+    a<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span> b<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span> t
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token comment">// w contains 1/w before perspective division</span>
+  <span class="token comment">//  which can also be linearly interpolated</span>
+  <span class="token keyword">const</span> frag_w <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">interpolate_line</span><span class="token punctuation">(</span>
+    a<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> b<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> t
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token comment">// the final fragment coordinate</span>
+  <span class="token keyword">const</span> frag_coord <span class="token operator">=</span> <span class="token function">vec4</span><span class="token punctuation">(</span>
+    px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> frag_z<span class="token punctuation">,</span> frag_w
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token operator">...</span>
+<span class="token punctuation">}</span>
+
+ <span class="token function">rasterize_triangle</span><span class="token punctuation">(</span><span class="token parameter">pipeline<span class="token punctuation">,</span> v0<span class="token punctuation">,</span> v1<span class="token punctuation">,</span>
+        v2<span class="token punctuation">,</span> <span class="token operator">...</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token operator">...</span>
+
+  <span class="token comment">// depth values (after perspective division!)</span>
+  <span class="token comment">//  can be linearly interpolated</span>
+  <span class="token keyword">const</span> frag_z <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">interpolate_triangle</span><span class="token punctuation">(</span>
+    v0<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span> v1<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span> v2<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">,</span> b
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token comment">// w contains 1/w before perspective division</span>
+  <span class="token comment">//  which can also be linearly interpolated</span>
+  <span class="token keyword">const</span> frag_w <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">interpolate_triangle</span><span class="token punctuation">(</span>
+    v0<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> v1<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> v2<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> b
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token comment">// the final fragment coordinate</span>
+  <span class="token keyword">const</span> frag_coord <span class="token operator">=</span> <span class="token function">vec4</span><span class="token punctuation">(</span>
+    x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> frag_z<span class="token punctuation">,</span> frag_w
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+<span class="token operator">...</span>
+<span class="token punctuation">}</span></code></pre>
+<p>You can now implement the depth test logic into the <code>write_fragment</code> method. The solution is below.</p>
+<p><strong>Exercise:</strong></p>
+<ul>
+<li>
+<p>Implement the depth test in <code>write_fragment</code> in rasterizer.js</p>
+<ul>
+<li>Follow the instructions in the code</li>
+</ul>
+</li>
+</ul>
+<div id="demo071"></div>
+<script> 
+    import("/site/scripts/rasterizer/07_perspective/07_demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/rasterization_course/rasterizer/07/add_depth"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeDemo071("demo071",appContext);
+        });
+    } else {
+        Module.makeDemo071("demo071",appContext);
+    }
+        })
+</script>
+<p><strong>Solution:</strong></p>
+<div class="hideableConainer">
+<div class="hideableButtonContainer">
+<button class="hideableButton" onclick="onClickHideableContent(this)">Show content</button>
+</div>
+<div class="hideablePreview">See the solution</div>
+<div class="hideableContent hideableHidden">
+<div id="demo071Solution"></div>
+<script> 
+    import("/site/scripts/rasterizer/07_perspective/07_demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/rasterization_course/rasterizer/07/add_depth"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeDemo071Solution("demo071Solution",appContext);
+        });
+    } else {
+        Module.makeDemo071Solution("demo071Solution",appContext);
+    }
+        })
+</script>
+</div>
+</div>
+<p>We now have functioning 3D images! As mentioned before, there is still something kinda weird. If you look closely at the textures, they don't really seem to follow the perspective and have some weird distortions around the diagonal.</p>
+<p>This is what we will fix in the next section.</p>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/rasterization_course/rasterizer/07/display_3d/" class="previous"> &lt; &lt; Previous: 07.3 - Displaying 3D data</a>
+            
+            
+            <a href="/site/rasterization_course/rasterizer/08/" class="next"> Next: 08 - Perspective-corrected interpolation &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

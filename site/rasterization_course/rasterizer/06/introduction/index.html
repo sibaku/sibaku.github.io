@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>06 - Interpolate attributes</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    <link rel="stylesheet" href="/site/styles/editor.css">
+
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <script>
+function onClickHideableContent(b){
+    let parent = b.parentElement;
+    while(parent && !parent.classList.contains("hideableConainer")){
+        parent = parent.parentElement;
+    }
+    if(!parent){
+        return;
+    }
+    const content = parent.querySelector(".hideableContent");
+    if(!content){
+        return;
+    }
+
+    const preview = parent.querySelector(".hideablePreview");
+    console.log(preview);
+
+    const bText = b.textContent || b.innerText;
+    if(bText === "Show content"){
+        b.textContent = "Hide content";
+        content.classList.remove("hideableHidden");
+        if(preview){
+            preview.classList.add("hideableHidden");
+        }
+    }else {
+        b.textContent = "Show content";    
+        content.classList.add("hideableHidden");
+        if(preview){
+            preview.classList.remove("hideableHidden");
+        }
+    }
+}   
+</script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <div class="navigationTree">
+        <ul><li><a href="/site/rasterization_course/">Introduction</a></li>
+<li><a href="/site/rasterization_course/prerequisites/">Prerequisites</a><ul><li><a href="/site/rasterization_course/prerequisites/math/">Math</a><ul><li><a href="/site/rasterization_course/prerequisites/math/trigonometry/">Trigonometry</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/vectors/">Vectors</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/matrices/">Matrices</a></li></ul></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/">Programming</a><ul><li><a href="/site/rasterization_course/prerequisites/programming/project/">Project</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/jsmatrix/">JSMatrix</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/image/">PixelImage</a></li></ul></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/">Rasterizer</a><ul><li><a href="/site/rasterization_course/rasterizer/00/">00 - Drawing points</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/introduction/">01 - Drawing lines</a><ul><li><a href="/site/rasterization_course/rasterizer/01/drawing_some_lines/">01.0 - Drawing some lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/drawing_all_lines/">01.1 - Drawing all lines</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/02/">02 - Clipping lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/introduction/">03 - Draw a triangle</a><ul><li><a href="/site/rasterization_course/rasterizer/03/point_part_of_triangle/">03.0 - Is this point part of a triangle?</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/putting_the_triangle_together/">03.1 - Putting the triangle together</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/04/introduction/">04 - Clip polygons</a><ul><li><a href="/site/rasterization_course/rasterizer/04/sutherland_hodgman/">04.0 - Sutherland-Hodgman</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/integrating_clipping/">04.1 - Integrating the clipping</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/what_about_lines/">04.2 - What about lines?</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/05/">05 - Shaders</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/introduction/">06 - Interpolate attributes</a><ul><li><a href="/site/rasterization_course/rasterizer/06/interpolate_line/">06.0 - Interpolate lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/interpolate_triangle/">06.1 - Interpolate triangles</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/07/introduction/">07 - Perspective and depth</a><ul><li><a href="/site/rasterization_course/rasterizer/07/camera_position/">07.0 - Defining the camera position</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/camera_lens/">07.1 - Defining the camera lens</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/viewport/">07.2 - The viewport</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/display_3d/">07.3 - Displaying 3D data</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/add_depth/">07.4 - Adding depth</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/08/">08 - Perspective-corrected interpolation</a></li>
+<li><a href="/site/rasterization_course/rasterizer/09/">09 - Application - Turn on the light</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/introduction/">10 - Blending</a><ul><li><a href="/site/rasterization_course/rasterizer/10/blending_operations/">10.0 - Blending operations</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/drawing_transparent/">10.1 - Drawing transparent objects</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/11/">11 - Culling</a></li>
+<li><a href="/site/rasterization_course/rasterizer/closing_remarks_and_playground/">Closing remarks and playground</a></li></ul></li></ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h1>06: Interpolate attributes</h1>
+<p>We are now able to draw lines and triangles and customize how they look and where they appear on the screen with our new shaders.</p>
+<p>So far we are kinda limited though, as we only have a mechanism for passing data to both shaders at once.
+The fragment shader doesn't really get any information aside from the fragment coordinate and the uniform data.</p>
+<p>But what if we wanted to dynamically compute the output color based on where we are on the line or triangle?
+One of the simplest examples is specifying the color at the endpoints and then gradually coloring in the in-between values with a mix of the endpoints.</p>
+<p>The generic mechanism to achieve these kinds of things will be implemented in this section.
+We will start with lines and then move on to triangles, although for those we will see, that we already implemented most of it!</p>
+<p>The main part of the work will be adding some additional data objects along the way, but nothing too complicated.</p>
+<p>You can find the full rasterization code here: <a href="/site/scripts/rasterizer/06_attrib_interp/rasterizer.js">Rasterizer 06</a></p>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/rasterization_course/rasterizer/05/" class="previous"> &lt; &lt; Previous: 05 - Shaders</a>
+            
+            
+            <a href="/site/rasterization_course/rasterizer/06/interpolate_line/" class="next"> Next: 06.0 - Interpolate lines &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

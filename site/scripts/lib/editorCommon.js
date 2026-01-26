@@ -10,7 +10,6 @@ import {
 } from "../bundles/codeMirror.bundle.min.js";
 import * as helper from "../lib/commonHtmlHelper.js";
 
-import * as jsm from "../bundles/jsmatrix.bundle.min.js";
 
 import {
     abcdef,
@@ -185,7 +184,7 @@ async function makeJsEditor(containerId, appContext, {
     iframeSourceDoc = null,
     populateOutputDocument = null,
     populateOutputContainerBeforeRun = null,
-    runHeaderCodeString = "",
+    runHeaderCode = "",
     autocompleteObjects = [],
     enableOutput = true,
     enableContent = true,
@@ -289,12 +288,15 @@ async function makeJsEditor(containerId, appContext, {
     const recreateButtons = () => {
         filesContainer.innerHTML = "";
         storedFiles.forEach((el, idx) => {
+            if (el.show !== undefined && !el.show) {
+                return;
+            }
             const fc = helper.makeContainer();
             fc.classList.add(editorClassNames.fileEntry);
             if (idx === storedOpenFileIdx) {
                 fc.classList.add(editorClassNames.selected);
             }
-            const name = helper.makeSpan(helper.makeTextField(el.name));
+            const name = helper.makeSpan(helper.makeTextField(`${el.name}${el.editable ? "" : " (RO)"}`));
             name.classList.add(editorClassNames.filename);
             fc.append(name);
             if (idx !== storedOpenFileIdx && storedFiles.length > 1) {
@@ -400,7 +402,7 @@ async function makeJsEditor(containerId, appContext, {
 
     const autoCompleteDummy = {
         renderLatex: function (str, el) { },
-        matToLatex: function (x) { },
+        renderLatexBlock: function (str, el) { },
         output: {
             log: function (str) { },
             error: function (str) { },
@@ -415,7 +417,7 @@ async function makeJsEditor(containerId, appContext, {
 
 
     const view = createCodeEditor(editorContainer, {
-        autocompleteObjects: [window, { jsm }, autoCompleteDummy, ...autocompleteObjects],
+        autocompleteObjects: [window, autoCompleteDummy, ...autocompleteObjects],
         initialContent,
         extensions: [
             EditorState.readOnly.of(!initialFile.editable),
@@ -479,6 +481,14 @@ async function makeJsEditor(containerId, appContext, {
             makeJsEditor(containerId, appContext, {
                 files,
                 openFileIndex,
+                iframeSourceDoc,
+                populateOutputDocument,
+                populateOutputContainerBeforeRun,
+                runHeaderCode,
+                autocompleteObjects,
+                enableOutput,
+                enableContent,
+                maxScriptRunHeight,
             });
         }
 
@@ -532,10 +542,9 @@ async function makeJsEditor(containerId, appContext, {
         const { data = {} } = event;
         const { type } = data;
         if (type === "finishedRunning") {
-            iframe.style.height = Math.min(maxScriptRunHeight, iframeDocument.body.scrollHeight) + 'px';
+            iframe.style.height = Math.min(maxScriptRunHeight, iframeDocument.body.scrollHeight + 20) + 'px';
 
         }
-        console.log("Message received from the child: " + event.data); // Message received from child
     });
 
 
@@ -566,25 +575,15 @@ async function makeJsEditor(containerId, appContext, {
         scriptKatex.setAttribute("defer", "");
         scriptKatex.src = `${appContext.basePath}scripts/extern/katex/katex.min.js`;
 
-        const scriptAutoRenderKatex = document.createElement("script");
-        scriptAutoRenderKatex.setAttribute("defer", "");
-        scriptAutoRenderKatex.src = `${appContext.basePath}scripts/extern/katex/contrib/auto-render.min.js`;
-
-
         const scriptOutputCss = document.createElement("link");
         scriptOutputCss.rel = "stylesheet";
         scriptOutputCss.href = `${appContext.basePath}styles/scriptOutput.css`;
         document.head.append(
             styleKatex,
             scriptKatex,
-            scriptAutoRenderKatex,
             scriptOutputCss);
 
     }
-
-
-
-
 
     const halfWidth = enableOutput && enableContent;
     let iframeContent = null;
@@ -679,7 +678,7 @@ async function makeJsEditor(containerId, appContext, {
 
 
 
-        const s = createScript(iframeDocument, data, appContext, runHeaderCodeString);
+        const s = createScript(iframeDocument, data, appContext, runHeaderCode);
         s.id = "runnable";
 
         s.addEventListener("error", (e) => {
@@ -694,9 +693,7 @@ async function makeJsEditor(containerId, appContext, {
             }
         });
 
-        s.addEventListener("load", () => {
-            console.log("DID RUN SCRIPT");
-        });
+
         if (enableOutput) {
             const outputContainer = iframeDoc.getElementById("output");
             outputContainer.innerHTML = "";
@@ -728,10 +725,17 @@ async function makeJsEditor(containerId, appContext, {
 }
 
 function createScript(document, content, appContext, runHeaderCodeString) {
-    const header = `
-const jsm = await import("${appContext.basePath}scripts/bundles/jsmatrix.bundle.min.js");
 
-    ${runHeaderCodeString !== null ? runHeaderCodeString : ""}
+    let inlineHeaderText = "";
+
+    if (typeof runHeaderCodeString === "function") {
+        inlineHeaderText = runHeaderCodeString(appContext);
+    } else {
+        inlineHeaderText = runHeaderCodeString;
+    }
+    const header = `
+
+    ${inlineHeaderText !== null ? inlineHeaderText : ""}
     `;
     const contentText = typeof content === "string" ? content : content.join("\n\n");
     const s = document.createElement("script");
@@ -787,13 +791,7 @@ const jsm = await import("${appContext.basePath}scripts/bundles/jsmatrix.bundle.
                         m.append(msg);
                     }
                     c.append(m);
-                    renderMathInElement(m, [
-                        {left: "$$", right: "$$", display: true},
-                        {left: "$", right: "$", display: false},
-                        {left: "\\(", right: "\\)", display: false},
-                        {left: "\\[", right: "\\]", display: true}
-                    ]);
-
+                    
                 };
         })(),
     };
@@ -814,21 +812,20 @@ const jsm = await import("${appContext.basePath}scripts/bundles/jsmatrix.bundle.
             });
             return el;
         };
-        const format = new Intl.NumberFormat("en-US", {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 3
-        });
-        const matToLatex = (a) => {
-            const f = x => x === undefined ? "\\\\_" : typeof (x) === 'number' ? format.format(x) : x;
-            // const f = x => typeof(x);
-            const mstr = jsm.map(a, f, jsm.MatAny.uninitialized(a.rows(), a.cols()));
-        
-            const rows = jsm.rowreduce(mstr, x => jsm.toArray(x).join(" & "), jsm.MatAny.uninitialized(a.rows(), 1));
-        
-            return '\\\\begin{pmatrix}' + jsm.toArray(rows).join("\\\\\\\\") + '\\\\end{pmatrix}';  
+
+        const renderLatexBlock = (str, el) => {
+            if(el === null || el === undefined){
+                el = document.createElement("span");
+            }
+
+            katex.render(str, el, {
+                throwOnError: false,
+                displayMode: true,
+            });
+            return el;
         };
-    
-        await (()=> {
+
+        await (async ()=> {
 
 ${contentText}
 

@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10.1 - Drawing transparent objects</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    <link rel="stylesheet" href="/site/styles/editor.css">
+
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <script>
+function onClickHideableContent(b){
+    let parent = b.parentElement;
+    while(parent && !parent.classList.contains("hideableConainer")){
+        parent = parent.parentElement;
+    }
+    if(!parent){
+        return;
+    }
+    const content = parent.querySelector(".hideableContent");
+    if(!content){
+        return;
+    }
+
+    const preview = parent.querySelector(".hideablePreview");
+    console.log(preview);
+
+    const bText = b.textContent || b.innerText;
+    if(bText === "Show content"){
+        b.textContent = "Hide content";
+        content.classList.remove("hideableHidden");
+        if(preview){
+            preview.classList.add("hideableHidden");
+        }
+    }else {
+        b.textContent = "Show content";    
+        content.classList.add("hideableHidden");
+        if(preview){
+            preview.classList.remove("hideableHidden");
+        }
+    }
+}   
+</script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <div class="navigationTree">
+        <ul><li><a href="/site/rasterization_course/">Introduction</a></li>
+<li><a href="/site/rasterization_course/prerequisites/">Prerequisites</a><ul><li><a href="/site/rasterization_course/prerequisites/math/">Math</a><ul><li><a href="/site/rasterization_course/prerequisites/math/trigonometry/">Trigonometry</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/vectors/">Vectors</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/matrices/">Matrices</a></li></ul></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/">Programming</a><ul><li><a href="/site/rasterization_course/prerequisites/programming/project/">Project</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/jsmatrix/">JSMatrix</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/image/">PixelImage</a></li></ul></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/">Rasterizer</a><ul><li><a href="/site/rasterization_course/rasterizer/00/">00 - Drawing points</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/introduction/">01 - Drawing lines</a><ul><li><a href="/site/rasterization_course/rasterizer/01/drawing_some_lines/">01.0 - Drawing some lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/drawing_all_lines/">01.1 - Drawing all lines</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/02/">02 - Clipping lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/introduction/">03 - Draw a triangle</a><ul><li><a href="/site/rasterization_course/rasterizer/03/point_part_of_triangle/">03.0 - Is this point part of a triangle?</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/putting_the_triangle_together/">03.1 - Putting the triangle together</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/04/introduction/">04 - Clip polygons</a><ul><li><a href="/site/rasterization_course/rasterizer/04/sutherland_hodgman/">04.0 - Sutherland-Hodgman</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/integrating_clipping/">04.1 - Integrating the clipping</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/what_about_lines/">04.2 - What about lines?</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/05/">05 - Shaders</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/introduction/">06 - Interpolate attributes</a><ul><li><a href="/site/rasterization_course/rasterizer/06/interpolate_line/">06.0 - Interpolate lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/interpolate_triangle/">06.1 - Interpolate triangles</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/07/introduction/">07 - Perspective and depth</a><ul><li><a href="/site/rasterization_course/rasterizer/07/camera_position/">07.0 - Defining the camera position</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/camera_lens/">07.1 - Defining the camera lens</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/viewport/">07.2 - The viewport</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/display_3d/">07.3 - Displaying 3D data</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/add_depth/">07.4 - Adding depth</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/08/">08 - Perspective-corrected interpolation</a></li>
+<li><a href="/site/rasterization_course/rasterizer/09/">09 - Application - Turn on the light</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/introduction/">10 - Blending</a><ul><li><a href="/site/rasterization_course/rasterizer/10/blending_operations/">10.0 - Blending operations</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/drawing_transparent/">10.1 - Drawing transparent objects</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/11/">11 - Culling</a></li>
+<li><a href="/site/rasterization_course/rasterizer/closing_remarks_and_playground/">Closing remarks and playground</a></li></ul></li></ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h1>Drawing transparent objects</h1>
+<p>We now have the necessary functions to compute the blending of colors with different parameters.
+The functions we implemented in the last part are included with all  cases in the current rasterizer.</p>
+<p>For brevity, we will only have a quick look at the full <code>write_fragment</code> method with blending included.
+The blending code is basically the same as the one from the last section. The main difference is that we support multiple output buffers.</p>
+<pre class="language-js"><code class="language-js"><span class="token comment">/**
+ * Writes a number of output colors and
+ *  depth to the pipeline's framebuffer.
+ * Might apply depth test/write and
+ *  blending operations
+ * @param {Pipeline} pipeline The pipeline to use
+ * @param {AbstractMat} frag_coord The
+ *  fragment coordinate
+ * @param {Object&lt;AbstractMat>} colors A map
+ *  containing the colors per output buffer
+ */</span>
+<span class="token function">write_fragment</span><span class="token punctuation">(</span><span class="token parameter">pipeline<span class="token punctuation">,</span> frag_coord<span class="token punctuation">,</span> colors</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> px <span class="token operator">=</span> <span class="token function">floor</span><span class="token punctuation">(</span><span class="token function">subvec</span><span class="token punctuation">(</span>frag_coord<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">const</span> depth_options <span class="token operator">=</span> pipeline<span class="token punctuation">.</span>depth_options<span class="token punctuation">;</span>
+  <span class="token keyword">const</span> blend_options <span class="token operator">=</span> pipeline<span class="token punctuation">.</span>blend_options<span class="token punctuation">;</span>
+
+  <span class="token keyword">const</span> depth <span class="token operator">=</span> pipeline<span class="token punctuation">.</span>framebuffer<span class="token punctuation">.</span>depth_buffer<span class="token punctuation">;</span>
+  <span class="token comment">// depth test</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>depth_options<span class="token punctuation">.</span>enable_depth_test <span class="token operator">&amp;&amp;</span>
+      <span class="token operator">!</span><span class="token operator">!</span>depth <span class="token operator">&amp;&amp;</span>
+      frag_coord<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span> 
+      <span class="token operator">></span> depth<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span>px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>depth_options<span class="token punctuation">.</span>enable_depth_write <span class="token operator">&amp;&amp;</span>
+      <span class="token operator">!</span><span class="token operator">!</span>depth<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    depth<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>
+      v32<span class="token punctuation">.</span><span class="token function">from</span><span class="token punctuation">(</span><span class="token punctuation">[</span>frag_coord<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+       px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">const</span> frames <span class="token operator">=</span> pipeline<span class="token punctuation">.</span>framebuffer<span class="token punctuation">.</span>color_buffers<span class="token punctuation">;</span>
+
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token keyword">in</span> colors<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> frame <span class="token operator">=</span> frames<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>frame<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">continue</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>blend_options<span class="token punctuation">.</span>enabled<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> blended_color <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">blend_colors</span><span class="token punctuation">(</span>
+          colors<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> 
+          frame<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span>px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          blend_options<span class="token punctuation">.</span>constant_color<span class="token punctuation">,</span>
+          blend_options<span class="token punctuation">.</span>source_function<span class="token punctuation">,</span>
+          blend_options<span class="token punctuation">.</span>destination_function<span class="token punctuation">,</span>
+          blend_options<span class="token punctuation">.</span>blend_equation<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      frame<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>blended_color<span class="token punctuation">,</span> px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      frame<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>colors<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> px<span class="token punctuation">.</span><span class="token function">at</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>The last part to our basic transparency rendering is handling the drawing itself. This isn't part of the rasterizer itself, so we have to do it from the outside. Luckily, our rasterizer is able to do all the required operations (besides one).</p>
+<p>As mentioned before, the way to draw transparent objects is to utilize the painter algorithm, that is we draw from the back to the front. <strong>Note</strong> There are other common methods, for example approximate <em>Order independent transparency</em>, but we won't cover that here.</p>
+<p>Since we can look through transparent objects, we can't just use the depth buffer, since that would discard all objects behind the closest one. So the transparent objects will not write into the depth buffer.</p>
+<p>But we also have opaque objects, which need the depth buffer. And these opaque objects may even occlude transparent ones. So what to do?</p>
+<p>First, we draw all opaque objects as usual. This will result in an opaque image with a filled depth buffer. Then we disable writing to the depth buffer, but keeping the depth test activated. This makes it so, that occluded transparent objects stay occluded. After that we enable blending. Finally we draw the transparent objects from the back to the front.</p>
+<p>How do we sort the transparent objects? The answer is: It depends. There are different ways to sort and all of them have some issues. In general, we won't ever be able to correctly sort objects without breaking them apart. 3 triangles can overlap each other in a circular fashion. Even two triangles can intersect each other, making a correct sorting impossible.</p>
+<p>The simple solution, that works well enough in practice is: Just take the centers (or some other point) of each object and sort by how far those are to the camera. We won't even go down to the level of triangles.</p>
+<p>How far to the camera can easily be determined by the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span>-value in camera space. So we can compute the center of geometry for each object (the mean of its vertices), transform it by the model view matrix and then sort by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span>. We just have to keep in mind, that the camera is looking in the negative <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> direction, so the farther an object is away, the smaller (&quot;more negative&quot;) <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> will get.</p>
+<p>Let us implement that! The floor plane and one cube are transparent now. Also, another transparent &quot;glass&quot; pane is put in the front, so you can really see the issue when running the unchanged exercise. Solution is below:</p>
+<p><strong>Exercise:</strong></p>
+<ul>
+<li>
+<p>Implement the <code>compute_center</code> function in rendering.js</p>
+<ul>
+<li>Compute the center of the given vertex array (the average)</li>
+</ul>
+</li>
+<li>
+<p>Implement the missing parts in <code>create_render_list</code> in rendering.js</p>
+<ul>
+<li>Compute the view space <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span></span></span></span> center coordinate and store it in the transparent list objects</li>
+<li>Sort the transparent list from small to large</li>
+</ul>
+</li>
+</ul>
+<div id="demo101"></div>
+<script> 
+    import("/site/scripts/rasterizer/10_blending/10_demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/rasterization_course/rasterizer/10/drawing_transparent"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeDemo101("demo101",appContext);
+        });
+    } else {
+        Module.makeDemo101("demo101",appContext);
+    }
+        })
+</script>
+<p><strong>Solution:</strong></p>
+<div class="hideableConainer">
+<div class="hideableButtonContainer">
+<button class="hideableButton" onclick="onClickHideableContent(this)">Show content</button>
+</div>
+<div class="hideablePreview">See the solution</div>
+<div class="hideableContent hideableHidden">
+<div id="demo101Solution"></div>
+<script> 
+    import("/site/scripts/rasterizer/10_blending/10_demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/rasterization_course/rasterizer/10/drawing_transparent"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeDemo101Solution("demo101Solution",appContext);
+        });
+    } else {
+        Module.makeDemo101Solution("demo101Solution",appContext);
+    }
+        })
+</script>
+</div>
+</div>
+<p>We can now draw transparent 3D objects together with opaque ones! The last issue that we cover may be hard to see. When we draw a single object, the order in which the triangles are drawing is dependent on the order in which they are specified in the vertex array. So we might actually get a similar effect as with different objects, but within one! Depending on how the triangles are sorted, this might display as weird and inconsistent color changes.</p>
+<p>We could of course do the same with each triangle that we did with the objects, but this would be a lot of additional processing. Also, as mentioned before, intersections and overlaps will still be an issue.</p>
+<p>So we can't really solve this issue easily. But we can do something to mitigate the issue, which might also accelerate the drawing process a bit: Culling!</p>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/rasterization_course/rasterizer/10/blending_operations/" class="previous"> &lt; &lt; Previous: 10.0 - Blending operations</a>
+            
+            
+            <a href="/site/rasterization_course/rasterizer/11/" class="next"> Next: 11 - Culling &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

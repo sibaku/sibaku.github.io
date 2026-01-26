@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSMatrix</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    <link rel="stylesheet" href="/site/styles/editor.css">
+
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <script>
+function onClickHideableContent(b){
+    let parent = b.parentElement;
+    while(parent && !parent.classList.contains("hideableConainer")){
+        parent = parent.parentElement;
+    }
+    if(!parent){
+        return;
+    }
+    const content = parent.querySelector(".hideableContent");
+    if(!content){
+        return;
+    }
+
+    const preview = parent.querySelector(".hideablePreview");
+    console.log(preview);
+
+    const bText = b.textContent || b.innerText;
+    if(bText === "Show content"){
+        b.textContent = "Hide content";
+        content.classList.remove("hideableHidden");
+        if(preview){
+            preview.classList.add("hideableHidden");
+        }
+    }else {
+        b.textContent = "Show content";    
+        content.classList.add("hideableHidden");
+        if(preview){
+            preview.classList.remove("hideableHidden");
+        }
+    }
+}   
+</script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <div class="navigationTree">
+        <ul><li><a href="/site/rasterization_course/">Introduction</a></li>
+<li><a href="/site/rasterization_course/prerequisites/">Prerequisites</a><ul><li><a href="/site/rasterization_course/prerequisites/math/">Math</a><ul><li><a href="/site/rasterization_course/prerequisites/math/trigonometry/">Trigonometry</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/vectors/">Vectors</a></li>
+<li><a href="/site/rasterization_course/prerequisites/math/matrices/">Matrices</a></li></ul></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/">Programming</a><ul><li><a href="/site/rasterization_course/prerequisites/programming/project/">Project</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/jsmatrix/">JSMatrix</a></li>
+<li><a href="/site/rasterization_course/prerequisites/programming/image/">PixelImage</a></li></ul></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/">Rasterizer</a><ul><li><a href="/site/rasterization_course/rasterizer/00/">00 - Drawing points</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/introduction/">01 - Drawing lines</a><ul><li><a href="/site/rasterization_course/rasterizer/01/drawing_some_lines/">01.0 - Drawing some lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/01/drawing_all_lines/">01.1 - Drawing all lines</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/02/">02 - Clipping lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/introduction/">03 - Draw a triangle</a><ul><li><a href="/site/rasterization_course/rasterizer/03/point_part_of_triangle/">03.0 - Is this point part of a triangle?</a></li>
+<li><a href="/site/rasterization_course/rasterizer/03/putting_the_triangle_together/">03.1 - Putting the triangle together</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/04/introduction/">04 - Clip polygons</a><ul><li><a href="/site/rasterization_course/rasterizer/04/sutherland_hodgman/">04.0 - Sutherland-Hodgman</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/integrating_clipping/">04.1 - Integrating the clipping</a></li>
+<li><a href="/site/rasterization_course/rasterizer/04/what_about_lines/">04.2 - What about lines?</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/05/">05 - Shaders</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/introduction/">06 - Interpolate attributes</a><ul><li><a href="/site/rasterization_course/rasterizer/06/interpolate_line/">06.0 - Interpolate lines</a></li>
+<li><a href="/site/rasterization_course/rasterizer/06/interpolate_triangle/">06.1 - Interpolate triangles</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/07/introduction/">07 - Perspective and depth</a><ul><li><a href="/site/rasterization_course/rasterizer/07/camera_position/">07.0 - Defining the camera position</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/camera_lens/">07.1 - Defining the camera lens</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/viewport/">07.2 - The viewport</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/display_3d/">07.3 - Displaying 3D data</a></li>
+<li><a href="/site/rasterization_course/rasterizer/07/add_depth/">07.4 - Adding depth</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/08/">08 - Perspective-corrected interpolation</a></li>
+<li><a href="/site/rasterization_course/rasterizer/09/">09 - Application - Turn on the light</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/introduction/">10 - Blending</a><ul><li><a href="/site/rasterization_course/rasterizer/10/blending_operations/">10.0 - Blending operations</a></li>
+<li><a href="/site/rasterization_course/rasterizer/10/drawing_transparent/">10.1 - Drawing transparent objects</a></li></ul></li>
+<li><a href="/site/rasterization_course/rasterizer/11/">11 - Culling</a></li>
+<li><a href="/site/rasterization_course/rasterizer/closing_remarks_and_playground/">Closing remarks and playground</a></li></ul></li></ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h1>JSMatrix</h1>
+<p>We will be dealing with lots of vectors and matrices.
+This course uses the <a href="https://github.com/sibaku/jsmatrix">JSMatrix</a> library for all vector and matrix operations.</p>
+<p>While probably not the fastest library, it should be decently feature complete, with some advanced features like matrix decompositions.
+Additionally it is designed to provide lots of ways to access and work with elements of matrices and vectors, such as non-copy transpose, block-views, reductions and more. I am also the author, so sorry about the blatant self promotion!</p>
+<p>Documentation can be found at the linked repository.</p>
+<p>All functions are accessible under the variable <code>jsm</code>.</p>
+<p>Since JavaScript sadly does not have operator overloading, math operations such as <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo></mrow><annotation encoding="application/x-tex">+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord">+</span></span></span></span> have to be computed using functions, in this case <code>jsm.add</code>.</p>
+<p>To make things slightly easier, a number of common functions are already provided at the scope of your scripts.</p>
+<p>For any of these functions that take an <strong>out</strong> parameter, you can omit it, in which case a new matrix is created. This is mainly for optimization.</p>
+<p>Here is a list of those:</p>
+<ul>
+<li><code>add(a, b, out)</code>: Add two matrices/vectors</li>
+<li><code>sub(a, b, out) </code>: Subtract a matrix/vector  from another one</li>
+<li><code>mult(a, b, out)</code>: Multiply two matrices</li>
+<li><code>scale(a, v, out)</code>: Scale a matrix/vector <code>a</code> by a scalar <code>v</code></li>
+<li><code>dot(a, b</code>: The dot product between two vectors</li>
+<li><code>cross(a, b, out)</code>: The cross product between two 3D vectors</li>
+<li><code>abs(a, out)</code>: Computes the element-wise absolute value of a matrix/vector</li>
+<li><code>normalize(a, out)</code>: Divides a vector by it's length</li>
+<li><code>cwiseMin(a, b, out)</code>: Compute the element-wise minimum of two matrices/vectors</li>
+<li><code>cwiseMax(a, b, out)</code>: Compute the element-wise maximum of two matrices/vectors</li>
+<li><code>cwiseMult(a, b, out)</code>: Compute the element-wise multiplication of two matrices/vectors</li>
+<li><code>subvec(v, start, rows)</code>: Get a view of a part of a vector, so it can match dimensions with other operations. Start indicates the index of the initial coordinate and rows the number of rows. Rows is optional and defaults to all remaining rows after start.</li>
+<li><code>diag(m)</code>: Get a view of the diagonal of a matrix. Behaves just like a vector</li>
+<li><code> block(m, i, j, rows = m.rows() - i, cols = m.cols() - j)</code>: Get a view of a part of a matrix, so it can match dimensions with other operations, such as multiplication or filling. <code>rows</code> and <code>cols</code> are optional and default to the remaining values from the starting point.</li>
+<li><code>transpose(m)</code>: Get a view of the transpose of a matrix</li>
+<li><code>insert(a, b)</code>: Fills a matrix/vectpr <code>a</code> with the values of another one <code>b</code>. The dimensions must match. Can be combined with views</li>
+<li><code>fill(a, v)</code>: Sets each element of a matrix/vector <code>a</code> to a scalar value <code>v</code>. Can be combined with views</li>
+<li><code>copy(m)</code>: Copy the given matrix/vector</li>
+<li><code>hvec(v, hcoord = 1)</code>: Creates a new vector from the given vector <code>v</code> with an additional constant coordinate (default = 1) equal to <code>hcoord</code></li>
+<li><code>v32</code>: Factory functions for float vectors. Equal to <code>jsm.VecF32</code></li>
+<li><code>m32</code>: Factory functions for float matrices. Equal to <code>jsm.MatF32</code></li>
+</ul>
+<p>Additionally, as it is commonly used, we defined some helper functions for the common 2D, 3D and 4D vectors:</p>
+<ul>
+<li><code>vec2(x = 0, y = 0)</code>: This is just a shorthand for <code>v32.from([x,y])</code></li>
+<li><code>vec3(x = 0, y = 0, z = 0)</code>: This is just a shorthand for <code>v32.from([x,y,z])</code></li>
+<li><code>vec4(x = 0, y = 0, z = 0, w = 0)</code>: This is just a shorthand for <code>v32.from([x,y,z,w])</code></li>
+<li><code>mix(a, b, t)</code>: Computes a linear interpolation with the parameter <code>t</code> for the vectors/matrices <code>a</code> and <code>b</code></li>
+<li><code>ceil(a, out)</code>: Computes the per component ceil function</li>
+<li><code>floor(a, out)</code>: Computes the per component floor function</li>
+<li><code>isAny(a, b, cmp)</code>: Does a element-wise comparison of <code>a</code> and <code>b</code>. Returns <code>true</code>, if any of those comparisons where <code>true</code>, <code>false</code>otherwise. <code>cmp</code> is any function <code>cmp(elem_a, elem_b) =&gt; {true|false}</code></li>
+</ul>
+<p>You can try out these functions or any others below to get a feeling.
+The code section contains example code, but you can change it as you like.</p>
+<div id="demoJSMProgramming"></div>
+<script> 
+    import("/site/scripts/rasterizer/programming/programming_demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/rasterization_course/prerequisites/programming/jsmatrix"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.makeJSMProgramming("demoJSMProgramming",appContext);
+        });
+    } else {
+        Module.makeJSMProgramming("demoJSMProgramming",appContext);
+    }
+        })
+</script>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/rasterization_course/prerequisites/programming/project/" class="previous"> &lt; &lt; Previous: Project</a>
+            
+            
+            <a href="/site/rasterization_course/prerequisites/programming/image/" class="next"> Next: PixelImage &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>
