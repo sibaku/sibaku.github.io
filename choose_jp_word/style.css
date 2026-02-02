@@ -48,6 +48,10 @@ button {
     font-size: larger;
 }
 
+button:hover {
+    background-color: #8d1123;
+}
+
 #meaningsContainer {
     flex-grow: 1;
     flex-shrink: 1;
