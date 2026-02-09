@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple epicycles</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "0";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/post.css">
+
+    
+
+    
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
+</head>
+
+<body>
+
+    <div id="header">
+    </div>
+
+    <div id="navigation">
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+            <div class="navigationBaseEntry"><a href="/site/all_pages/">All pages</a></div>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <h1>Epicycles</h1>
+<p>I saw a nice GIF of some line drawing with epicycles of stacked circles. Did a very simple Version for myself as a form of recreational coding. The images are soothing to me, even if I haven't found the greatest parameters yet. You can play around with it too, if you like. It's pretty simple. Just insert the values you want in the text field and hit the Button. The syntax is as follows:</p>
+<p>[] needs to be outside</p>
+<p>Inside you can put a number of circles, each one stacked on the last one. A circle is described by its radius (r) in pixels and its rotations per second (rps). A third value can place the 'pencil' of the last circle off its center and is a ratio (0 is the center, 1 is on the circle). Note: You have to write numbers, i.e. 1/7 won't work. If the circle should take N seconds to rotate around, the rps is 1/N. Each Circle can be written as</p>
+<p>[r,rps,offset] You can omit values from the right, default values will be set.</p>
+<p>In total, it looks like this:</p>
+<p>[[r1,rps1,offset1],[r2,rps2,offset2],...,[rn,rpsn,offsetn]]</p>
+<p>Example:
+Two circles. The first one takes 10 seconds to rotate, and has a radius of 40 pixels. The second one takes 2 seconds and has a radius of 10 pixels. Its drawpoint is offset by 2 times its radius.</p>
+<p>[[40,0.1],[10,0.5,2]]</p>
+<div id="vis">
+<canvas id="canvas" width="500" height="500">
+Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+</canvas><br>
+<p>Descriptor: <input type="text" id="epiInput" name="epicycleDescriptor"><br>
+<button id="epiButton" type="button">Update</button> <br>
+<button id="epiButtonRand" type="button">Random</button> <br>
+Info: <input type="text" id="epiInfo" name="epicycleDescriptor" readonly=""><br>
+Draw Circles: <input type="checkbox" id="epiCirclesDraw" checked=""><br>
+Fade Lines: <input type="checkbox" id="epiFadeLines"><br>
+Draw Background: <input type="checkbox" id="epiDrawBG"><br></p>
+</div>
+<script> 
+            import("/site/scripts/cycloid/main.js").then((Module) => {
+            const appContext = {"basePath":"/site/","filePathStem":"/pages/epicycles"};
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", ()=> {
+                    Module.run("vis", appContext);
+                });
+            } else {
+                Module.run("vis", appContext);
+            }
+             })
+            </script>
+
+
+        <div id="footer">
+
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>

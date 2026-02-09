@@ -1,0 +1,11 @@
+.tagContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.tagEntry {
+    margin: 5px;
+    padding: 5px;
+
+}

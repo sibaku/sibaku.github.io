@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algeobra Showcase - Physics</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    <link rel="stylesheet" href="/site/styles/editor.css">
+
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <script>
+function onClickHideableContent(b){
+    let parent = b.parentElement;
+    while(parent && !parent.classList.contains("hideableConainer")){
+        parent = parent.parentElement;
+    }
+    if(!parent){
+        return;
+    }
+    const content = parent.querySelector(".hideableContent");
+    if(!content){
+        return;
+    }
+
+    const preview = parent.querySelector(".hideablePreview");
+    console.log(preview);
+
+    const bText = b.textContent || b.innerText;
+    if(bText === "Show content"){
+        b.textContent = "Hide content";
+        content.classList.remove("hideableHidden");
+        if(preview){
+            preview.classList.add("hideableHidden");
+        }
+    }else {
+        b.textContent = "Show content";    
+        content.classList.add("hideableHidden");
+        if(preview){
+            preview.classList.remove("hideableHidden");
+        }
+    }
+}   
+</script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <div class="navigationTree">
+        <ul><li><a href="/site/algeobra_showcase/">Introduction</a></li>
+<li><a href="/site/playground/algeobra_showcase/geometry/">Geometry</a></li>
+<li><a href="/site/playground/algeobra_showcase/vectors/">Vectors</a></li>
+<li><a href="/site/playground/algeobra_showcase/curves/">Curves</a></li>
+<li><a href="/site/playground/algeobra_showcase/physics/">Physics</a></li>
+<li><a href="/site/playground/algeobra_showcase/math/">Math</a></li>
+<li><a href="/site/playground/algeobra_showcase/algorithms/">Algorithms</a></li>
+<li><a href="/site/playground/algeobra_showcase/3d/">3D</a></li>
+<li><a href="/site/playground/algeobra_showcase/various/">Various</a></li></ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h1>Physics</h1>
+<p>Here we have demos related to physics.</p>
+<h2>Lens optics</h2>
+<p>Visualization of rays being refracted through a lens represented by two intersecting circles. You can move the center point of the rays.</p>
+<p>The code can be seen <a href="/site/scripts/algeobra_showcase/showcase/demos.js">here</a> in the function <code>demoLens</code>.</p>
+<div id="demo0"></div>
+<script> 
+    import("/site/scripts/algeobra_showcase/showcase/demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/playground/algeobra_showcase/physics"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.demoLens("demo0",appContext);
+        });
+    } else {
+        Module.demoLens("demo0",appContext);
+    }
+        })
+</script>
+<h2>Reflection and refraction</h2>
+<p>Visualization of reflection and refraction at a medium interface.</p>
+<p>The code can be seen <a href="/site/scripts/algeobra_showcase/tutorial/tutorial.js">here</a> in the function <code>reflectionRefraction</code>.</p>
+<div id="demo1"></div>
+<script> 
+    import("/site/scripts/algeobra_showcase/tutorial/tutorial.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/playground/algeobra_showcase/physics"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.reflectionRefraction("demo1",appContext);
+        });
+    } else {
+        Module.reflectionRefraction("demo1",appContext);
+    }
+        })
+</script>
+
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/playground/algeobra_showcase/curves/" class="previous"> &lt; &lt; Previous: Curves</a>
+            
+            
+            <a href="/site/playground/algeobra_showcase/math/" class="next"> Next: Math &gt;&gt;</a>
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>

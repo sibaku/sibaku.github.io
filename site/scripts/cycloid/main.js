@@ -1,0 +1,266 @@
+function Cycloid(radius, speed, offset) {
+    this.r = radius === undefined ? 10.0 : radius;
+    this.speed = speed === undefined ? 1.0 : speed;
+    this.offset = offset === undefined ? 0.0 : offset;
+
+}
+
+Cycloid.new = function () {
+    return new Cycloid(...arguments);
+}
+
+var cycl = [];
+var t0 = 0;
+var t = 0;
+var lastPoint;
+var lastTime = 0;
+
+function drawCycloids(cycl, t, ctx) {
+    ctx.save();
+    var w = Math.floor(ctx.canvas.width / 2);
+    var h = Math.floor(ctx.canvas.height / 2);
+    var c = [w, h];
+    var d = [0, 0];
+    var r0 = 0.0;
+    ctx.strokeStyle = "rgba(0,0,0,0.25)";
+    for (var i = 0; i < cycl.length; i++) {
+        ctx.beginPath();
+        var cy = cycl[i];
+        c = [c[0] + (r0 + cy.r) * d[0], c[1] + (r0 + cy.r) * d[1]];
+
+        ctx.arc(c[0], c[1], Math.abs(cy.r), 0, 2 * Math.PI);
+
+        var param = t * 2 * Math.PI * cy.speed;
+        d = [Math.cos(param), Math.sin(param)];
+        r0 = cy.r;
+        ctx.moveTo(c[0], c[1]);
+        ctx.lineTo(c[0] + cy.r * d[0], c[1] + cy.r * d[1]);
+        ctx.stroke();
+
+
+    }
+    var e = getEndpoint(cycl, t);
+    ctx.beginPath();
+    ctx.moveTo(c[0], c[1]);
+    ctx.lineTo(e[0], e[1]);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255,0,0,0.5)";
+    ctx.beginPath();
+    ctx.arc(e[0], e[1], 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.restore();
+}
+
+function getEndpoint(cycl, t) {
+    var w = Math.floor(ctx.canvas.width / 2);
+    var h = Math.floor(ctx.canvas.height / 2);
+    var c = [w, h];
+    var d = [0, 0];
+    var r0 = 0.0;
+    for (var i = 0; i < cycl.length; i++) {
+        var cy = cycl[i];
+        c = [c[0] + (r0 + cy.r) * d[0], c[1] + (r0 + cy.r) * d[1]];
+        var param = t * 2 * Math.PI * cy.speed;
+        d = [Math.cos(param), Math.sin(param)];
+        r0 = cy.r;
+    }
+
+    if (cycl.length > 0) {
+        c = [c[0] + cy.offset * cy.r * d[0], c[1] + cy.offset * cy.r * d[1]];
+    }
+
+    return c;
+}
+
+var ctxLine;
+var ctxCycl;
+var ctx;
+
+function drawAll(ctx) {
+
+    drawCycloids(cycl, t, ctx)
+}
+function addLine(ctx) {
+    if (checkFade.checked) {
+        ctx.save();
+        ctx.fillStyle = "rgba(255,255,255,0.1)";
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.restore();
+    }
+    // split into steps
+    var maxSteps = 100;
+    ctx.beginPath();
+    if (lastPoint === undefined) {
+        lastPoint = getEndpoint(cycl, t0);
+    }
+    ctx.moveTo(lastPoint[0], lastPoint[1]);
+    var endPoint = lastPoint;
+    for (var i = 1; i <= maxSteps; i++) {
+        var ti = t0 + (t - t0) * (i / maxSteps);
+        endPoint = getEndpoint(cycl, ti);
+        ctx.lineTo(endPoint[0], endPoint[1]);
+    }
+
+
+    ctx.stroke();
+    lastPoint = endPoint;
+
+}
+
+function clear(ctx) {
+    var w = ctx.canvas.width;
+    var h = ctx.canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+}
+function update() {
+    var now = Date.now();
+    var delta = now - lastTime;
+    delta = delta / 1000;
+    delta = Math.min(1 / 15, delta);
+    lastTime = now;
+
+    clear(ctx);
+    if (checkBG.checked) {
+        ctx.save();
+        ctx.fillStyle = "rgba(255,255,255,1)";
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.restore();
+    }
+    clear(ctxCycl);
+    drawAll(ctxCycl);
+    addLine(ctxLine);
+    var w = ctx.canvas.width;
+    var h = ctx.canvas.height;
+    ctx.drawImage(ctxLine.canvas, 0, 0, w, h);
+    if (checkCircl.checked) {
+
+        ctx.drawImage(ctxCycl.canvas, 0, 0, w, h);
+    }
+
+    t0 = t;
+    t += delta;
+    window.requestAnimationFrame(update);
+}
+
+function parseCycloid(str) {
+    var er;
+    try {
+        var values = JSON.parse(str);
+        const cycln = [];
+        if (!(values instanceof Array)) {
+            er = "Wrong value";
+        }
+        for (var i = 0; i < values.length; i++) {
+            var v = values[i];
+            if (!(v instanceof Array)) {
+                er = "Wrong value";
+            }
+            cycln.push(Cycloid.new(v[0], v[1], v[2]));
+        }
+        cycl = cycln;
+    } catch (e) {
+        er = "There was some error during parsing";
+    }
+
+
+    return er;
+}
+
+function randCycloid() {
+
+    var max = 1 + Math.random() * 6;
+
+    var res = [];
+    for (var i = 0; i < max; i++) {
+        var r = Math.random() * 40;
+        r = Math.round(r * 1000) / 1000;
+
+
+        // chose exponential
+        var s = Math.random();
+        s = -Math.log(1 - s) / 1.5;
+        s = Math.round(s * 1000) / 1000;
+        res.push([r, s]);
+    }
+
+    var o = Math.random() * 4;
+    o = Math.round(o * 100) / 100;
+    res[res.length - 1] = res[res.length - 1].concat(o);
+
+
+    return res;
+}
+
+var but;
+var field;
+var infoField;
+var checkCircl;
+var checkBG;
+var checkFade;
+var butRand;
+function run () {
+
+    var canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+
+    var canvasLine = document.createElement('canvas');
+    canvasLine.width = canvas.width;
+    canvasLine.height = canvas.height;
+    ctxLine = canvasLine.getContext('2d');
+
+
+    var canvasCycl = document.createElement('canvas');
+    canvasCycl.width = canvas.width;
+    canvasCycl.height = canvas.height;
+    ctxCycl = canvasCycl.getContext('2d');
+
+    //cycl = [Cycloid.new(50,1/7),Cycloid.new(30,1/2),Cycloid.new(10,20,0.4),Cycloid.new(5,40,1)];
+    //cycl = [Cycloid.new(50,1/7),Cycloid.new(30,1/5),Cycloid.new(10,20,0.4),Cycloid.new(5,40,1)];
+    //cycl = [Cycloid.new(50,1/8),Cycloid.new(30,1/5),Cycloid.new(10,1/2),Cycloid.new(5,1),Cycloid.new(5,2,10)];
+
+    but = document.getElementById("epiButton");
+    butRand = document.getElementById("epiButtonRand");
+    field = document.getElementById("epiInput");
+    infoField = document.getElementById("epiInfo");
+    checkCircl = document.getElementById("epiCirclesDraw");
+    checkBG = document.getElementById("epiDrawBG");
+    checkFade = document.getElementById("epiFadeLines");
+    field.size = 80;
+
+    butRand.onclick = function () {
+        var r = randCycloid();
+        field.value = JSON.stringify(r);
+        but.click();
+    };
+    but.onclick = function () {
+        var s = field.value;
+        var res = parseCycloid(s);
+        if (res) {
+            infoField.value = "Error: " + res;
+        }
+        else {
+            clear(ctx);
+            clear(ctxCycl);
+            clear(ctxLine);
+            lastPoint = undefined;
+            lastTime = Date.now();
+            t = 0;
+            t0 = 0;
+            infoField.value = "";
+        }
+
+
+
+    };
+    field.value = JSON.stringify([[50, 1 / 7], [30, 1 / 5], [10, 20], [5, 40, 1]]);
+    but.click();
+    lastTime = Date.now();
+
+    window.requestAnimationFrame(update);
+}
+
+export {
+    run
+};

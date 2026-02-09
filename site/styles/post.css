@@ -1,30 +1,34 @@
 * {
   -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    background-color: #cbd8df;
-    color: #141e26;
-    line-height: 1.4;
+  background-color: #cbd8df;
+  color: #141e26;
+  line-height: 1.4;
 }
+
 #content {
-    transition: margin-left .5s;
-    padding: 16px;
-    margin: 0 auto;
-    margin-top: 5px;
-    max-width: 800px;
-    min-width: 500px;
+  transition: margin-left .5s;
+  padding: 16px;
+  margin: 0 auto;
+  margin-top: 5px;
+  max-width: 800px;
+  min-width: 500px;
 
-    border: solid 2px #141e26;
+  border: solid 2px #141e26;
 
 }
+
+
 
 .subpages {
   display: flex;
   flex-wrap: wrap;
 }
+
 .subPageEntry:nth-child(even) {
   background-color: #b1c4cf;
 
@@ -42,23 +46,23 @@ body {
 }
 
 .pageEntryPreviewImageContainer img {
-  
+
   object-fit: contain;
   max-width: 100%;
   max-height: 100%;
 }
 
 .navigationBase {
-    display: flex;
-    margin: 0 auto;
-    align-items: center;
-     justify-content: center;
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: left;
 }
 
 .navigationBase .navigationBaseEntry {
-    display: inline-block;
-    padding: 5px;
-    border: solid 2px  #141e26;
+  display: inline-block;
+  padding: 5px;
+  border: solid 2px #141e26;
 }
 
 #scrollUpButton {
@@ -82,6 +86,11 @@ body {
 }
 
 .figure {
-    width: 80%;
-    margin: 0 auto;
+  width: 80%;
+  margin: 0 auto;
+}
+
+#navigation a:not([href]) {
+  font-weight: bold;
+  font-size: large;
 }

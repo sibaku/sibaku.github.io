@@ -1,0 +1,313 @@
+// a lot of ugly hacky code :)
+var t = 0;
+var lastTime = 0;
+var spc = 10;
+
+var ctx;
+
+var curve = [];
+var fourierCurve = [];
+var fourierCoeffs = [];
+var mdown = false;
+
+var maxDegree = 10;
+
+
+function clear(ctx) {
+    var w = ctx.canvas.width;
+    var h = ctx.canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+}
+
+function exp(t) {
+    return cn(Math.cos(t), Math.sin(t));
+}
+
+function cmult(a, b) {
+    return cn(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
+}
+
+function cadd(a, b) {
+    return cn(a.x + b.x, a.y + b.y);
+}
+
+function csub(a, b) {
+    return cn(a.x - b.x, a.y - b.y);
+}
+
+function smult(a, s) {
+    return cn(a.x * s, a.y * s);
+}
+
+function abs(a) {
+    return Math.sqrt(a.x * a.x + a.y * a.y);
+}
+
+function cn(a, b) {
+    return {
+        x: a,
+        y: b
+    };
+}
+
+function mapN2Z(n) {
+    if (n % 2 === 0) {
+        return n / 2;
+    } else {
+        return (-n - 1) / 2;
+    }
+}
+
+//    function mapZ2N(z) {
+//        if (z >= 0) {
+//            return 2 * z;
+//        } else {
+//            return -2 * z - 1;
+//        }
+//    }
+
+
+function fourier() {
+
+
+
+    fourierCoeffs = [];
+    for (let i = 0; i < maxDegree; i++) {
+        let k = mapN2Z(i);
+        var c = fourierCoeff(k);
+        fourierCoeffs.push(c);
+    }
+
+
+}
+
+
+
+function fourierCoeff(k) {
+    var n = curve.length;
+    var dt = 1 / n;
+
+    var c = cn(0, 0);
+    var freq = -2 * Math.PI * k;
+    for (let i = 0; i < n; i++) {
+        let ind = i % curve.length;
+        var e = exp(freq * i * dt);
+        var d = cmult(curve[ind], e);
+        d = smult(d, dt);
+        c = cadd(c, d);
+    }
+
+    return c;
+}
+
+function drawFourierCoeffs(coeffs, t) {
+    if (coeffs.length < 1) {
+        return cn(0, 0);
+    }
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(0,0,128,0.5)";
+    var center = cmult(coeffs[0], exp(0));
+    var points = [center];
+
+
+    for (let i = 1; i < coeffs.length; i++) {
+        let k = mapN2Z(i);
+        var freq = 2 * Math.PI * k;
+        var c = coeffs[i];
+        var e = exp(freq * t);
+        var pd = cmult(c, e);
+        points.push(pd);
+
+
+    }
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    var cur = points[0];
+    for (let i = 1; i < points.length; i++) {
+        let pi = points[i];
+
+        cur = cadd(cur, pi);
+        ctx.lineTo(cur.x, cur.y);
+
+        //            ctx.arc(center.x, center.y, 3, 0, 2 * Math.PI);
+    }
+
+    ctx.stroke();
+
+    cur = points[0];
+    for (let i = 1; i < points.length; i++) {
+        let pi = points[i];
+        let r = abs(pi);
+
+        ctx.beginPath();
+        ctx.arc(cur.x, cur.y, r, 0, 2 * Math.PI);
+        ctx.stroke();
+        cur = cadd(cur, pi);
+    }
+
+    ctx.beginPath();
+    ctx.arc(cur.x, cur.y, 3, 0, 2 * Math.PI);
+    ctx.stroke();
+    //        ctx.fill();
+
+
+    ctx.restore();
+
+    return cur;
+}
+
+function drawCurve(curve, close) {
+    ctx.save();
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (curve.length > 0) {
+        ctx.moveTo(curve[0].x, curve[0].y);
+    }
+    for (let i = 1; i < curve.length; i++) {
+        ctx.lineTo(curve[i].x, curve[i].y);
+    }
+    if (close) {
+
+        ctx.closePath();
+    }
+    ctx.stroke();
+    ctx.restore();
+}
+
+function update() {
+    var now = Date.now();
+    var delta = now - lastTime;
+    delta = delta / 1000;
+    delta = Math.min(1 / 15, delta);
+
+    delta = delta / spc;
+    lastTime = now;
+
+    clear(ctx);
+
+    drawCurve(curve, !mdown);
+    ctx.save();
+    ctx.strokeStyle = "rgb(255,0,0)";
+    drawCurve(fourierCurve, false);
+    ctx.restore();
+
+    if (fourierCoeffs.length > 0) {
+
+        var endpoint = drawFourierCoeffs(fourierCoeffs, t);
+        if (Math.abs(t) <= 1.1) {
+            fourierCurve.push(endpoint);
+        }
+
+    }
+
+    t += delta;
+    window.requestAnimationFrame(update);
+}
+
+
+
+
+function mousePos(e) {
+    var posx = 0;
+    var posy = 0;
+    var el = e.target;
+    var elb = el.getBoundingClientRect();
+    var db = document.getElementsByTagName("html")[0].getBoundingClientRect();
+    posx = e.clientX - elb.left;
+    posy = e.clientY - elb.top;
+
+    return {
+        x: posx,
+        y: posy
+    };
+}
+
+
+function mousedown(ev) {
+    mdown = true;
+    curve = [];
+    fourierCoeffs = [];
+    fourierCurve = [];
+    var p = mousePos(ev);
+    curve.push(p);
+}
+
+function mouseup() {
+    mdown = false;
+
+    updateFourier();
+    //        invFourier();
+}
+
+
+function mousemove(ev) {
+    if (mdown) {
+
+        var p = mousePos(ev);
+
+        var lp = curve[curve.length - 1];
+        var d = csub(p, lp);
+        var l = abs(d);
+
+        var k = Math.floor(l / 5);
+
+        for (let i = 1; i <= k; i++) {
+            let f = i / (k + 1);
+            let pm = cadd(lp, smult(d, f));
+            curve.push(pm);
+        }
+        curve.push(p);
+    }
+}
+
+function updateFourier() {
+    fourier();
+    t = 0;
+    fourierCurve = [];
+    lastTime = Date.now();
+}
+
+function run () {
+
+    var canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+
+    lastTime = Date.now();
+
+    canvas.onmousemove = mousemove;
+    canvas.onmousedown = mousedown;
+    canvas.onmouseup = mouseup;
+
+    var updateButton = document.getElementById('update');
+    var freqText = document.getElementById('numFreqs');
+    var speedText = document.getElementById('speed');
+    freqText.value = maxDegree;
+    updateButton.onclick = function () {
+        var num = parseInt(freqText.value);
+
+        if (isNaN(num)) {
+            return;
+        }
+        if (num < 0) {
+            return;
+        }
+
+        var speed = parseFloat(speedText.value);
+        if (isNaN(speed)) {
+            return;
+        }
+
+        spc = speed;
+        maxDegree = num;
+        updateFourier();
+
+    };
+
+    window.requestAnimationFrame(update);
+};
+
+export {
+    run
+};

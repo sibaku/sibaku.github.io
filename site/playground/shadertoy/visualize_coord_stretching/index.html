@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualization of coordinate transform stretching</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "0";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/post.css">
+
+    
+
+    
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
+</head>
+
+<body>
+
+    <div id="header">
+    </div>
+
+    <div id="navigation">
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+            <div class="navigationBaseEntry"><a href="/site/all_pages/">All pages</a></div>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <h1>Coordinate transform stretching</h1>
+<p>When changing coordinate system one has to be careful in many situations about the &quot;shape&quot; of the coordinate space. You can see this in all kind of applications dealing with differentiation and integration.</p>
+<p>The <strong>Shadertoy demo (<a href="https://www.shadertoy.com/view/7stGzN">https://www.shadertoy.com/view/7stGzN</a>)</strong> shows, why this is needed. Basically, the amount of volume that a small parameter region in one space takes up, might be drastically different in another one, into which the parameters where transformed into. The demo transforms a grid from a common Cartesian space into some other space via a generally non-linear transformation functions, which means that the amount of stretching and squishing changes depending on where the corresponding point is.</p>
+<p>As shadertoy embeds don't seem to work anymore, here is a video of the shader:</p>
+<p><video src="/site/videos/coord_transform2d.mp4" class="figure" type="video/mp4" controls="" autoplay="true">Video did not load</video></p>
+<p>The shader uses my automatic differentiation pack for GLSL (<a href="https://github.com/sibaku/glsl-autodiff">https://github.com/sibaku/glsl-autodiff</a>). Basically, this computes derivatives of expressions by wrapping each operation and adding a bit of additional data to each number. The nice thing is, that it is exact minus numerical precision without too much overhead. This is in stark contrast to numerical differentiation, but requires implementing all operations using custom types (much easier in languages with operator overloading).</p>
+<p>The demo computes the <a href="https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant">Jacobian</a> of the transform, which transforms the grid from its base positions to the right side shape (for technical reasons for the visualizations, we compute <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><msup><mi mathvariant="bold">J</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|\mathbf{J}^{-1}|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord"><span class="mord mathbf">J</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span><span class="mord">∣</span></span></span></span>, but <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">∣</mi><msup><mi mathvariant="bold">J</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi mathvariant="normal">∣</mi><mo>=</mo><mfrac><mn>1</mn><mrow><mi mathvariant="normal">∣</mi><mi mathvariant="bold">J</mi></mrow></mfrac><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">|\mathbf{J}^{-1}| = \frac{1}{|\mathbf{J}}|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord"><span class="mord mathbf">J</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.3651em;vertical-align:-0.52em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∣</span><span class="mord mathbf mtight">J</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord">∣</span></span></span></span>, so we can easily recover the original value). This Jacobian, more specifically, its determinant is a measure of how much space around a point gets compressed or stretched. This factor is used to color each point, with blue showing squishing and red stretching.</p>
+
+
+        <div id="footer">
+
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>

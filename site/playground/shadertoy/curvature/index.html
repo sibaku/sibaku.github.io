@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curvature computation and visualization of implicit surfaces</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "0";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/post.css">
+
+    
+
+    
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
+</head>
+
+<body>
+
+    <div id="header">
+    </div>
+
+    <div id="navigation">
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+            <div class="navigationBaseEntry"><a href="/site/all_pages/">All pages</a></div>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <h1>Curvature Visualization of implicit surfaces</h1>
+<p>The following shows two types of curvature visualizations computed live from the implicit surface definition.</p>
+<p>The shader uses my automatic differentiation pack for GLSL (<a href="https://github.com/sibaku/glsl-autodiff">https://github.com/sibaku/glsl-autodiff</a>). Basically, this computes derivatives of expressions by wrapping each operation and adding a bit of additional data to each number. The nice thing is, that it is exact minus numerical precision without too much overhead. This is in stark contrast to numerical differentiation, but requires implementing all operations using custom types (much easier in languages with operator overloading).</p>
+<p>The first example utilizes a special property of distance fields, where the Hessian matrix is the Shape operator (it is the derivative of the normalized normal field). Thus we can compute the principal curvature directions as the eigenvectors of the Hessian matrix (which has one zero-eigenvalue). For that, the shader uses a simple iterative algorithm called Jacobi Iteration.</p>
+<p>In the shader, we then project the curvature, either first or second principal curvature onto the screen. Afterwards, this direction is used in a line integral convolution with a random texture. This results in strokes following the curvature!</p>
+<p>As shadertoy embeds don't seem to work anymore, here are screenshots and links to the shaders.</p>
+<p>You can find the shader here: <a href="https://www.shadertoy.com/view/4stSRf">https://www.shadertoy.com/view/4stSRf</a></p>
+<p><img class="figure" alt="Image showcasing the first and second principal curvature directions on a torus" src="/site/images/previews/preview_curvature_lines.jpg"></p>
+<p>In the second example, the <a href="https://en.wikipedia.org/wiki/Gaussian_curvature">Gaussian curvature</a> is computed from the Hessian and gradient.</p>
+<p><strong>You can find the shader here: <a href="https://www.shadertoy.com/view/Nd3GRS">https://www.shadertoy.com/view/Nd3GRS</a></strong></p>
+<p><img class="figure" alt="Image showcasing the Gaussian curvature of an implicit surface encoded in a red/blue/white color scheme." src="/site/images/curvature/gaussian_curvature.png"></p>
+
+
+        <div id="footer">
+
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>

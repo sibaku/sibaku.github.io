@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evenly Matched Opponents</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "0";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/post.css">
+
+    
+
+    
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
+</head>
+
+<body>
+
+    <div id="header">
+    </div>
+
+    <div id="navigation">
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+            <div class="navigationBaseEntry"><a href="/site/all_pages/">All pages</a></div>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <h1>Evenly Matched Opponents</h1>
+<p>I made this as a quick doodle because I saw a <a href="https://hachyderm.io/@vnglst/111828811496422610">social media post</a> doing something like this! Multiple opponents represented as balls bounce around a grid. Each time they hit a differently colored wall, they color it in, making it their own. In the course of the simulation, this will mostly fall into a kind of equilibrium, each opponent having roughly the same amount of fields.
+I find this to be very relaxing to look at!</p>
+<div id="game">
+    <canvas id="canvas">Sadly, your browser does not support a canvas</canvas>
+</div>
+<div class="slidecontainer">
+    <span>Speed: </span>
+    <input type="range" min="0" max="100" value="50" class="slider" id="speedRange">
+    <span id="speedText"></span>
+</div>
+<div>
+    <div><b>Restart:</b></div>
+    <div>
+        <label for="numPlayers">Number of players (between 2 and 30):</label>
+        <input type="number" id="numPlayers" name="numPlayers" min="2" max="30">
+    </div>
+    <div>
+        <label for="fieldWidth">Field width (between 5 and 50):</label>
+        <input type="number" id="fieldWidth" name="fieldWidth" min="5" max="50">
+    </div>
+    <div>
+        <label for="fieldHeight">Field height (between 5 and 50):</label>
+        <input type="number" id="fieldHeight" name="fieldHeight" min="5" max="50">
+    </div>
+<p><button id="restartButton">Restart</button></p>
+</div>
+<div>
+    <div><b>Scoreboard:</b></div>
+    <div id="scoreboard"></div>
+</div>
+<script> 
+            import("/site/scripts/evenly_matched_opponents/main.js").then((Module) => {
+            const appContext = {"basePath":"/site/","filePathStem":"/playground/games_and_friends/evenly_matched_opponents"};
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", ()=> {
+                    Module.main("game", appContext);
+                });
+            } else {
+                Module.main("game", appContext);
+            }
+             })
+            </script>
+
+
+        <div id="footer">
+
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>

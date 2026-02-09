@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algeobra Showcase - Various</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    <link rel="stylesheet" href="/site/styles/editor.css">
+
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "auto";
+        }
+    </script>
+
+    <script>
+function onClickHideableContent(b){
+    let parent = b.parentElement;
+    while(parent && !parent.classList.contains("hideableConainer")){
+        parent = parent.parentElement;
+    }
+    if(!parent){
+        return;
+    }
+    const content = parent.querySelector(".hideableContent");
+    if(!content){
+        return;
+    }
+
+    const preview = parent.querySelector(".hideablePreview");
+    console.log(preview);
+
+    const bText = b.textContent || b.innerText;
+    if(bText === "Show content"){
+        b.textContent = "Hide content";
+        content.classList.remove("hideableHidden");
+        if(preview){
+            preview.classList.add("hideableHidden");
+        }
+    }else {
+        b.textContent = "Show content";    
+        content.classList.add("hideableHidden");
+        if(preview){
+            preview.classList.remove("hideableHidden");
+        }
+    }
+}   
+</script>
+
+    <link rel="stylesheet" href="/site/styles/subpage.css">
+
+    
+
+    
+</head>
+
+<body>
+    
+
+    <div id="header">
+
+
+
+    </div>
+
+    <div id="navigation">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+        </div>
+        <div class="navigationTree">
+        <ul><li><a href="/site/algeobra_showcase/">Introduction</a></li>
+<li><a href="/site/playground/algeobra_showcase/geometry/">Geometry</a></li>
+<li><a href="/site/playground/algeobra_showcase/vectors/">Vectors</a></li>
+<li><a href="/site/playground/algeobra_showcase/curves/">Curves</a></li>
+<li><a href="/site/playground/algeobra_showcase/physics/">Physics</a></li>
+<li><a href="/site/playground/algeobra_showcase/math/">Math</a></li>
+<li><a href="/site/playground/algeobra_showcase/algorithms/">Algorithms</a></li>
+<li><a href="/site/playground/algeobra_showcase/3d/">3D</a></li>
+<li><a href="/site/playground/algeobra_showcase/various/">Various</a></li></ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <button class="openbtn" onclick="openNav()">☰ Navigation</button>
+        <h1>Various</h1>
+<p>Here we have demos that don't easily fit into the other categories.</p>
+<h2>Minkowski difference</h2>
+<p>Visualization of the <a href="https://en.wikipedia.org/wiki/Minkowski_addition">Minkowski difference</a> of two polygons. This can be used to check for collisions. If the two shapes overlap, the Minkowski difference will contain the origin.</p>
+<p>The code can be seen <a href="/site/scripts/algeobra_showcase/showcase/demos.js">here</a> in the function <code>demoMinkowskiDifference</code>.</p>
+<div id="demo0"></div>
+<script> 
+    import("/site/scripts/algeobra_showcase/showcase/demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/playground/algeobra_showcase/various"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.demoMinkowskiDifference("demo0",appContext);
+        });
+    } else {
+        Module.demoMinkowskiDifference("demo0",appContext);
+    }
+        })
+</script>
+<h2>Clipping</h2>
+<p>This shows the clipping of polygons.</p>
+<p>The code can be seen <a href="/site/scripts/algeobra_showcase/showcase/demos.js">here</a> in the function <code>demoClip</code>.</p>
+<div id="demo0"></div>
+<script> 
+    import("/site/scripts/algeobra_showcase/showcase/demos.js").then((Module) => {
+    const appContext = {"basePath":"/site/","filePathStem":"/playground/algeobra_showcase/various"};
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ()=> {
+            Module.demoClip("demo0",appContext);
+        });
+    } else {
+        Module.demoClip("demo0",appContext);
+    }
+        })
+</script>
+
+        <div id="footer">
+            
+
+            
+            <a href="/site/playground/algeobra_showcase/3d/" class="previous"> &lt; &lt; Previous: 3D</a>
+            
+            
+
+
+        </div>
+    </div>
+
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+
+
+</body>
+
+</html>
