@@ -115,16 +115,16 @@ function onClickHideableContent(b){
 <h2>Clipping</h2>
 <p>This shows the clipping of polygons.</p>
 <p>The code can be seen <a href="/site/scripts/algeobra_showcase/showcase/demos.js">here</a> in the function <code>demoClip</code>.</p>
-<div id="demo0"></div>
+<div id="demo1"></div>
 <script> 
     import("/site/scripts/algeobra_showcase/showcase/demos.js").then((Module) => {
     const appContext = {"basePath":"/site/","filePathStem":"/playground/algeobra_showcase/various"};
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", ()=> {
-            Module.demoClip("demo0",appContext);
+            Module.demoClip("demo1",appContext);
         });
     } else {
-        Module.demoClip("demo0",appContext);
+        Module.demoClip("demo1",appContext);
     }
         })
 </script>

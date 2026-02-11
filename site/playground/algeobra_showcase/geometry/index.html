@@ -179,16 +179,16 @@ function onClickHideableContent(b){
 <h2>Rectangle</h2>
 <p>Simple visualization of a rectangle, which can be adjusted by the user.</p>
 <p>The code can be seen <a href="/site/scripts/algeobra_showcase/tutorial/tutorial.js">here</a> in the function <code>controllableRectangle</code>.</p>
-<div id="demo4"></div>
+<div id="demo5"></div>
 <script> 
     import("/site/scripts/algeobra_showcase/tutorial/tutorial.js").then((Module) => {
     const appContext = {"basePath":"/site/","filePathStem":"/playground/algeobra_showcase/geometry"};
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", ()=> {
-            Module.controllableRectangle("demo4",appContext);
+            Module.controllableRectangle("demo5",appContext);
         });
     } else {
-        Module.controllableRectangle("demo4",appContext);
+        Module.controllableRectangle("demo5",appContext);
     }
         })
 </script>
