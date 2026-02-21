@@ -88,6 +88,9 @@ body {
 .figure {
   width: 80%;
   margin: 0 auto;
+  max-height: 400px;
+  object-fit: contain;
+  object-position: left;
 }
 
 #navigation a:not([href]) {

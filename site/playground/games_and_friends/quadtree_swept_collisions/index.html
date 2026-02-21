@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadtree based (swept) collisions</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    
+    
+    <link rel="stylesheet" href="/site/styles/style_quad.css">
+    
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "0";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/post.css">
+
+    
+    
+    <script src="/site/scripts/quadtree_sweep/main.js" type="module"></script>
+    
+    
+
+    
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
+</head>
+
+<body>
+
+    <div id="header">
+    </div>
+
+    <div id="navigation">
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+            <div class="navigationBaseEntry"><a href="/site/all_pages/">All pages</a></div>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <h1>Quadtree based intersections and collisions of moving objects</h1>
+<p>This article will show you how to implement exact collision detection between two axis-aligned rectangles or binary quadtrees including movement! We will cover what these words mean. The code is linked below so you can adapt it as you like to your desired language or environment. The code is generally kept as simple as possible to be accessible to a broader audience.</p>
+<p>The method presented here will not work if the base objects are rotated, though a solution is mentioned.</p>
+<p>A basic understanding of vectors is useful. I also have a quick summary of vector properties <a href="/site/rasterization_course/prerequisites/math/vectors/">here</a> if you need a refresher.</p>
+<p>You can find the code for the demo below split up in four files:</p>
+<ol>
+<li><strong><a href="/site/scripts/quadtree_sweep/simple_vector.js">simple_vector.js</a></strong>: Simple implementations of basic vector operations used in the demo. All vectors are represented as arrays with two elements. When you see a function in the examples below starting with <code>v</code>, there is a good chance it is a vector operation</li>
+<li><strong><a href="/site/scripts/quadtree_sweep/grid.js">grid.js</a></strong>: Simple grid class which holds the data of the pixel objects. Also defines constants for the values representing obstacles (<code>OBSTACLE</code>) and free space (<code>FREESPACE</code>).</li>
+<li><strong><a href="/site/scripts/quadtree_sweep/collisions.js">collisions.js</a></strong>: Contains the code for generating the data structures and the corresponding intersections and collisions. This is where you find the content of this article</li>
+<li><strong><a href="/site/scripts/quadtree_sweep/main.js">main.js</a></strong>: Not the most important script, this is just the slightly disorderly setup to run the demo you see below and use the functions for collision.</li>
+</ol>
+<p>We will start with the simpler case and then build on that. First, let's see the result!</p>
+<h2>Demo</h2>
+<p>Here you can see the result of all that follows in action. You can draw your own pixel objects below and switch modes, for example replacing the collision object or both with rectangles. You can also drag around the object centers in the top canvas.</p>
+<div id="demoContainer">
+    <canvas id="canvas" width="600" height="600" style="border: solid;">No canvas for you!</canvas>
+    <div class="pqcFlexContainer">
+        <div class="pcqFlexElement">
+            <div>Blocking object</div>
+            <canvas id="canvasDrawTarget" width="300" height="300" style="border: solid;">No canvas for you!</canvas>
+        </div>
+        <div class="pcqFlexElement">
+            <div>Collision object</div>
+            <canvas id="canvasDrawObject" width="300" height="300" style="border: solid;">No canvas for you!</canvas>
+        </div>
+    </div>
+    <div id="options">
+        <label>
+            <input type="checkbox" name="eraser" value="value" id="eraser">
+            Erase
+        </label>
+        <div class="slidecontainer">
+            <span>Draw size:</span> <input type="range" min="0" max="4" value="1" class="slider" id="size"><span id="sizeLabel"></span>
+        </div>
+        <div>
+            <label>
+                <input type="checkbox" name="showLevels" value="value" id="showLevels">
+                Show QuadTree levels
+            </label>
+            <div class="slidecontainer">
+                <span>Tree level target:</span> <input type="range" min="0" max="4" value="1" class="slider" id="sliderLevelA"><span id="levelLabelA"></span>
+            </div>
+            <div class="slidecontainer">
+                <span>Tree level collider:</span> <input type="range" min="0" max="4" value="1" class="slider" id="sliderLevelB"><span id="levelLabelB"></span>
+            </div>
+        </div>
+        <div>
+            <div>
+                <span>Mode:</span> <select id="selectMode"></select>
+                <span>Objects:</span> <select id="selectObjects"></select>
+            </div>
+        </div>
+    </div>
+    <div>
+        <h4>Keyboard shortcuts</h4>
+        <div>
+            <b>e</b>: Toggle eraser
+        </div>
+        <div>
+            <b>r</b>: Toggle running state
+        </div>
+        <div>
+            <b>a</b>: Decrease pen size
+        </div>
+        <div>
+            <b>s</b>: Increase pen size
+        </div>
+    </div>
+</div>
+<h2>Axis-aligned bounding box (AABB) intersections</h2>
+<p>We start with a special rectangle: The rectangle's sides are parallel to the normal coordinate axes. One pair is parallel to the x axis and the other to the y axis. We use this rectangle to encapsulate an object or part of an object, for example the player character in a game just a part of them, like the feet, or individual pixels. That way we encapsulate or put a <strong>bound</strong> on our object. This gives rise to the very common name <strong>Axis-aligned bounding box</strong> or <strong>AABB</strong> for short.</p>
+<p><strong>NOTE</strong>: It is also possible to have a rectangle, that is not axis-aligned. In this case we call it an <strong>Oriented bounding box</strong> or <strong>OBB</strong> for short. What we will be discussing here can also be done with OBBs, but the formulas become more complicated. And if you already have a pixel based game, chances are that if you don't use general collision shapes you either want to test individual pixels of static things like the environment or define some collision box for dynamic ones. So we won't go into more detail here.</p>
+<p>There are a few ways to parameterize an AABB and different representations can be used for optimization in specific use cases. They are all equally valid though.</p>
+<ul>
+<li>(<strong>we use this</strong>) Minimum and maximum extents</li>
+<li>Minimum and size (width and height)</li>
+<li>Center and half size</li>
+</ul>
+<p>Our simple AABB will be defined by its minimum and maximum but also compute the other values, first as a showcase second because the values come in handy at different parts. Let us call those points <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">x</mi><mtext>min</mtext></msub></mrow><annotation encoding="application/x-tex">\mathbf{x}_{\text{min}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">min</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">x</mi><mtext>max</mtext></msub></mrow><annotation encoding="application/x-tex">\mathbf{x}_{\text{max}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">max</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>. The coordinates will be written in non-bold font, so</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mtable rowspacing="0.25em" columnalign="right left" columnspacing="0em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msub><mi mathvariant="bold">x</mi><mtext>min</mtext></msub></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mrow><mo fence="true">(</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>x</mi><mtext>min</mtext></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>y</mi><mtext>min</mtext></msub></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="true"><msub><mi mathvariant="bold">x</mi><mtext>max</mtext></msub></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow></mrow><mo>=</mo><mrow><mo fence="true">(</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>x</mi><mtext>max</mtext></msub></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><msub><mi>y</mi><mtext>max</mtext></msub></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow></mrow></mstyle></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+\mathbf{x}_{\text{min}} &amp;= \begin{pmatrix}x_{\text{min}} \\ y_{\text{min}} \end{pmatrix} \\
+\mathbf{x}_{\text{max}} &amp;= \begin{pmatrix}x_{\text{max}} \\ y_{\text{max}} \end{pmatrix}
+\end{aligned}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:5.4001em;vertical-align:-2.45em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.95em;"><span style="top:-4.95em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">min</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"><span class="mord"><span class="mord mathbf">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">max</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.45em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.95em;"><span style="top:-4.95em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">min</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">min</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.45em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">max</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">max</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.45em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>Our coordinates will start from the top left, as that is what the HTML canvas uses, but none of this relies on that and works equally well in a coordinate system with the origin in the bottom left.</p>
+<p><img src="/site/images/quadtree_sweep/aabb_def.png" alt="Definition of a AABB according to min an max extents" class="figure"></p>
+<p>In code, it looks like this:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">AABB</span> <span class="token punctuation">{</span>
+    <span class="token comment">// minimum extent</span>
+    min <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token comment">// maximum extent</span>
+    max <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token comment">// total size = max - min</span>
+    delta <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token comment">// center of the AABB = (max + min) * 0.5</span>
+    center <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token comment">// half size of the AABB = delta * 0.5</span>
+    half <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">min<span class="token punctuation">,</span> max</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>min <span class="token operator">=</span> min<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>max <span class="token operator">=</span> max<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>delta <span class="token operator">=</span> <span class="token function">vsub</span><span class="token punctuation">(</span>max<span class="token punctuation">,</span> min<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>half <span class="token operator">=</span> <span class="token function">vscale</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>delta<span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>center <span class="token operator">=</span> <span class="token function">vadd</span><span class="token punctuation">(</span>min<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>half<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>We will start with the intersection of two AABBs. This tells us whether the two objects overlap, that is collide. Let's just call them A and B.</p>
+<p><strong>NOTE:</strong> It is also possible to find out where they overlap/collide, but as our plan is to deal in pixels, we only care about if they do, as the pixels are what we are interested in here.</p>
+<p>For AABBs, this test is luckily very simple. We check, if we can find any axis where they do not overlap and there are only four possible configurations for that (the reason is <a href="https://en.wikipedia.org/wiki/Hyperplane_separation_theorem">this</a> wonderful theorem):</p>
+<ol>
+<li>The minimum x coordinate of A is larger than the maximum x coordinate of B</li>
+<li>The minimum x coordinate of B is larger than the maximum x coordinate of A</li>
+<li>The minimum y coordinate of A is larger than the maximum y coordinate of B</li>
+<li>The minimum y coordinate of B is larger than the maximum y coordinate of A</li>
+</ol>
+<p>If 1. or 2. hold, we can place a separating plane parallel to the y axis between both bonds, and for 3. and 4. one parallel to the x axis.</p>
+<p>One important aspect of these tests is how to deal with touching objects, which will happen easily with pixels! In our case, it makes sense, that we don't consider touching pixels to be intersecting. Thus in 1.-4. we must use greater than equal (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo></mrow><annotation encoding="application/x-tex">\geq</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mrel">≥</span></span></span></span>) instead of just greater than (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&gt;</mo></mrow><annotation encoding="application/x-tex">&gt;</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em;"></span><span class="mrel">&gt;</span></span></span></span>).</p>
+<p>We also want to be able to move objects arounds. There are many ways to do this, but here we will use the following convention: The first object A is always considered to be at the origin and the second object B is positioned relative to that. Let's say we have the origins <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">o</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{o}_A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">o</mi><mi>B</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{o}_B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>. We can then accomplish that by adding <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="bold">o</mi><mi>B</mi></msub><mo>−</mo><msub><mi mathvariant="bold">o</mi><mi>A</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{o}_B - \mathbf{o}_A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">o</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> to the minimum and maximum points of the bounds for object B.</p>
+<p>Here is the code for the intersection.</p>
+<!-- TODO code here -->
+<pre class="language-js"><code class="language-js"><span class="token comment">// computes the intersection of AABBs A and B</span>
+<span class="token comment">// B's origin is moved by offsetB relative to A</span>
+<span class="token keyword">function</span> <span class="token function">intersectAABB</span><span class="token punctuation">(</span><span class="token parameter">a<span class="token punctuation">,</span> b<span class="token punctuation">,</span> offsetB <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// these are the four conditions listed above</span>
+    <span class="token comment">// reordered 2. and 4. to have the b-terms on the righ</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>a<span class="token punctuation">.</span>min<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">>=</span> b<span class="token punctuation">.</span>max<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> offsetB<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">||</span>
+        a<span class="token punctuation">.</span>max<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> b<span class="token punctuation">.</span>min<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> offsetB<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">||</span>
+        a<span class="token punctuation">.</span>min<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">>=</span> b<span class="token punctuation">.</span>max<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> offsetB<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">||</span>
+        a<span class="token punctuation">.</span>max<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> b<span class="token punctuation">.</span>min<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> offsetB<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> 
+    <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Now that we have this basic primitive, we can continue to a full pixel image.</p>
+<h2>Pixel image quadtrees</h2>
+<p>If we just wanted to check single pixels against each other, we don't actually need the previous section. We could just iterate over all pixels of each object (or their overlapping area) and check for each pixel, if the corresponding pixel of each object's grid is set to represent an obstacle. If so, these pixels intersect, otherwise not.</p>
+<p>With obstacle, we just mean a &quot;filled&quot; pixel, something that can collide and intersect with other filled pixels.</p>
+<p>This is simple, but has two immediate issues.</p>
+<p>First, how do you deal with non-integer movements? While you might have pixels as graphics for your game, it might be possible to move at subpixel accuracy. If you only move in pixel units, this isn't a problem.</p>
+<p>Second, it might get really inefficient! Imagine two objects both with only their last pixel set, so at position <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mtext>width</mtext><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mtext>height</mtext><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\text{width}-1,\text{height} -1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord text"><span class="mord">width</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord text"><span class="mord">height</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>. If both objects move on top of each other, which would be easy, because they only collide in that last pixel, you would need to iterate over every pixel until you finally find the last position. If you had a small 32x32 pixel image, this would already be 1024 checks! Quite a lot for such a simple thing, even if this is the worst case.</p>
+<p>A third issue is something we will talk about in the next section: How to handle movement. If one or both objects move in a frame, how would you handle this? If you have a fast moving object, it might even cover a few pixels in a frame. Would you do the above test only for the ends? Then you might miss something. Would you check in-between positions? How many? That's expensive! We will be able to handle that though!</p>
+<p>From the example for the second issue, you might think about some optimizations. The issue was, that the intersecting pixel was at the end of our iteration. How about we iterate only half the image from the start and then iterate backwards from the end to cover the over half? This would catch the given case at half the computations!</p>
+<p>You might see the issue though. In that case, what about pixels at the other two corners? How about we only do quarter region and then start the iterations at the corners? This would in theory be parallelizable and catch the corners earlier than before. There is still a case where a pixel is set at the last iterated pixel of the last corner. And in general you can always find configurations that perform worse, as there is <a href="https://en.wikipedia.org/wiki/No_free_lunch_theorem">No free lunch</a> in computation. But it might give us an idea!</p>
+<p>We could take the idea of starting at 4 quadrants. What if we beforehand went through each image quadrant and recorded, whether it contains any obstacle pixels. Then when testing, we could start by checking the quadrants against each other. If two intersecting quadrants both contain a pixel, we can then look at the actual pixels they represent to check those. But if they don't intersect or one does not contain any obstacles, we can just skip the whole region! In the previous corner obstacle example, we could immediately skip 3 of the four quadrants of each image!</p>
+<p>And then... what if we don't stop there? What if we split each of the quadrants themselves into smaller quadrants? This would help us discard unneeded regions there as well. Of course, we would stop splitting when our regions are as big as a pixel.</p>
+<p>We can visualize this like the following:</p>
+<p><img src="/site/images/quadtree_sweep/quadtree_split.png" alt="Recursively splitting up a square" class="figure"></p>
+<p>This is a data structure called a <strong><a href="https://en.wikipedia.org/wiki/Quadtree">Quadtree</a></strong>. Tree structures are everywhere and there are many different ones used in 2D and 3D computation, in this context called spatial data structures. In 3D, the same idea, but splitting in eight octants, is called an <a href="https://en.wikipedia.org/wiki/Octree">Octree</a>. Both of these can be considered a special case of a <a href="https://en.wikipedia.org/wiki/Bounding_volume_hierarchy">Bounding volume hierarchy (BVH)</a>. General BVHs are commonly encountered in computer graphics, as they adapt pretty well to more irregular scenes. If you have heard about frustum culling, this is one way to do it.</p>
+<p>But enough of getting side-tracked. So we now have two things to accomplish: Creating this structure and then implementing the intersection.</p>
+<p>We will follow a pretty basic procedure and setup. Our tree is represented by a node. Such a node is just an AABB describing what area it covers and an array of four children. Each of these children themselves can be a tree and thus a node! We will use the convention that <code>null</code> represents a tree without obstacles inside. Might not be the most elegant variant, but it's also pretty simple. A node without any children (all <code>null</code>) is called a leaf. In our case, these will be the pixels, as this is our smallest unit. On the other side, the node at the top, which is not a child of any other node is the root of the tree.</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">class</span> <span class="token class-name">QuadNode</span> <span class="token punctuation">{</span>
+    <span class="token comment">// aabb of the region covered by a node</span>
+    bounds <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token comment">// child nodes, null represents an empty subtree</span>
+    children <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token comment">// the level (how many splits have occured) for this node</span>
+    level <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token comment">// whether this is a leaf</span>
+    <span class="token comment">// could also be computed by checking if all children are null</span>
+    <span class="token comment">// this is easier to use though</span>
+    leaf <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>We will do the construction recursively, as it is pretty straightforward. We could also do it iteratively, as the other operations will do.</p>
+<p>The basic construction of a node works as follows:</p>
+<p><strong>Inputs</strong>: The obstacle grid and the bounds inside of the grid. We also add a level parameter. This isn't strictly needed, but makes other operations less verbose.</p>
+<ol>
+<li>
+<p>If the width or height of the bounds is 0, we return, as there is no content</p>
+</li>
+<li>
+<p>Go through each pixel of the grid in the bounds</p>
+<ol>
+<li>If the pixel is an obstacle, create a node. Split the bounds into 4 quadrants and pass each of these to the construction method again. The results are the children of the created node. Afterwards return the node, which will end the loop</li>
+<li>If no obstacle was found, the loop is completed. Return null, as the region is empty</li>
+</ol>
+</li>
+</ol>
+<p>Initially, we will call this with the bounds encompassing the whole obstacle grid, level equal to 0. One thing to be careful about is the pixel area. The maximum pixel is at <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mtext>width</mtext><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mtext>height</mtext><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\text{width} - 1, \text{height}-1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord text"><span class="mord">width</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord text"><span class="mord">height</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span> but its area extends one step farther. Thus the initial range is from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>0</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(0,0)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">0</span><span class="mclose">)</span></span></span></span> to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mtext>width</mtext><mo separator="true">,</mo><mtext>height</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\text{width}, \text{height})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord text"><span class="mord">width</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord text"><span class="mord">height</span></span><span class="mclose">)</span></span></span></span> and we must keep this fact in mind when iterating.</p>
+<p>In code, this looks like the following, just with a part added to indicate, that a node is a leaf.</p>
+<pre class="language-js"><code class="language-js"><span class="token comment">// create quadtree from a grid</span>
+<span class="token comment">// base function to call into the recursive build</span>
+<span class="token keyword">function</span> <span class="token function">createQuadtree</span><span class="token punctuation">(</span><span class="token parameter">grid</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+    <span class="token comment">// initial values for the recursive call</span>
+    <span class="token comment">// size includes the full grid</span>
+    <span class="token comment">// NOTE: The maximimum is placed at (w,h),</span>
+    <span class="token comment">//   while the pixel range ends in (w-1,h-1)</span>
+    <span class="token comment">// this is because the bounding box contains the full pixel, </span>
+    <span class="token comment">//   while the indexing only considers the start</span>
+    <span class="token comment">// during iteration we must take this into account</span>
+    <span class="token keyword">return</span> <span class="token function">createQuadNode</span><span class="token punctuation">(</span>grid<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">AABB</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">[</span>grid<span class="token punctuation">.</span>w<span class="token punctuation">,</span> grid<span class="token punctuation">.</span>h<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">}</span>
+
+<span class="token comment">// recursive build of a quadtree</span>
+<span class="token keyword">function</span> <span class="token function">createQuadNode</span><span class="token punctuation">(</span><span class="token parameter">grid<span class="token punctuation">,</span> aabb<span class="token punctuation">,</span> level</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+    <span class="token comment">// used to iterate over the pixels</span>
+    <span class="token keyword">const</span> <span class="token punctuation">[</span>minX<span class="token punctuation">,</span> minY<span class="token punctuation">]</span> <span class="token operator">=</span> aabb<span class="token punctuation">.</span>min<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> <span class="token punctuation">[</span>maxX<span class="token punctuation">,</span> maxY<span class="token punctuation">]</span> <span class="token operator">=</span> aabb<span class="token punctuation">.</span>max<span class="token punctuation">;</span>
+
+    <span class="token comment">// used to determine if we arrived at a leaf or split too far</span>
+    <span class="token keyword">const</span> <span class="token punctuation">[</span>deltaX<span class="token punctuation">,</span> deltaY<span class="token punctuation">]</span> <span class="token operator">=</span> aabb<span class="token punctuation">.</span>delta<span class="token punctuation">;</span>
+
+    <span class="token comment">// node has zero size -> empty -> nothing to do</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>deltaX <span class="token operator">===</span> <span class="token number">0</span> <span class="token operator">||</span> deltaY <span class="token operator">===</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">const</span> <span class="token punctuation">{</span> data<span class="token punctuation">,</span> w <span class="token punctuation">}</span> <span class="token operator">=</span> grid<span class="token punctuation">;</span>
+
+    <span class="token comment">// go through the grid and search for obstacles</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> y <span class="token operator">=</span> minY<span class="token punctuation">;</span> y <span class="token operator">&lt;</span> maxY<span class="token punctuation">;</span> y<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// small optimization, we precompute this</span>
+        <span class="token comment">// we could also just call the value method of the grid</span>
+        <span class="token keyword">let</span> yOffset <span class="token operator">=</span> y <span class="token operator">*</span> w<span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> x <span class="token operator">=</span> minX<span class="token punctuation">;</span> x <span class="token operator">&lt;</span> maxX<span class="token punctuation">;</span> x<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+            <span class="token keyword">let</span> idx <span class="token operator">=</span> yOffset <span class="token operator">+</span> x<span class="token punctuation">;</span>
+
+            <span class="token comment">// if not an obstacle, we check the next pixel</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>data<span class="token punctuation">[</span>idx<span class="token punctuation">]</span> <span class="token operator">!==</span> <span class="token constant">OBSTACLE</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">continue</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+
+
+            <span class="token comment">// found an obstacle</span>
+            <span class="token comment">// create node and traverse down</span>
+            <span class="token keyword">const</span> node <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">QuadNode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            node<span class="token punctuation">.</span>bounds <span class="token operator">=</span> aabb<span class="token punctuation">;</span>
+            node<span class="token punctuation">.</span>level <span class="token operator">=</span> level<span class="token punctuation">;</span>
+            node<span class="token punctuation">.</span>leaf <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+
+            <span class="token comment">// stop, if we are a leaf</span>
+            <span class="token comment">// a leaf is a pixel, so size is 1</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>deltaX <span class="token operator">===</span> <span class="token number">1</span> <span class="token operator">&amp;&amp;</span> deltaY <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                node<span class="token punctuation">.</span>leaf <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+                <span class="token keyword">return</span> node<span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+
+            <span class="token comment">// split</span>
+            <span class="token comment">// also handles non-power-of-two sizes</span>
+            <span class="token keyword">const</span> cX <span class="token operator">=</span> minX <span class="token operator">+</span> Math<span class="token punctuation">.</span><span class="token function">floor</span><span class="token punctuation">(</span>deltaX <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> cY <span class="token operator">=</span> minY <span class="token operator">+</span> Math<span class="token punctuation">.</span><span class="token function">floor</span><span class="token punctuation">(</span>deltaY <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> c <span class="token operator">=</span> <span class="token punctuation">[</span>cX<span class="token punctuation">,</span> cY<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+            <span class="token comment">// the four quadrants</span>
+            node<span class="token punctuation">.</span>children<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">createQuadNode</span><span class="token punctuation">(</span>grid<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">AABB</span><span class="token punctuation">(</span>aabb<span class="token punctuation">.</span>min<span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">,</span> level <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            node<span class="token punctuation">.</span>children<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">createQuadNode</span><span class="token punctuation">(</span>grid<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">AABB</span><span class="token punctuation">(</span><span class="token punctuation">[</span>cX<span class="token punctuation">,</span> minY<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">[</span>maxX<span class="token punctuation">,</span> cY<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> level <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            node<span class="token punctuation">.</span>children<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">createQuadNode</span><span class="token punctuation">(</span>grid<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">AABB</span><span class="token punctuation">(</span>c<span class="token punctuation">,</span> aabb<span class="token punctuation">.</span>max<span class="token punctuation">)</span><span class="token punctuation">,</span> level <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            node<span class="token punctuation">.</span>children<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">createQuadNode</span><span class="token punctuation">(</span>grid<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">AABB</span><span class="token punctuation">(</span><span class="token punctuation">[</span>minX<span class="token punctuation">,</span> cY<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">[</span>cX<span class="token punctuation">,</span> maxY<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> level <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">return</span> node<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Here is an example from the demo of how this subdivision scheme works, where you can see that there are no nodes in the free regions and the structure adapts to the actual pixels!</p>
+<p><img src="/site/images/quadtree_sweep/quadtrees_example.png" alt="Examples of two pixel grids split into quadtrees" class="figure"></p>
+<p>Great! Now  we can use this structure to check for intersections. The demo code calculates all possible intersections, because that is used in the visualization. Depending on the application, you might only be interested in IF a collision happens, which can be significantly faster. I will add a note after and in the code to indicate the differences, as they are pretty tiny.</p>
+<p>So we want to find all intersections between two quadtrees. Once again, we will use object A as a reference and add an offset parameter to the function. Below is just the code, but here is what it does and it is basically what we talked about before. Basically, each node will test against the other tree.</p>
+<p>We start with the root nodes of objects A and B put into a list as a pair. We also create an empty array for the found intersections.</p>
+<p>At each step, we get the next pair of nodes from the top of the list. If their bounds do not intersect, nothing inside will intersect and we can skip to the next pair in line, if there is one. If they intersect, we check whether both nodes are leaf nodes. If so, we add the pair to the intersection array and continue with the next pair. Otherwise we add each pair of children of the current A node and the current B node to the list. If either of the nodes is a leaf, then we use the node itself instead of its children.</p>
+<p>When the list of pairs is empty, we are finished and return the intersection array.</p>
+<p>Now, if we just wanted to check IF an intersection exists, we can make a simple change. First, we don't need the intersection array anymore. Then, in our check, whether both nodes are leaf nodes, we can just return <code>true</code> or the collision pair instead of adding it to a list. This will exit the function as expected. When the list becomes empty and we exit the loop, no intersection was encountered and we can return <code>false</code>, an empty pair or whatever you see fit. That's all!</p>
+<p>Here is the full code for the intersection, with one additional functionality, that allows us to treat all nodes after a certain level as leaf nodes. That way, we can test against coarser representations of an object!</p>
+<pre class="language-js"><code class="language-js"><span class="token comment">// computes all intersections between two quadtrees</span>
+<span class="token comment">// tree A is assumed to be located at its origin</span>
+<span class="token comment">// B is moved by an offset, which is the relative</span>
+<span class="token comment">//   vector between both origins (B-A)</span>
+<span class="token comment">// the maxLevel parameters allow us to intersect with coarser levels</span>
+<span class="token keyword">function</span> <span class="token function">intersectQuadtrees</span><span class="token punctuation">(</span><span class="token parameter">aTree<span class="token punctuation">,</span> bTree<span class="token punctuation">,</span> offsetB<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    maxLevelA <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span>
+    maxLevelB <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// contains all intersections at the end</span>
+    <span class="token keyword">const</span> intersections <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// queue of node pairs</span>
+    <span class="token keyword">const</span> queue <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">[</span>aTree<span class="token punctuation">,</span> bTree<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// we work until all pairs have been processed</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span>queue<span class="token punctuation">.</span>length <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// the current pair</span>
+        <span class="token keyword">const</span> <span class="token punctuation">[</span>a<span class="token punctuation">,</span> b<span class="token punctuation">]</span> <span class="token operator">=</span> queue<span class="token punctuation">.</span><span class="token function">pop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// one of the nodes is empty, no intersections possible</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>a <span class="token operator">===</span> <span class="token keyword">null</span> <span class="token operator">||</span> b <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// check if nodes are leaf nodes or treat them as one</span>
+        <span class="token comment">//   if they are larger than the max level </span>
+        <span class="token comment">// (-1 is treated as infinity)</span>
+        <span class="token keyword">const</span> aLeaf <span class="token operator">=</span> a<span class="token punctuation">.</span>leaf <span class="token operator">||</span> <span class="token punctuation">(</span>maxLevelA <span class="token operator">>=</span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> a<span class="token punctuation">.</span>level <span class="token operator">>=</span> maxLevelA<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">const</span> bLeaf <span class="token operator">=</span> b<span class="token punctuation">.</span>leaf <span class="token operator">||</span> <span class="token punctuation">(</span>maxLevelB <span class="token operator">>=</span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> b<span class="token punctuation">.</span>level <span class="token operator">>=</span> maxLevelB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// no intersection -> children can't intersect either</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">intersectAABB</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span>bounds<span class="token punctuation">,</span> b<span class="token punctuation">.</span>bounds<span class="token punctuation">,</span> offsetB<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// two leaf nodes -> intersection found</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>aLeaf <span class="token operator">&amp;&amp;</span> bLeaf<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            intersections<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">[</span>a<span class="token punctuation">,</span> b<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// go through all children</span>
+        <span class="token keyword">let</span> nodesA <span class="token operator">=</span> a<span class="token punctuation">.</span>children<span class="token punctuation">;</span>
+        <span class="token keyword">let</span> nodesB <span class="token operator">=</span> b<span class="token punctuation">.</span>children<span class="token punctuation">;</span>
+
+        <span class="token comment">// if a node is a leaf, use the node itself</span>
+        <span class="token comment">//   instead of its non-existing children</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>aLeaf<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            nodesA <span class="token operator">=</span> <span class="token punctuation">[</span>a<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>bLeaf<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            nodesB <span class="token operator">=</span> <span class="token punctuation">[</span>b<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// add all child pairs</span>
+        <span class="token comment">// we don't add empty pairs, but we could, </span>
+        <span class="token comment">//   as it is handled above</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> ca <span class="token keyword">of</span> nodesA<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>ca <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">continue</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> cb <span class="token keyword">of</span> nodesB<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>cb <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token keyword">continue</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                queue<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">[</span>ca<span class="token punctuation">,</span> cb<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> intersections<span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>The result will look something like this:</p>
+<p><img src="/site/images/quadtree_sweep/quadtree_intersection.png" alt="Visualizing the intersection of two quadtrees" class="figure"></p>
+<p>If we want to intersect an AABB with a quadtree, we can just create a new quadtree node with that AABB and set its leaf property. Then the algorithm works just as before!</p>
+<p>Next we will extend this to moving objects. Luckily, this won't be too much change!</p>
+<h2>Intersections with moving objects</h2>
+<p>When a character moves in a game, this happens per frame. During this time objects will only move in a straight line. During this movement a moving object B could intersect with a stationary object A. We want to compute the point to which B can move until it collides with A. This is also called some variant of &quot;sweep&quot;.</p>
+<p>If both objects move, that isn't an issue either. As we are using A as a reference, we can just compute the relative movement as movement of B - movement of A, similar to the relative position. This is like in physics problems. When you are not accelerating, you don't feel like moving. So if you are in a car and a car next to you drives with the same speed, it kind of looks like you are both standing still (ignoring the fact that you can see your environment change, just imagine driving through thick fog).</p>
+<p>It turns out, that this is surprisingly simple! We will only quickly cover the intuition behind it.</p>
+<p>Imagine our AABB B trying to move by a certain amount, given by a movement vector. Now imagine B colliding with A. This means, that it was blocked by one of the sides of A. Next, think about slightly moving around the movement vector, so that the boxes still collide. B will slide around the edge it collided with.</p>
+<p>Next up, highlight the center of the colliding B and basically trace with a line how the center moves when changing the direction. You can also move around the original position of B around A, basically cover all directions! What you will observe is, that the center will trace out another rectangle around A! (In mathematical terms which you will also find in the collision literature, this is a <a href="https://en.wikipedia.org/wiki/Minkowski_addition">Minkowski sum</a> of both shapes).</p>
+<p>It looks something like this:</p>
+<p><img src="/site/images/quadtree_sweep/collide_aabb.png" alt="Intuituin behind the sweeping AABB algorithm" class="figure"></p>
+<p>A small liberty for the purpose of visualization in the image is that the objects collide directly at the corners. This won't happen in our implementation, but it helps in creating the mental image.</p>
+<p>The tracing out of the outer rectangle makes sense, as the collisions are just sliding around all the edges of A. This extended rectangle therefore has the the width of A plus the width of B and similar for the height! You could also say, the half size of A plus the half size of B is the half size of the extended rectangle, which might seem more natural, as we are dealing with the center of the object.</p>
+<p>Now the problem of finding the point to which B can move until it collides with A is reduced to finding the intersection of a ray starting at the center of B and moving along the direction given by the movement vector with the extended rectangle!</p>
+<p>Let's implement that!</p>
+<p>First, we create a method for rectangles and then for the quadtrees.</p>
+<p>For that, we need an algorithm for intersecting a ray with an AABB. You can find a bunch of different ones when you search for it. They are basically all based on the <a href="https://en.wikipedia.org/wiki/Slab_method">Slab method</a>. Many use some very optimized versions, but sometimes you need to be careful when using them, as they might rely on properties of floating point division not used by the specific system you are using. Here is a simple version of that.</p>
+<pre class="language-js"><code class="language-js"><span class="token comment">// intersects a ray with an AABB</span>
+<span class="token keyword">function</span> <span class="token function">intersectRayAABB</span><span class="token punctuation">(</span><span class="token parameter">bmin<span class="token punctuation">,</span> bmax<span class="token punctuation">,</span> rayPos<span class="token punctuation">,</span> rayDir</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> tNear <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">Infinity</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> tFar <span class="token operator">=</span> <span class="token number">Infinity</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// slab method</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> bmin<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+        <span class="token comment">// check axis -> must not be parallel</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>Math<span class="token punctuation">.</span><span class="token function">abs</span><span class="token punctuation">(</span>rayDir<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">1E-7</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">const</span> tlow <span class="token operator">=</span> <span class="token punctuation">(</span>bmin<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> rayPos<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">/</span> rayDir<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> thigh <span class="token operator">=</span> <span class="token punctuation">(</span>bmax<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> rayPos<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">/</span> rayDir<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">const</span> tNearI <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">min</span><span class="token punctuation">(</span>tlow<span class="token punctuation">,</span> thigh<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">const</span> tFarI <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">max</span><span class="token punctuation">(</span>tlow<span class="token punctuation">,</span> thigh<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            tNear <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">max</span><span class="token punctuation">(</span>tNear<span class="token punctuation">,</span> tNearI<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            tFar <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">min</span><span class="token punctuation">(</span>tFar<span class="token punctuation">,</span> tFarI<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token comment">// if direction in axis is 0, we check</span>
+            <span class="token comment">//   instead if the ray origin in that axis lies in the bounds</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>rayPos<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">-</span> <span class="token number">1E-7</span> <span class="token operator">&lt;=</span> bmin<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">||</span> rayPos<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1E-7</span> <span class="token operator">>=</span> bmax<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// outside</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>tNear <span class="token operator">></span> tFar<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// calculate various in and out values</span>
+    <span class="token keyword">let</span> t <span class="token operator">=</span> <span class="token number">Infinity</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>tNear <span class="token operator">>=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        t <span class="token operator">=</span> tNear<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>tFar <span class="token operator">>=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        t <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">min</span><span class="token punctuation">(</span>t<span class="token punctuation">,</span> tFar<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">isFinite</span><span class="token punctuation">(</span>t<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment">// if the second hit occured before the origin, no actual hit happened</span>
+    <span class="token keyword">const</span> hit <span class="token operator">=</span> tFar <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+        <span class="token comment">// first intersection</span>
+        tNear<span class="token punctuation">,</span>
+        <span class="token comment">// second intersection</span>
+        tFar<span class="token punctuation">,</span>
+        <span class="token comment">// first non-zero intersection</span>
+        t<span class="token punctuation">,</span>
+        <span class="token comment">// if a hit occured</span>
+        hit<span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>This function will return <code>null</code>, if no intersection occurs at all and otherwise information about the hit. In the code, more is returned than you would need, but this was and can be used for debugging, so I left it there. The <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> value of the ray will be between 0 and 1 if a collision occurred. With that in mind, we can just adjust our movement vector with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> as a percentage value.</p>
+<p>The actual sweep collision will be very easy. Take in A, B, relative position and movement of B. Compute the minimum and maximum of the AABB of A enlarged by the size of B. Shoot a ray from the center of B in the direction of the movement vector against the enlarged AABB. If it hits and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> is less than 1, adjust the movement vector and return it.</p>
+<p>Here is how it can look like:</p>
+<pre class="language-js"><code class="language-js"><span class="token comment">// sweeps an object B by the amount moveB and</span>
+<span class="token comment">//   computes its possibly adjusted movement</span>
+<span class="token comment">//   vector if a collision with A occurs</span>
+<span class="token keyword">function</span> <span class="token function">sweepAABB</span><span class="token punctuation">(</span><span class="token parameter">ba<span class="token punctuation">,</span> bb<span class="token punctuation">,</span> offsetB<span class="token punctuation">,</span> moveB</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+    <span class="token comment">// move bounds of b to offset</span>
+    <span class="token keyword">const</span> bbOrig <span class="token operator">=</span> <span class="token function">vadd</span><span class="token punctuation">(</span>bb<span class="token punctuation">.</span>center<span class="token punctuation">,</span> offsetB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// pad size of a by b</span>
+    <span class="token comment">// we use the half size, as computing min max is easy:</span>
+    <span class="token comment">//   center -+ half</span>
+    <span class="token keyword">const</span> baHalfSizePadded <span class="token operator">=</span> <span class="token function">vadd</span><span class="token punctuation">(</span>ba<span class="token punctuation">.</span>half<span class="token punctuation">,</span> bb<span class="token punctuation">.</span>half<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// adjusted min max</span>
+    <span class="token keyword">const</span> baPadMin <span class="token operator">=</span> <span class="token function">vsub</span><span class="token punctuation">(</span>ba<span class="token punctuation">.</span>center<span class="token punctuation">,</span> baHalfSizePadded<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> baPadMax <span class="token operator">=</span> <span class="token function">vadd</span><span class="token punctuation">(</span>ba<span class="token punctuation">.</span>center<span class="token punctuation">,</span> baHalfSizePadded<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// raycast with the adjusted bounds and movement vector</span>
+    <span class="token keyword">const</span> hit <span class="token operator">=</span> <span class="token function">intersectRayAABB</span><span class="token punctuation">(</span>baPadMin<span class="token punctuation">,</span> baPadMax<span class="token punctuation">,</span> bbOrig<span class="token punctuation">,</span> moveB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">let</span> result <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token literal-property property">t</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">move</span><span class="token operator">:</span> moveB<span class="token punctuation">,</span>
+        <span class="token literal-property property">hit</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>hit <span class="token operator">!==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>hit<span class="token punctuation">.</span>hit<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// a hit exist, but we need to make sure to</span>
+        <span class="token comment">//   handle the case, that the extended bounds</span>
+        <span class="token comment">//   contain the ray origin</span>
+        <span class="token comment">// if the ray origin is inside, tNear will be</span>
+        <span class="token comment">//   less than 0 and we can't move</span>
+        <span class="token comment">// generally we will take the closest </span>
+        <span class="token comment">//   intersection but clamp it to zero</span>
+        <span class="token keyword">let</span> t <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">max</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> hit<span class="token punctuation">.</span>tNear<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// collision occured further away than we</span>
+        <span class="token comment">//   want to go, so no problem</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>t <span class="token operator">></span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// blocked -> fill result</span>
+        result<span class="token punctuation">.</span>hit <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        result<span class="token punctuation">.</span>t <span class="token operator">=</span> t<span class="token punctuation">;</span>
+        result<span class="token punctuation">.</span>move <span class="token operator">=</span> <span class="token function">vscale</span><span class="token punctuation">(</span>moveB<span class="token punctuation">,</span> t<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>You can see another resource about this <a href="https://noonat.github.io/intersect/#aabb-vs-aabb">here</a>.</p>
+<p>The quadtree sweep variant is actually nearly the same as before! We just replace the AABB intersection with the AABB sweep. If both nodes are leaf nodes, instead of adding them to a list, we check whether the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6151em;"></span><span class="mord mathnormal">t</span></span></span></span> value from the sweep test is smaller than the current one and if so replace the current one with the sweep result. We also add the colliding object pair. At the end of the processing of pairs, we return the current result containing the possibly adjusted movement vector and collision pairs!</p>
+<pre class="language-js"><code class="language-js"><span class="token comment">// computes the sweep collision between two quadtrees</span>
+<span class="token comment">// tree A is assumed to be located at its origin</span>
+<span class="token comment">// B is moved by an offset, which is the relative vector</span>
+<span class="token comment">//   between both origins (B-A)</span>
+<span class="token comment">// B tries to move by the vector moveB</span>
+<span class="token comment">// the maxLevel parameters allow us to intersect with</span>
+<span class="token comment">//   coarser levels</span>
+<span class="token keyword">function</span> <span class="token function">sweepQuadtrees</span><span class="token punctuation">(</span><span class="token parameter">aTree<span class="token punctuation">,</span> bTree<span class="token punctuation">,</span> offsetB<span class="token punctuation">,</span> moveB<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    maxLevelA <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span>
+    maxLevelB <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+    <span class="token comment">// result contains movement values and the</span>
+    <span class="token comment">//   object pair of the collision</span>
+    <span class="token keyword">let</span> result <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token literal-property property">sweep</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token literal-property property">t</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+            <span class="token literal-property property">move</span><span class="token operator">:</span> moveB<span class="token punctuation">,</span>
+            <span class="token literal-property property">hit</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">objects</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// working queue of node pairs</span>
+    <span class="token keyword">const</span> queue <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">[</span>aTree<span class="token punctuation">,</span> bTree<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// we work until all pairs have been processed</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span>queue<span class="token punctuation">.</span>length <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// current pair</span>
+        <span class="token keyword">const</span> <span class="token punctuation">[</span>a<span class="token punctuation">,</span> b<span class="token punctuation">]</span> <span class="token operator">=</span> queue<span class="token punctuation">.</span><span class="token function">pop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// one of the nodes is empty,</span>
+        <span class="token comment">//   no intersections possible</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>a <span class="token operator">===</span> <span class="token keyword">null</span> <span class="token operator">||</span> b <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// compute sweep between values</span>
+        <span class="token keyword">const</span> abSweep <span class="token operator">=</span> <span class="token function">sweepAABB</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span>bounds<span class="token punctuation">,</span> b<span class="token punctuation">.</span>bounds<span class="token punctuation">,</span> offsetB<span class="token punctuation">,</span> moveB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// no collision found -> next pair</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>abSweep<span class="token punctuation">.</span>hit<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// check if nodes are leaf nodes or treat</span>
+        <span class="token comment">//   them as one if they are larger than the max level</span>
+        <span class="token comment">//   (-1 is treated as infinity)</span>
+        <span class="token keyword">const</span> aLeaf <span class="token operator">=</span> a<span class="token punctuation">.</span>leaf <span class="token operator">||</span> <span class="token punctuation">(</span>maxLevelA <span class="token operator">>=</span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> a<span class="token punctuation">.</span>level <span class="token operator">>=</span> maxLevelA<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">const</span> bLeaf <span class="token operator">=</span> b<span class="token punctuation">.</span>leaf <span class="token operator">||</span> <span class="token punctuation">(</span>maxLevelB <span class="token operator">>=</span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> b<span class="token punctuation">.</span>level <span class="token operator">>=</span> maxLevelB<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// both leafs</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>aLeaf <span class="token operator">&amp;&amp;</span> bLeaf<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// if the hit is before the one we already</span>
+            <span class="token comment">//   found -> replace</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>abSweep<span class="token punctuation">.</span>hit<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>abSweep<span class="token punctuation">.</span>t <span class="token operator">&lt;</span> result<span class="token punctuation">.</span>sweep<span class="token punctuation">.</span>t<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    result<span class="token punctuation">.</span>sweep <span class="token operator">=</span> abSweep<span class="token punctuation">;</span>
+                    result<span class="token punctuation">.</span>objects <span class="token operator">=</span> <span class="token punctuation">[</span>a<span class="token punctuation">,</span> b<span class="token punctuation">]</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">continue</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// go through all children</span>
+        <span class="token keyword">let</span> nodesA <span class="token operator">=</span> a<span class="token punctuation">.</span>children<span class="token punctuation">;</span>
+        <span class="token keyword">let</span> nodesB <span class="token operator">=</span> b<span class="token punctuation">.</span>children<span class="token punctuation">;</span>
+
+        <span class="token comment">// if a node is a leaf, use the node itself</span>
+        <span class="token comment">//   instead of its non-existing children</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>aLeaf<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            nodesA <span class="token operator">=</span> <span class="token punctuation">[</span>a<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>bLeaf<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            nodesB <span class="token operator">=</span> <span class="token punctuation">[</span>b<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// add all child pairs</span>
+        <span class="token comment">// we don't add empty pairs, but we could,</span>
+        <span class="token comment">//   as it is handled above</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> ca <span class="token keyword">of</span> nodesA<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>ca <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">continue</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> cb <span class="token keyword">of</span> nodesB<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>cb <span class="token operator">===</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token keyword">continue</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+
+                queue<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">[</span>ca<span class="token punctuation">,</span> cb<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+
+<span class="token punctuation">}</span></code></pre>
+<p>The result looks like this:</p>
+<p><img src="/site/images/quadtree_sweep/quadtree_sweep_block.png" alt="One quadtree blocking the movement of another" class="figure"></p>
+<p>By setting the <code>maxlevel</code> parameters, we can also block with the coarser version!</p>
+<p><img src="/site/images/quadtree_sweep/quadtree_sweep_block_level.png" alt="One coarser quadtree blocking the movement of another" class="figure"></p>
+<p>And with this we are finished! We implemented exact collision of arbitrary pixel maps with each other that also allow interaction with general AABBs. For example, you could place a box at the center of your player character's feet. When moving, you can check for collisions with the surroundings. You could also combine this with my last post on <a href="/site/playground/games_and_friends/pixel_collisions/">generating normals from pixel grids</a> to handle interaction with the surroundings.</p>
+<p>If you only want to move in pixel units you can just round the values you get from the above algorithm. You could also compute the amount of offset needed based on the movement direction to get a more correct result.</p>
+<p>There are of course various other ways to improve this. The literature about spatial data structures is large and there are many ways to optimize the tree traversal, especially with directional rays. For example, some schemes in raytracing will sort (without a real sorting algorithm) child nodes based on which one is closer. Even in our collision algorithm, there should be some heuristic to discard a node, if any collision inside is guaranteed to be behind the current one.</p>
+<p>If you also want to integrate rotation into this (without rotation during the movement), you can just replace all the AABB methods with their corresponding OBB variants. A resource on how to implement that can be found <a href="https://www.geometrictools.com/Documentation/DynamicCollisionDetection.pdf">here</a>. This source is for 3D and also contains some more advanced math and functionality, like estimating general movement during the timestep, but for the basic OBB tests, you can more or less copy the code, but you might need to adjust some things. As 3D rotation is more complex, the 2D version will be a lot simpler. You can probably also find these functions ready-mad for 2D somewhere.</p>
+<p>Thanks for reading!</p>
+
+
+        <div id="footer">
+
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>
