@@ -360,6 +360,12 @@ function sweepQuadtrees(aTree, bTree, offsetB, moveB, {
             continue;
         }
 
+        // if the result is already further away than the current one, 
+        //   the children can't be closer
+        if (abSweep.t > result.sweep.t) {
+            continue;
+        }
+        
         // check if nodes are leaf nodes or treat them as one if they are larger than the max level (-1 is treated as infinity)
         const aLeaf = a.leaf || (maxLevelA >= 0 && a.level >= maxLevelA);
         const bLeaf = b.leaf || (maxLevelB >= 0 && b.level >= maxLevelB);

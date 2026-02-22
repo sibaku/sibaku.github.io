@@ -563,6 +563,7 @@ function run() {
     // button and other ui interactions
     //---------------------------------
 
+    sliderSize.value = 0;
     sliderSize.oninput = () => {
         const v = parseInt(sliderSize.value);
         drawOptions.drawSize = v;
