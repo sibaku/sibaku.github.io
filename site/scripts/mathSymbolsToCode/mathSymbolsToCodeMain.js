@@ -1,6 +1,6 @@
 import { makeJsEditor, FileSource, themes, createCodeEditor, createEditorState } from "../lib/editorCommon.js";
 
-function makeExampleSummation(containerId, appContext) {
+async function makeExampleSummation(containerId, appContext) {
     const scriptDemoJs = `
 // here we define the function f and the minimum/maximum index startI/n
 
@@ -31,7 +31,7 @@ output.log(\`The sum of all f_i from \${startI} to \${n} is: \${sum}\`);
 output.log(\`The entries f_i:\`);
 [...new Array(n - startI + 1).keys()].map(i => (i + startI) + ": " + (i + startI)).forEach(x => output.log(x));
 `;
-    makeJsEditor(containerId, appContext, {
+    await makeJsEditor(containerId, appContext, {
         files: [
             new FileSource({ initialText: scriptDemoJs.trim(), name: "Demo.js" }),
             new FileSource({ initialText: scriptSummationJs.trim(), name: "Summation.js" }),

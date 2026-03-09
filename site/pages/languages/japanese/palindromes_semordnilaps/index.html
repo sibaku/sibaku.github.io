@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese palindromes and semordnilaps</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "0";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/post.css">
+
+    
+
+    
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
+</head>
+
+<body>
+
+    <div id="header">
+    </div>
+
+    <div id="navigation">
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+            <div class="navigationBaseEntry"><a href="/site/all_pages/">All pages</a></div>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <h1>Palindromes and Semordnilaps</h1>
+<p>This article analyzes two classes of words in Japanese, which are described below.</p>
+<p>The lists linked below were generated using the JMdict database <a href="http://jmdict.org/">JMdict</a>.</p>
+<p>Each entry contains the two spellings with readings and all associated meanings of each. The meanings are gathered from German and English, as I know both.</p>
+<p>Entries are grouped by length and sorted according to the average frequency of all entries mapping to the specific spellings, which can sometimes be multiple ones.</p>
+<p>One thing which I have not filtered out is the number of abbreviations with Latin letters, as the below mentioned &quot;ＳａａＳ&quot;.</p>
+<h1>Kanji Palindromes</h1>
+<p>Palindromes are words that read the same forward and backwards, like noon. In Japanese, words might be spelled with the same kanji from both sides, but they might be read differently, for example 日曜日 (にちようび). This list kind of fell out of finding semordnilaps, see below.</p>
+<p>in the data, I found palindromes consisting of up to 5 characters.  Below you can find a link to each page:</p>
+<h2>Length 2</h2>
+<p>The minimum length of a palindrome. As there are only two characters, this consists of all words with two duplicate kanji.</p>
+<p><strong><a href="/site/pages/languages/japanese/palindromes_semordnilaps/palindromes_2_data/">Click this link to see the list</a></strong></p>
+<h2>Length 3</h2>
+<p><strong><a href="/site/pages/languages/japanese/palindromes_semordnilaps/palindromes_3_data/">Click this link to see the list</a></strong></p>
+<h2>Length 4</h2>
+<p>For length 4, there is actually just one word and it isn't actually a kanji word: &quot;ＳａａＳ&quot;, software as a service.</p>
+<h2>Length 5</h2>
+<p>There are just 3 different entries in this. Two of them are actually the same but with different kanji! Makes sense, as a compound of 5 characters is probably rare as it is.</p>
+<p><strong><a href="/site/pages/languages/japanese/palindromes_semordnilaps/palindromes_5_data/">Click this link to see the list</a></strong></p>
+<h1>Kanji Semordnilaps</h1>
+<p>Semordnilaps are words that form new words when read in reverse, like dog and god. They are called <a href="https://en.wiktionary.org/wiki/semordnilap"><strong>semordnilap</strong></a>, because it's <strong>palindromes</strong> backwards.  With kanji, this happens quite often.</p>
+<h2>Length 2</h2>
+<p>The minimum length of a semordnilap.</p>
+<p><strong><a href="/site/pages/languages/japanese/palindromes_semordnilaps/semordnilaps_2_data/">Click this link to see the list</a></strong></p>
+<h2>Length 3</h2>
+<p><strong><a href="/site/pages/languages/japanese/palindromes_semordnilaps/semordnilaps_3_data/">Click this link to see the list</a></strong></p>
+<h2>Length 4</h2>
+<p>Only one word found for this one. And it consists of two groups of repeated kanji. It was highly unlikely to contain a lot of entries to begin with, as reversing the order of 4 kanji likely won't result in a meaningful word.</p>
+<p><strong><a href="/site/pages/languages/japanese/palindromes_semordnilaps/semordnilaps_4_data/">Click this link to see the list</a></strong></p>
+<h2>Limitiations</h2>
+<p>There is very limited processing during the generation and as such there are some limitations to keep in mind.</p>
+<p>First of all, this list was created by a non-linguist Japanese learner based on things I found interesting or difficult during learning and might contain inaccuracies due to ignorance.</p>
+<p>Western letters weren't filtered out, so there are some English acronyms in there.</p>
+<p>Some words share Kanji spellings, which might not be used generally, but those will be included as well. This shouldn't cause issues aside from some additional meanings and readings showing up in some entries.</p>
+<p>Similarly, while the entries are sorted by the average frequency (according to the nfxx field) of all associated words. This is neither the only nor the most sophisticted order. This only influences the list order though, so this shouldn't cause any issues.</p>
+
+
+        <div id="footer">
+
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>

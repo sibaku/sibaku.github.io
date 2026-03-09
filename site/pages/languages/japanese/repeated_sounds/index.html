@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Words with repeated sounds</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "0";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/post.css">
+
+    
+
+    
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
+</head>
+
+<body>
+
+    <div id="header">
+    </div>
+
+    <div id="navigation">
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+            <div class="navigationBaseEntry"><a href="/site/all_pages/">All pages</a></div>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <h1>Words with repeated sounds</h1>
+<p>A class of words in Japanese that I especially like are the ones where the first half is repeated, like しばしば　or ゴロゴロ. I think they just sound very nice.</p>
+<p>I am not sure, if there is a specific name for these words or if there are specific subsets, but in this list, I looked for all words with the above characteristic. There are two relaxation conditions:</p>
+<ol>
+<li>The repeated sound is often softened, for example in 人々（ひとびと）, where the second ひ is changed to び. In the relaxed rule, the repeated part might begin with a dakuten ゛or a handakuten ゜variant of the same character.</li>
+<li>Some words might contain an additional character at the end, for example くれぐれも. So the second relaxed rule is, that words are allowed an additional character at the end.</li>
+</ol>
+<p>I think, if kanji are available, these words are generally comprised of repeated ones, like the above mentioned 人々. Due to the reading-only approach for searching, there might be some words that obey this reading, but use different kanji for each part, for example 高校 (こうこう). I am not sure, if these should or should not be considered a different type of words. At the same time, there are some words without kanji (or at least not in the dataset) like ゴロゴロ. I want to include these and to me, the sound itself is what makes these words fun, that's why the rules are pretty relaxed.</p>
+<p>Words in the list are sorted according to one frequency measure, with the more frequent ones coming first.</p>
+<p><strong><a href="/site/pages/languages/japanese/repeated_sounds/repeated_sounds_data/">Click this link to see the list</a></strong></p>
+<h2>Limitiations</h2>
+<p>There is very limited processing during the generation and as such there are some limitations to keep in mind.</p>
+<p>First of all, this list was created by a non-linguist Japanese learner based on things I found interesting or difficult during learning and might contain inaccuracies due to ignorance.</p>
+<p>Similarly, while the entries are sorted by the frequency (according to the nfxx field) of the associated entry. This is neither the only nor the most sophisticated order. This only influences the list order though, so this shouldn't cause any issues.</p>
+
+
+        <div id="footer">
+
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>

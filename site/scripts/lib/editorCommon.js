@@ -504,6 +504,17 @@ async function makeJsEditor(containerId, appContext, {
 
     container.append(iframeContainer);
 
+    let loadedFrame = new Promise((resolve) => {
+
+        iframe.addEventListener("load", () => {
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+            resolve(doc);
+            return;
+        });
+
+    });
+
     if (iframeSourceDoc !== null) {
         iframe.srcdoc = iframeSourceDoc;
     } else {
@@ -516,27 +527,15 @@ async function makeJsEditor(containerId, appContext, {
     <title>Script runner</title>
 </head>
 <body>
+<script>
 
+</script>
 </body>
 </html>
         `;
     }
 
-    let iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-
-    iframeDocument = await new Promise((resolve) => {
-        if (iframeDocument.readyState === "complete") {
-            resolve(iframeDocument);
-            return;
-        }
-        iframe.addEventListener("load", () => {
-            const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-            resolve(doc);
-            return;
-        });
-
-    });
+    let iframeDocument = await loadedFrame;
 
     window.addEventListener('message', (event) => {
         const { data = {} } = event;
