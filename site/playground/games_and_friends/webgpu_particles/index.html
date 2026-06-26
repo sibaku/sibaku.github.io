@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGPU particles</title>
+    <link href="/site/styles/extern/prism-dark.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/site/styles/extern/katex/katex.min.css">
+    <link rel="stylesheet" href="/site/styles/extern/github-markdown.css">
+    
+    
+    <link rel="stylesheet" href="/site/styles/webgpu_particles.css">
+    
+    
+
+    <script>
+        function openNav() {
+            document.getElementById("navigation").style.width = "30%";
+            document.getElementById("content").style.marginLeft = "30%";
+        }
+
+        function closeNav() {
+            document.getElementById("navigation").style.width = "0";
+            document.getElementById("content").style.marginLeft = "0";
+        }
+    </script>
+
+    <link rel="stylesheet" href="/site/styles/post.css">
+
+    
+
+    
+
+<script>
+    const App = {
+        basePath : "/site/"
+    };
+</script>
+
+</head>
+
+<body>
+
+    <div id="header">
+    </div>
+
+    <div id="navigation">
+        <div class="navigationBase">
+            <div class="navigationBaseEntry"> <a href="/site/">Home</a></div>
+            <div class="navigationBaseEntry"><a href="/site/all_pages/">All pages</a></div>
+        </div>
+    </div>
+
+    <div id="content">
+
+        <h1>WebGPU particles</h1>
+<p>I made this as a quick doodle because I got recommended a similar video on Youtube. I only hovered over it shortly, but I thought it looked nice. Wanted to check out WebGPU for quite some time, so it was a good opportunity. Also nice to brush up on my Typescript.</p>
+<p>For this to work, your browser needs to support WebGPU, so if nothing shows up, that might be it.</p>
+<div class="demoContainer">
+    <canvas width="500px" height="500px">Sadly, your browser does not support a canvas</canvas>
+    <div class="optionsContainer">
+<p></p></div><p></p>
+</div>
+<script> 
+            import("/site/scripts/webgpu_particle_trails/main.js").then((Module) => {
+            const appContext = {"basePath":"/site/","filePathStem":"/playground/games_and_friends/webgpu_particles"};
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", ()=> {
+                    Module.main("game", appContext);
+                });
+            } else {
+                Module.main("game", appContext);
+            }
+             })
+            </script>
+
+
+        <div id="footer">
+
+        </div>
+    </div>
+
+    <button onclick="topFunction()" id="scrollUpButton" title="Go to top">Top</button>
+
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("scrollUpButton");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>
